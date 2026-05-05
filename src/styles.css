@@ -211,7 +211,7 @@ h1, h2, h3, p { margin-top: 0; }
 .mode-pill { min-width: 128px; padding: 9px 12px; border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; background: rgba(255,194,32,0.09); color: var(--yellow); font-size: 0.82rem; font-weight: 900; text-align: right; }
 .mode-pill span { display: block; color: var(--text-muted); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .executive-strip, .progress-grid, .kpi-grid, .dashboard-grid { display: grid; gap: 14px; }
-.executive-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 14px; }
+.executive-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px; }
 .executive-item, .progress-card, .kpi-card, .panel {
   border: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, var(--surface-panel-raised), rgba(255,255,255,0.04));
@@ -237,7 +237,7 @@ h1, h2, h3, p { margin-top: 0; }
 .progress-card p, .panel p, .kpi-card p { color: var(--text-secondary); line-height: 1.55; }
 .progress-track { height: 8px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,0.1); }
 .progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--yellow), var(--everyday-blue)); }
-.kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 14px; }
+.kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; }
 .kpi-card { position: relative; min-height: 190px; padding: 18px; overflow: hidden; border-radius: var(--radius-xl); transition: transform var(--motion-normal), box-shadow var(--motion-normal), border-color var(--motion-normal); }
 .kpi-card::after { position: absolute; inset: auto 18px 0; height: 3px; content: ""; background: linear-gradient(90deg, var(--everyday-blue), var(--sky-blue)); opacity: 0.78; }
 .kpi-card.priority-kpi { border-color: rgba(255,194,32,0.42); background: radial-gradient(circle at 90% 8%, rgba(255,194,32,0.18), transparent 12rem), linear-gradient(180deg, var(--surface-panel-raised), rgba(255,255,255,0.04)); }
@@ -252,12 +252,15 @@ h1, h2, h3, p { margin-top: 0; }
 .selected-service-panel { grid-column: span 7; }
 .readiness-panel { grid-column: span 5; }
 .activity-panel { grid-column: span 4; }
-.spatial-preview { grid-column: span 3; }
+.spatial-preview, .top-risk-panel { grid-column: span 3; }
 .module-map-panel { grid-column: span 5; }
 .service-heading h2 { max-width: 760px; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.08; }
 .service-meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
 .service-meta-grid div { padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); }
 .service-meta-grid strong { display: block; margin-top: 7px; }
+.service-meta-grid small { display: block; margin-top: 6px; color: var(--text-muted); font-size: 0.72rem; line-height: 1.35; }
+.service-live-metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.service-context-grid { margin-top: 12px; }
 .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .trend-note { color: var(--sky-blue); font-size: 0.76rem; font-weight: 850; }
 .bar-stack { display: flex; height: 34px; overflow: hidden; margin: 18px 0; border: 1px solid rgba(255,255,255,0.09); border-radius: 999px; background: rgba(255,255,255,0.08); }
@@ -285,12 +288,43 @@ h1, h2, h3, p { margin-top: 0; }
 .site-node.action { right: 14%; top: 48%; color: var(--bentonville-blue); background: var(--yellow); }
 .site-node.escalated { left: 36%; bottom: 18%; color: var(--bentonville-blue); background: var(--white); }
 .spatial-button { width: 100%; }
+.dashboard-state-panel { margin-bottom: 14px; }
+.dashboard-state-panel h1 { margin-bottom: 0; font-size: clamp(1.75rem, 3vw, 2.7rem); }
+.top-risk-list { display: grid; gap: 10px; }
+.top-risk-item { display: grid; gap: 7px; width: 100%; padding: 12px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); text-align: left; transition: transform var(--motion-normal), box-shadow var(--motion-normal), border-color var(--motion-normal), background var(--motion-normal); }
+.top-risk-item > div { display: grid; gap: 3px; }
+.top-risk-item strong { line-height: 1.2; }
+.top-risk-item span, .top-risk-item small { color: var(--text-muted); font-size: 0.78rem; line-height: 1.35; }
+.top-risk-item p { margin: 0; color: var(--text-secondary); font-size: 0.84rem; line-height: 1.4; }
+.top-risk-item .status-pill { width: fit-content; }
+.top-risk-item:hover { transform: translateY(-2px); border-color: rgba(255,194,32,0.34); background: rgba(0,83,226,0.14); box-shadow: var(--shadow-card-hover); }
+.facility-detail-panel { margin-top: 14px; }
+.facility-detail-header { display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.facility-detail-header h2 { margin-bottom: 7px; font-size: clamp(1.45rem, 2.4vw, 2.25rem); letter-spacing: -0.045em; }
+.facility-detail-header p { margin: 0; color: var(--text-secondary); }
+.facility-detail-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+.detail-close-button { min-height: 34px; padding: 8px 12px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(255,255,255,0.055); font-weight: 850; }
+.detail-close-button:hover { border-color: var(--border-strong); background: rgba(255,255,255,0.09); }
+.facility-summary-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.facility-summary-grid div { padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); }
+.facility-summary-grid span { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 900; letter-spacing: 0.11em; text-transform: uppercase; }
+.facility-summary-grid strong { display: block; margin-top: 6px; font-size: 1.35rem; letter-spacing: -0.04em; }
+.facility-section { padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.facility-section h3 { margin-bottom: 8px; font-size: 0.98rem; }
+.facility-section p { margin: 0; }
+.facility-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.record-section { align-self: start; }
+.facility-record-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; padding-right: 3px; }
+.facility-record { display: grid; gap: 4px; padding: 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); background: rgba(0,30,96,0.24); }
+.facility-record strong { font-size: 0.9rem; line-height: 1.25; }
+.facility-record span, .facility-record small, .empty-records { color: var(--text-muted); font-size: 0.78rem; line-height: 1.35; }
+.empty-records { margin: 0; }
 
 @media (max-width: 1280px) {
   .dashboard-shell { grid-template-columns: 248px minmax(0, 1fr); }
   .executive-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi-grid, .progress-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .module-map-panel { grid-column: span 6; }
+  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel { grid-column: span 6; }
 }
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -301,8 +335,9 @@ h1, h2, h3, p { margin-top: 0; }
   .dashboard-header { flex-direction: column; padding: 18px; }
   .mode-pill { text-align: left; }
   .executive-strip, .progress-grid, .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .module-map-panel { grid-column: 1 / -1; }
-  .service-meta-grid, .module-map { grid-template-columns: 1fr; }
+  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel { grid-column: 1 / -1; }
+  .service-meta-grid, .service-live-metrics, .module-map, .facility-summary-grid, .facility-detail-grid { grid-template-columns: 1fr; }
+  .facility-detail-header { flex-direction: column; }
 }
 @media (max-width: 620px) {
   .landing-shell, .dashboard-content { padding: 12px; }

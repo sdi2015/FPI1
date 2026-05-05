@@ -1,5 +1,7 @@
 declare module 'react' {
   export type Dispatch<T> = (value: T | ((previous: T) => T)) => void;
+  export type ReactNode = unknown;
+  export function useEffect(effect: () => void | (() => void), deps?: readonly unknown[]): void;
   export function useMemo<T>(factory: () => T, deps: readonly unknown[]): T;
   export function useState<T>(initialValue: T): [T, Dispatch<T>];
 }

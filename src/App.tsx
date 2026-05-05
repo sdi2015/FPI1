@@ -1,36 +1,19 @@
 import { useMemo, useState } from 'react';
-import { activity, capabilities, kpis, pillars, type Capability, type Kpi, type Pillar } from './data/program';
+import { FacilityDetailPanel } from './components/FacilityDetailPanel';
+import { getFacilityDetailModel } from './data/fpiSelectors';
+import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
+import { capabilities, pillars, type Capability, type Pillar } from './data/program';
+import type { FpiDashboardMetrics, FpiKpi, FpiTopRiskFacility, StatusTone } from './data/fpiTypes';
+import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
 
 type Screen = 'landing' | 'dashboard';
-type StatusTone = 'ready' | 'watch' | 'buildout' | 'critical' | 'stable' | 'track' | 'expanding';
-
-const readinessBands = [
-  { label: 'Verified', value: 44, color: '#4DBDF5', tone: 'ready', note: '+6% this cycle' },
-  { label: 'In review', value: 28, color: '#A9DDF7', tone: 'stable', note: 'verification queue' },
-  { label: 'Needs action', value: 18, color: '#FFC220', tone: 'watch', note: 'owner review' },
-  { label: 'Escalated', value: 10, color: '#FFFFFF', tone: 'critical', note: 'governance track' },
-];
-
-const executiveStatus = [
-  { label: 'Overall Status', value: 'WATCH', tone: 'watch' as const, trend: 'program posture' },
-  { label: 'Facilities Profiled', value: '1,284', tone: 'expanding' as const, trend: '+128 this cycle' },
-  { label: 'Critical Exceptions', value: '37', tone: 'watch' as const, trend: '-11 WoW' },
-  { label: 'Monitoring Uptime', value: '98.6%', tone: 'stable' as const, trend: '+0.8 pts' },
-  { label: 'Remediation SLA', value: '91%', tone: 'track' as const, trend: 'on track' },
-];
-
-const kpiStatusByLabel: Record<string, { status: string; tone: StatusTone; caption: string }> = {
-  'Facilities profiled': { status: 'EXPANDING', tone: 'expanding', caption: 'Coverage increasing across profiled facilities' },
-  'Critical exceptions': { status: 'WATCH', tone: 'watch', caption: 'Priority exceptions remain under active governance' },
-  'Monitoring uptime': { status: 'STABLE', tone: 'stable', caption: 'Monitoring availability is within expected range' },
-  'Remediation SLAs': { status: 'ON TRACK', tone: 'track', caption: 'Remediation performance is meeting target' },
-};
 
 const defaultCapabilityId = 'external-coordination';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('landing');
   const [activeCapabilityId, setActiveCapabilityId] = useState(defaultCapabilityId);
+  const fpiState = useFpiProgramData();
 
   const activeCapability = useMemo(
     () => capabilities.find((capability) => capability.id === activeCapabilityId) ?? capabilities[0],
@@ -44,6 +27,7 @@ function App() {
         onSelectCapability={setActiveCapabilityId}
         onBackToLanding={() => setScreen('landing')}
         activeCapability={activeCapability}
+        fpiState={fpiState}
       />
     );
   }
@@ -181,12 +165,26 @@ function DashboardShell({
   activeCapability,
   onSelectCapability,
   onBackToLanding,
+  fpiState,
 }: {
   activeCapabilityId: string;
   activeCapability: Capability;
   onSelectCapability: (id: string) => void;
   onBackToLanding: () => void;
+  fpiState: FpiProgramDataState;
 }) {
+  const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
+  const metrics = fpiState.data?.dashboardMetrics;
+  const programData = fpiState.data?.programData;
+  const selectedFacility = useMemo(
+    () => (programData && selectedFacilityId ? getFacilityDetailModel(programData, selectedFacilityId) : null),
+    [programData, selectedFacilityId],
+  );
+  const serviceMetrics = useMemo(
+    () => (programData ? getServiceMetrics(programData, activeCapability.id, activeCapability.title) : null),
+    [programData, activeCapability.id, activeCapability.title],
+  );
+
   return (
     <div className="dashboard-shell">
       <SidebarNav
@@ -196,28 +194,39 @@ function DashboardShell({
       />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
-        <HeroSummary />
-        <ExecutiveStatusStrip />
+        {fpiState.loading ? <DashboardStatePanel title="Loading FPI master data" message="Preparing the local master JSON dataset and calculating dashboard metrics." /> : null}
+        {fpiState.error ? <DashboardStatePanel title="Dashboard data is unavailable" message={fpiState.error} tone="critical" /> : null}
+        {!fpiState.loading && !fpiState.error && !metrics ? (
+          <DashboardStatePanel title="No dashboard data" message="The master dataset loaded but did not produce a dashboard model." tone="watch" />
+        ) : null}
 
-        <section className="progress-grid" aria-label="FPI program progress indicators">
-          {pillars.map((pillar) => (
-            <ProgressCard pillar={pillar} key={pillar.id} />
-          ))}
-        </section>
+        {metrics ? (
+          <>
+            <HeroSummary metrics={metrics} />
+            <ExecutiveStatusStrip metrics={metrics} />
 
-        <section className="kpi-grid" aria-label="Key FPI indicators">
-          {kpis.map((kpi) => (
-            <KpiCard kpi={kpi} key={kpi.label} />
-          ))}
-        </section>
+            <section className="progress-grid" aria-label="FPI program progress indicators">
+              {pillars.map((pillar) => (
+                <ProgressCard pillar={pillar} key={pillar.id} />
+              ))}
+            </section>
 
-        <section className="dashboard-grid" aria-label="Dashboard operational detail">
-          <SelectedServiceCard activeCapability={activeCapability} />
-          <ReadinessDistribution />
-          <ProgramSignals />
-          <FacilitySpatialPreview />
-          <ServiceAreaBuildout activeCapabilityId={activeCapabilityId} onSelectCapability={onSelectCapability} />
-        </section>
+            <section className="kpi-grid" aria-label="Key FPI indicators">
+              {metrics.kpis.map((kpi) => (
+                <KpiCard kpi={kpi} key={kpi.label} />
+              ))}
+            </section>
+
+            <section className="dashboard-grid" aria-label="Dashboard operational detail">
+              <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
+              <ReadinessDistribution metrics={metrics} />
+              <ProgramSignals metrics={metrics} />
+              <TopRiskFacilities facilities={metrics.topRiskFacilities} onSelectFacility={setSelectedFacilityId} />
+              <ServiceAreaBuildout activeCapabilityId={activeCapabilityId} onSelectCapability={onSelectCapability} />
+            </section>
+            <FacilityDetailPanel facility={selectedFacility} onClose={() => setSelectedFacilityId(null)} />
+          </>
+        ) : null}
       </main>
     </div>
   );
@@ -261,15 +270,31 @@ function SidebarNav({
   );
 }
 
-function HeroSummary() {
+function DashboardStatePanel({ title, message, tone = 'stable' }: { title: string; message: string; tone?: StatusTone }) {
+  return (
+    <section className="panel dashboard-state-panel" role={tone === 'critical' ? 'alert' : 'status'}>
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Data foundation</p>
+          <h1>{title}</h1>
+        </div>
+        <StatusPill label={tone === 'critical' ? 'ERROR' : 'STATUS'} tone={tone} />
+      </div>
+      <p>{message}</p>
+    </section>
+  );
+}
+
+function HeroSummary({ metrics }: { metrics: FpiDashboardMetrics }) {
   return (
     <header className="dashboard-header">
       <div>
-        <p className="eyebrow">FPI dashboard shell</p>
+        <p className="eyebrow">FPI data-backed dashboard</p>
         <h1>Facility protection posture overview</h1>
         <p>
-          Overall posture is <strong>WATCH</strong> across 1,284 profiled facilities, with 37 critical exceptions and 91%
-          remediation SLA performance.
+          {metrics.headline.split(metrics.overallStatus)[0]}
+          <strong>{metrics.overallStatus}</strong>
+          {metrics.headline.split(metrics.overallStatus).slice(1).join(metrics.overallStatus)}
         </p>
       </div>
       <div className="mode-pill" aria-label="Mode Synthetic data">
@@ -280,10 +305,10 @@ function HeroSummary() {
   );
 }
 
-function ExecutiveStatusStrip() {
+function ExecutiveStatusStrip({ metrics }: { metrics: FpiDashboardMetrics }) {
   return (
     <section className="executive-strip" aria-label="Executive status summary">
-      {executiveStatus.map((item) => (
+      {metrics.executiveStatus.map((item) => (
         <article className="executive-item" key={item.label}>
           <span>{item.label}</span>
           <strong>{item.value}</strong>
@@ -319,24 +344,29 @@ function ProgressCard({ pillar }: { pillar: Pillar }) {
   );
 }
 
-function KpiCard({ kpi }: { kpi: Kpi }) {
-  const meta = kpiStatusByLabel[kpi.label];
-  const isPriority = kpi.label === 'Critical exceptions';
+function KpiCard({ kpi }: { kpi: FpiKpi }) {
+  const isPriority = kpi.label === 'Critical exceptions' || kpi.label === 'Panel trouble';
 
   return (
     <article className={isPriority ? 'kpi-card priority-kpi' : 'kpi-card'}>
       <div className="kpi-topline">
         <span>{kpi.label}</span>
-        <StatusPill label={meta.status} tone={meta.tone} />
+        <StatusPill label={kpi.status} tone={kpi.tone} />
       </div>
       <strong>{kpi.value}</strong>
       <small>{kpi.trend}</small>
-      <p>{meta.caption}</p>
+      <p>{kpi.caption}</p>
     </article>
   );
 }
 
-function SelectedServiceCard({ activeCapability }: { activeCapability: Capability }) {
+function SelectedServiceCard({
+  activeCapability,
+  serviceMetrics,
+}: {
+  activeCapability: Capability;
+  serviceMetrics: FpiServiceMetricsModel | null;
+}) {
   return (
     <section className="panel selected-service-panel" aria-labelledby="selected-service-title">
       <div className="card-heading service-heading">
@@ -347,7 +377,22 @@ function SelectedServiceCard({ activeCapability }: { activeCapability: Capabilit
         <StatusPill label={activeCapability.status.toUpperCase()} tone="watch" />
       </div>
       <p>{activeCapability.description}</p>
-      <div className="service-meta-grid">
+      <div className="service-meta-grid service-live-metrics">
+        {(serviceMetrics?.metrics ?? []).map((metric) => (
+          <div key={metric.label}>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+            {metric.helperText ? <small>{metric.helperText}</small> : null}
+          </div>
+        ))}
+        {!serviceMetrics ? (
+          <div>
+            <span>Service metrics</span>
+            <strong>Loading</strong>
+          </div>
+        ) : null}
+      </div>
+      <div className="service-meta-grid service-context-grid">
         <div>
           <span>Primary metric</span>
           <strong>{activeCapability.metric}</strong>
@@ -370,39 +415,37 @@ function SelectedServiceCard({ activeCapability }: { activeCapability: Capabilit
   );
 }
 
-function ReadinessDistribution() {
+function ReadinessDistribution({ metrics }: { metrics: FpiDashboardMetrics }) {
+  const summary = metrics.readinessDistribution.map((band) => `${band.label} ${band.value}%`).join(' / ');
+
   return (
     <section className="panel readiness-panel" aria-labelledby="readiness-title">
       <div className="card-heading">
         <div>
-          <p className="eyebrow">Verification health</p>
+          <p className="eyebrow">Risk-tier health</p>
           <h2 id="readiness-title">Readiness distribution</h2>
         </div>
-        <span className="trend-note">Verified +6% this cycle</span>
+        <span className="trend-note">Derived from facility risk tiers</span>
       </div>
-      <p>44% verified / 28% in review / 28% require action or escalation.</p>
-      <div
-        className="bar-stack"
-        role="img"
-        aria-label="Readiness distribution: Verified 44%, In review 28%, Needs action 18%, Escalated 10%"
-      >
-        {readinessBands.map((band) => (
+      <p>{summary}.</p>
+      <div className="bar-stack" role="img" aria-label={`Readiness distribution: ${summary}`}>
+        {metrics.readinessDistribution.map((band) => (
           <span
             key={band.label}
             style={{ width: `${band.value}%`, background: band.color }}
             aria-label={`${band.label} ${band.value}%`}
           >
-            {band.value >= 18 ? `${band.value}%` : ''}
+            {band.value >= 14 ? `${band.value}%` : ''}
           </span>
         ))}
       </div>
       <div className="band-list">
-        {readinessBands.map((band) => (
+        {metrics.readinessDistribution.map((band) => (
           <div key={band.label}>
             <span style={{ background: band.color }} aria-hidden="true" />
             <p>{band.label}</p>
             <strong>{band.value}%</strong>
-            <small>{band.note}</small>
+            <small>{band.count} facilities • {band.note}</small>
           </div>
         ))}
       </div>
@@ -410,7 +453,7 @@ function ReadinessDistribution() {
   );
 }
 
-function ProgramSignals() {
+function ProgramSignals({ metrics }: { metrics: FpiDashboardMetrics }) {
   return (
     <section className="panel activity-panel" aria-labelledby="signals-title">
       <div className="card-heading">
@@ -420,7 +463,7 @@ function ProgramSignals() {
         </div>
       </div>
       <ol className="activity-list">
-        {activity.map((item) => (
+        {metrics.latestSignals.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ol>
@@ -462,32 +505,57 @@ function ServiceAreaBuildout({
   );
 }
 
-function FacilitySpatialPreview() {
+function TopRiskFacilities({
+  facilities,
+  onSelectFacility,
+}: {
+  facilities: FpiTopRiskFacility[];
+  onSelectFacility: (facilityId: string) => void;
+}) {
   return (
-    <section className="panel spatial-preview" aria-labelledby="spatial-title">
+    <section className="panel top-risk-panel" aria-labelledby="top-risk-title">
       <div className="card-heading">
         <div>
-          <p className="eyebrow">Spatial intelligence</p>
-          <h2 id="spatial-title">Facility posture preview</h2>
+          <p className="eyebrow">Facility posture</p>
+          <h2 id="top-risk-title">Top-risk facilities</h2>
         </div>
-        <StatusPill label="STATIC" tone="stable" />
+        <StatusPill label="LIVE" tone="watch" />
       </div>
-      <div className="isometric-map" aria-hidden="true">
-        <span className="site-node verified">Verified</span>
-        <span className="site-node review">In review</span>
-        <span className="site-node action">Needs action</span>
-        <span className="site-node escalated">Escalated</span>
+      <div className="top-risk-list">
+        {facilities.map((facility) => (
+          <button
+            className="top-risk-item"
+            type="button"
+            key={facility.facilityId}
+            onClick={() => onSelectFacility(facility.facilityId)}
+            aria-label={`Open detail for ${facility.facilityName}`}
+          >
+            <div>
+              <strong>{facility.facilityName}</strong>
+              <span>{facility.region} • {facility.market}</span>
+            </div>
+            <StatusPill label={facility.riskTier.toUpperCase()} tone={riskTierTone(facility.riskTier)} />
+            <p>
+              {facility.activeSignals} active signals · {facility.criticalExceptions} critical exceptions ·{' '}
+              {facility.openWorkItems} open work items
+            </p>
+            <small>Primary concern: {facility.primaryIssueType}</small>
+          </button>
+        ))}
       </div>
-      <p>
-        Lightweight non-WebGL preview: verified sites remain the largest cohort, while 28% require action or escalation.
-      </p>
-      <button type="button" className="spatial-button">Open spatial view</button>
     </section>
   );
 }
 
 function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
   return <span className={`status-pill status-${tone}`}>{label}</span>;
+}
+
+function riskTierTone(riskTier: FpiTopRiskFacility['riskTier']): StatusTone {
+  if (riskTier === 'Critical') return 'critical';
+  if (riskTier === 'High') return 'watch';
+  if (riskTier === 'Medium') return 'stable';
+  return 'ready';
 }
 
 function statusToneForCapability(status: Capability['status']): StatusTone {
