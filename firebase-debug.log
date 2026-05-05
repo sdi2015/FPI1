@@ -1,0 +1,57 @@
+[debug] [2026-05-05T22:15:23.179Z] ----------------------------------------------------------------------
+[debug] [2026-05-05T22:15:23.183Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\j0w16ja\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2026-05-05T22:15:23.183Z] CLI Version:   15.16.0
+[debug] [2026-05-05T22:15:23.183Z] Platform:      win32
+[debug] [2026-05-05T22:15:23.183Z] Node Version:  v24.11.1
+[debug] [2026-05-05T22:15:23.183Z] Time:          Tue May 05 2026 17:15:23 GMT-0500 (Central Daylight Time)
+[debug] [2026-05-05T22:15:23.184Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\j0w16ja\OneDrive - Walmart Inc\FPI - D Team\02_Foundry_Pack\foundry_pack\02_Active_Build\FPI_202605
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-05-05T22:15:31.424Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-05T22:15:31.424Z] > authorizing via signed-in user (jwilbur@sdinc.us)
+[debug] [2026-05-05T22:15:31.425Z] Checked if tokens are valid: true, expires at: 1778022620003
+[debug] [2026-05-05T22:15:31.426Z] Checked if tokens are valid: true, expires at: 1778022620003
+[debug] [2026-05-05T22:15:31.427Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/client-portal-c4be5 [none]
+[debug] [2026-05-05T22:15:34.705Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/client-portal-c4be5 200
+[debug] [2026-05-05T22:15:34.705Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/client-portal-c4be5 {"projectId":"client-portal-c4be5","projectNumber":"536186791211","displayName":"Client Portal","name":"projects/client-portal-c4be5","resources":{"hostingSite":"client-portal-c4be5","realtimeDatabaseInstance":"client-portal-c4be5"},"state":"ACTIVE","etag":"1_0424bbd0-f1dc-4c93-ac61-a678fd1b1bb9"}
+[info] i  Using project client-portal-c4be5 (Client Portal) . 
+[info] 
+=== Functions Setup
+[debug] [2026-05-05T22:15:34.746Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-05T22:15:34.746Z] > authorizing via signed-in user (jwilbur@sdinc.us)
+[debug] [2026-05-05T22:15:34.746Z] [iam] checking project client-portal-c4be5 for permissions ["firebase.projects.get"]
+[debug] [2026-05-05T22:15:34.747Z] Checked if tokens are valid: true, expires at: 1778022620003
+[debug] [2026-05-05T22:15:34.747Z] Checked if tokens are valid: true, expires at: 1778022620003
+[debug] [2026-05-05T22:15:34.747Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/client-portal-c4be5:testIamPermissions [none]
+[debug] [2026-05-05T22:15:34.747Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/client-portal-c4be5:testIamPermissions  x-goog-user-project=client-portal-c4be5
+[debug] [2026-05-05T22:15:34.747Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/client-portal-c4be5:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-05-05T22:15:34.901Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/client-portal-c4be5:testIamPermissions 200
+[debug] [2026-05-05T22:15:34.901Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/client-portal-c4be5:testIamPermissions {"permissions":["firebase.projects.get"]}
+[info] Let's create a new codebase for your functions.
+[info] A directory corresponding to the codebase will be created in your project
+[info] with sample code pre-configured.
+
+[info] See https://firebase.google.com/docs/functions/organize-functions for
+[info] more information on organizing your functions using codebases.
+
+[info] Functions can be deployed with firebase deploy.
+
+[info] +  Wrote functions/requirements.txt 
+[info] +  Wrote functions/.gitignore 
+[info] +  Wrote functions/main.py 
