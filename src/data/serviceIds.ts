@@ -7,6 +7,7 @@ export const SERVICE_IDS = {
   REMEDIATION: 'remediation',
   VENDOR_INTELLIGENCE: 'vendor-intelligence',
   EXTERNAL_COORDINATION: 'external-coordination',
+  SETTINGS: 'settings',
 } as const;
 
 export type ServiceId = (typeof SERVICE_IDS)[keyof typeof SERVICE_IDS];

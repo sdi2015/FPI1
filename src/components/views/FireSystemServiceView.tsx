@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FireAlarmSiteDetailPanel } from '../FireAlarmSiteDetailPanel';
 import { LockedScopeSummary } from '../LockedScopeSummary';
 import { DonutChart } from '../charts/DonutChart';
@@ -36,35 +36,17 @@ export function FireSystemServiceView({ fireAlarmData, fireAlarmLoading, fireAla
   const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortKey, setSortKey] = useState<SortKey>('riskScore');
-  const [activeSiteIds, setActiveSiteIds] = useState<string[]>([]);
   const [selectedSiteId, setSelectedSiteId] = useState<string | null>(null);
 
   const lockedData = useMemo(() => (fireAlarmData ? applyFireAlarmScope(fireAlarmData, storeScope) : null), [fireAlarmData, storeScope]);
   const lockedSiteIds = useMemo(() => lockedData?.sites.map((site) => site.id) ?? [], [lockedData]);
-
-  useEffect(() => {
-    setActiveSiteIds(lockedSiteIds);
-    setSelectedSiteId(null);
-  }, [lockedSiteIds.join('|')]);
-
-  const selectedIdsForModel = activeSiteIds.length > 0 ? activeSiteIds : lockedSiteIds;
   const model = useMemo(
-    () => (lockedData && selectedIdsForModel.length > 0 ? getFireAlarmDashboardModel(lockedData, selectedIdsForModel) : null),
-    [lockedData, selectedIdsForModel.join('|')],
+    () => (lockedData && lockedSiteIds.length > 0 ? getFireAlarmDashboardModel(lockedData, lockedSiteIds) : null),
+    [lockedData, lockedSiteIds.join('|')],
   );
   const filteredRows = useMemo(() => filterAndSortRows(model?.siteDirectoryRows ?? [], siteSearch, riskFilter, statusFilter, sortKey), [model, siteSearch, riskFilter, statusFilter, sortKey]);
   const selectedDetail = selectedSiteId && model ? model.siteDetailsById[selectedSiteId] ?? null : null;
 
-  function toggleActiveSite(siteId: string) {
-    setActiveSiteIds((previous) => {
-      const next = previous.includes(siteId) ? previous.filter((id) => id !== siteId) : [...previous, siteId];
-      return next.length > 0 ? next : lockedSiteIds;
-    });
-  }
-
-  function showOnlySite(siteId: string) {
-    setActiveSiteIds([siteId]);
-  }
 
   return (
     <section className="fire-ops-page" aria-label="Fire Alarm Operations Intelligence dashboard">
@@ -80,11 +62,10 @@ export function FireSystemServiceView({ fireAlarmData, fireAlarmLoading, fireAla
       {fireAlarmData ? <LockedScopeSummary sites={fireAlarmData.sites} scope={storeScope} onChangeScope={onChangeScopeRequest} /> : null}
       {fireAlarmLoading ? <StatePanel title="Loading fire alarm dataset" message="Preparing Fire Alarm Operations Intelligence." /> : null}
       {fireAlarmError ? <StatePanel title="Fire alarm dataset unavailable" message={fireAlarmError} danger /> : null}
-      {fireAlarmData && hasEmptyStoreScope(storeScope) ? <StatePanel title="No fire-system stores selected" message="Change the locked scope in Executive Protection Readiness to include stores or regions." /> : null}
+      {fireAlarmData && hasEmptyStoreScope(storeScope) ? <StatePanel title="No fire-system stores selected" message="Open Settings to include stores or regions in the global dashboard scope." /> : null}
 
       {lockedData && model ? (
         <>
-          <ScopeToggle sites={lockedData.sites} activeSiteIds={activeSiteIds} onToggleSite={toggleActiveSite} onShowOnlySite={showOnlySite} onShowAll={() => setActiveSiteIds(lockedSiteIds)} />
           <KpiGrid kpis={model.kpis} />
           <ChartGrid model={model} />
           <OperationalTables model={model} onSelectSite={setSelectedSiteId} />

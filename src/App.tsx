@@ -3,6 +3,7 @@ import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FireSystemServiceView } from './components/views/FireSystemServiceView';
 import { PlaceholderServiceView } from './components/views/PlaceholderServiceView';
 import { ReadinessOverviewView } from './components/views/ReadinessOverviewView';
+import { SettingsView } from './components/views/SettingsView';
 import { getFacilityDetailModel } from './data/fpiSelectors';
 import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
 import { applyFacilityScope, createAllFacilitiesScope, hasEmptySelectedScope, isFacilityInScope, type FacilityScopeState } from './data/fpiScope';
@@ -217,7 +218,7 @@ function DashboardShell({
   }
 
   function handleChangeStoreScopeRequest() {
-    onSelectService(SERVICE_IDS.READINESS);
+    onSelectService(SERVICE_IDS.SETTINGS);
   }
 
   return (
@@ -249,22 +250,27 @@ function DashboardShell({
                   tone="watch"
                 />
               </>
+            ) : selectedService === SERVICE_IDS.SETTINGS ? (
+              <SettingsView
+                fireSites={fireAlarmState.data?.sites ?? []}
+                fireAlarmLoading={fireAlarmState.loading}
+                fireAlarmError={fireAlarmState.error}
+                storeScope={storeScope}
+                onStoreScopeChange={setStoreScope}
+              />
             ) : selectedService === SERVICE_IDS.READINESS ? (
               <ReadinessOverviewView
                 facilities={programData.facilities}
-                fireSites={fireAlarmState.data?.sites ?? []}
-                storeScope={storeScope}
                 dashboardMetrics={metrics}
                 activeCapability={activeCapability}
                 serviceMetrics={serviceMetrics}
-                onStoreScopeChange={setStoreScope}
                 onFacilitySelect={setSelectedFacilityId}
                 onCapabilitySelect={handleCapabilitySelect}
               />
             ) : selectedService === SERVICE_IDS.FIRE_SYSTEM ? (
               <FireSystemServiceView
                 programData={scopedProgramData}
-                      facilities={programData.facilities}
+                facilities={programData.facilities}
                 fireAlarmData={fireAlarmState.data}
                 fireAlarmLoading={fireAlarmState.loading}
                 fireAlarmError={fireAlarmState.error}
@@ -326,6 +332,19 @@ function SidebarNav({
             </button>
           );
         })}
+      </nav>
+
+      <nav aria-label="Application settings navigation" className="sidebar-settings-nav">
+        <p className="nav-label">Workspace</p>
+        <button
+          className={selectedService === SERVICE_IDS.SETTINGS ? 'nav-item active' : 'nav-item'}
+          type="button"
+          aria-current={selectedService === SERVICE_IDS.SETTINGS ? 'page' : undefined}
+          onClick={() => onSelectService(SERVICE_IDS.SETTINGS)}
+        >
+          <span>Controls</span>
+          Settings
+        </button>
       </nav>
     </aside>
   );
