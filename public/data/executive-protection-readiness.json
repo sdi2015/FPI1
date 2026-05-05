@@ -1,0 +1,3647 @@
+{
+  "metadata": {
+    "source_folder": "C:\\Users\\j0w16ja\\OneDrive - Walmart Inc\\FPI - D Team\\02_Foundry_Pack\\foundry_pack\\03_Workspaces\\Cody S - Working Folder\\03_Handoff_Drafts\\fpi-dashboard",
+    "data_environment": "synthetic/demo",
+    "classification": "Walmart internal demo data - do not treat as production travel, safety, or incident data",
+    "analysis_status": "All files in source folder inventoried; markdown/code/templates/json/sqlite assets mapped into implementation domains.",
+    "file_count_analyzed": 70
+  },
+  "source_inventory": [
+    {
+      "path": ".gitignore",
+      "bytes": 134,
+      "extension": "(none)"
+    },
+    {
+      "path": "8",
+      "bytes": 0,
+      "extension": "(none)"
+    },
+    {
+      "path": "add_store_2638.py",
+      "bytes": 4020,
+      "extension": ".py"
+    },
+    {
+      "path": "backfill_incidents.py",
+      "bytes": 8445,
+      "extension": ".py"
+    },
+    {
+      "path": "backfill_incidents_fix.txt",
+      "bytes": 718,
+      "extension": ".txt"
+    },
+    {
+      "path": "BUILD_SUMMARY.md",
+      "bytes": 9953,
+      "extension": ".md"
+    },
+    {
+      "path": "COMPLETE_WITH_HOTELS.md",
+      "bytes": 10705,
+      "extension": ".md"
+    },
+    {
+      "path": "DEMO_SCRIPT.md",
+      "bytes": 6149,
+      "extension": ".md"
+    },
+    {
+      "path": "FINAL_SUMMARY.md",
+      "bytes": 12553,
+      "extension": ".md"
+    },
+    {
+      "path": "FINAL_TASK_FEATURES.md",
+      "bytes": 6065,
+      "extension": ".md"
+    },
+    {
+      "path": "fpi_dashboard.db",
+      "bytes": 475136,
+      "extension": ".db"
+    },
+    {
+      "path": "FPI_DASHBOARD_BUILD_2026-05-04.json",
+      "bytes": 35120,
+      "extension": ".json"
+    },
+    {
+      "path": "generate_data.py",
+      "bytes": 10036,
+      "extension": ".py"
+    },
+    {
+      "path": "HOTEL_BOOKING.md",
+      "bytes": 9422,
+      "extension": ".md"
+    },
+    {
+      "path": "HOTEL_FEATURE_COMPLETE.md",
+      "bytes": 5637,
+      "extension": ".md"
+    },
+    {
+      "path": "HOTEL_IMAGES.md",
+      "bytes": 9612,
+      "extension": ".md"
+    },
+    {
+      "path": "HOTEL_INTELLIGENCE_REFACTOR.md",
+      "bytes": 9704,
+      "extension": ".md"
+    },
+    {
+      "path": "HOTEL_QUICK_REF.md",
+      "bytes": 4365,
+      "extension": ".md"
+    },
+    {
+      "path": "INCIDENT_INTEGRATION.md",
+      "bytes": 12331,
+      "extension": ".md"
+    },
+    {
+      "path": "incident_stats.json",
+      "bytes": 1680,
+      "extension": ".json"
+    },
+    {
+      "path": "INTERACTIVE_MAP.md",
+      "bytes": 12242,
+      "extension": ".md"
+    },
+    {
+      "path": "log_to_json.py",
+      "bytes": 2223,
+      "extension": ".py"
+    },
+    {
+      "path": "main.py",
+      "bytes": 37948,
+      "extension": ".py"
+    },
+    {
+      "path": "models.py",
+      "bytes": 7107,
+      "extension": ".py"
+    },
+    {
+      "path": "MULTI_USER_SUPPORT.md",
+      "bytes": 8190,
+      "extension": ".md"
+    },
+    {
+      "path": "PORT_8002_WORKING.md",
+      "bytes": 3887,
+      "extension": ".md"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7284,
+      "extension": ".md"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 93,
+      "extension": ".txt"
+    },
+    {
+      "path": "SECURITY_MODULE_README.md",
+      "bytes": 5642,
+      "extension": ".md"
+    },
+    {
+      "path": "seed_data.json",
+      "bytes": 27519,
+      "extension": ".json"
+    },
+    {
+      "path": "seed_security_data.py",
+      "bytes": 7843,
+      "extension": ".py"
+    },
+    {
+      "path": "server_8005.json",
+      "bytes": 76405,
+      "extension": ".json"
+    },
+    {
+      "path": "services/__init__.py",
+      "bytes": 20,
+      "extension": ".py"
+    },
+    {
+      "path": "services/geocoder.py",
+      "bytes": 4244,
+      "extension": ".py"
+    },
+    {
+      "path": "services/incident_service.py",
+      "bytes": 6685,
+      "extension": ".py"
+    },
+    {
+      "path": "services/security_db.py",
+      "bytes": 7429,
+      "extension": ".py"
+    },
+    {
+      "path": "services/security_recommender.py",
+      "bytes": 14489,
+      "extension": ".py"
+    },
+    {
+      "path": "services/spotnana.py",
+      "bytes": 12854,
+      "extension": ".py"
+    },
+    {
+      "path": "services/spotnana_advanced.py",
+      "bytes": 15922,
+      "extension": ".py"
+    },
+    {
+      "path": "SMART_HOTEL_RECOMMENDATIONS.md",
+      "bytes": 10169,
+      "extension": ".md"
+    },
+    {
+      "path": "SMART_HOTELS.md",
+      "bytes": 12813,
+      "extension": ".md"
+    },
+    {
+      "path": "SMART_HOTELS_DEMO.md",
+      "bytes": 8094,
+      "extension": ".md"
+    },
+    {
+      "path": "SMART_HOTELS_SUMMARY.md",
+      "bytes": 12580,
+      "extension": ".md"
+    },
+    {
+      "path": "SMM_COMPLETE.md",
+      "bytes": 16320,
+      "extension": ".md"
+    },
+    {
+      "path": "SMM_FINAL_STATUS.md",
+      "bytes": 4063,
+      "extension": ".md"
+    },
+    {
+      "path": "SMM_SIMPLIFIED_SOLUTIONS.md",
+      "bytes": 3702,
+      "extension": ".md"
+    },
+    {
+      "path": "SMM_STORE_SPECIFIC_ROI.md",
+      "bytes": 6476,
+      "extension": ".md"
+    },
+    {
+      "path": "start.bat",
+      "bytes": 136,
+      "extension": ".bat"
+    },
+    {
+      "path": "state_machine.py",
+      "bytes": 5301,
+      "extension": ".py"
+    },
+    {
+      "path": "TASK_OWNER_FILTER.md",
+      "bytes": 7426,
+      "extension": ".md"
+    },
+    {
+      "path": "templates/base.html",
+      "bytes": 11176,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/field_view.html",
+      "bytes": 10531,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/hotel_advanced.html",
+      "bytes": 15544,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/index.html",
+      "bytes": 6106,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/my_tasks.html",
+      "bytes": 11116,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/dashboard.html",
+      "bytes": 13749,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/incidents.html",
+      "bytes": 9053,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/partials/incident_list.html",
+      "bytes": 4514,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/partials/roi_result.html",
+      "bytes": 10033,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/partials/solution_list.html",
+      "bytes": 4459,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/partials/store_detail.html",
+      "bytes": 11151,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/roi_calculator.html",
+      "bytes": 18939,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/solutions.html",
+      "bytes": 8582,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/security/store_analysis.html",
+      "bytes": 7778,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/spotnana_mock.html",
+      "bytes": 16981,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/task_detail.html",
+      "bytes": 14807,
+      "extension": ".html"
+    },
+    {
+      "path": "templates/visit_planner.html",
+      "bytes": 41687,
+      "extension": ".html"
+    },
+    {
+      "path": "test_smm_visual.py",
+      "bytes": 1197,
+      "extension": ".py"
+    },
+    {
+      "path": "update_solutions.py",
+      "bytes": 4254,
+      "extension": ".py"
+    },
+    {
+      "path": "VISIT_PLANNER.md",
+      "bytes": 6042,
+      "extension": ".md"
+    }
+  ],
+  "executive_summary": {
+    "modules": [
+      "Field Operations Intelligence",
+      "Visit Planning & Routing",
+      "Hotel Safety Intelligence / Spotnana handoff",
+      "Incident Intelligence",
+      "Security Mitigation Manager",
+      "Task Owner / Remediation Workflow"
+    ],
+    "recommended_ui_home": "EPR tab with subtabs: Overview, Visit Planner, Hotel Intelligence, Incident Risk, Security Mitigation, Tasks & Governance",
+    "business_value": {
+      "time_savings": {
+        "before": "30 minutes (manual safety research + booking)",
+        "after": "30 seconds (AI analysis + pre-filled booking)",
+        "reduction": "90%"
+      },
+      "cost_savings": {
+        "walmart_preferred_discount": "15% average",
+        "example_savings": "$19 per night (on $110 room)",
+        "annual_potential": "Est. $500K+ (10,000 field visits/year)"
+      },
+      "safety_improvement": {
+        "metric": "Incidents at booked hotels",
+        "expected_reduction": "40-60%",
+        "basis": "AI filters out high-crime areas + validates security features"
+      },
+      "user_satisfaction": {
+        "expected_nps": "80+",
+        "key_drivers": [
+          "Time savings",
+          "Safety confidence",
+          "Visual hotel preview",
+          "Seamless booking"
+        ]
+      }
+    }
+  },
+  "kpis": {
+    "visit_facilities": 7,
+    "tasks": 20,
+    "remediations": 20,
+    "markets": 5,
+    "incident_records": 855,
+    "recent_incidents": 66,
+    "security_incidents": 158,
+    "security_solutions": 8,
+    "hotel_recommendations": 3
+  },
+  "field_operations": {
+    "facilities": [
+      {
+        "facility_id": 9012,
+        "facility_name": "Store #9012",
+        "market": "Houston",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 1,
+        "overdue_task_count": 1,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 278.0,
+        "risk_score": 55.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "division": "Div 4",
+        "open_task_count": 2,
+        "overdue_task_count": 2,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 135.0,
+        "risk_score": 70.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 5678,
+        "facility_name": "Store #5678",
+        "market": "Dallas",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 1,
+        "overdue_task_count": 0,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 234.0,
+        "risk_score": 25.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 7890,
+        "facility_name": "Store #7890",
+        "market": "Phoenix",
+        "region": "West",
+        "division": "Div 2",
+        "open_task_count": 3,
+        "overdue_task_count": 2,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 69.66666666666667,
+        "risk_score": 75.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 3,
+        "overdue_task_count": 0,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 70.0,
+        "risk_score": 35.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 9753,
+        "facility_name": "Store #9753",
+        "market": "Chicago",
+        "region": "Midwest",
+        "division": "Div 5",
+        "open_task_count": 2,
+        "overdue_task_count": 1,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 94.5,
+        "risk_score": 40.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 5432,
+        "facility_name": "Store #5432",
+        "market": "Chicago",
+        "region": "Midwest",
+        "division": "Div 5",
+        "open_task_count": 0,
+        "overdue_task_count": 0,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 49.0,
+        "risk_score": 0.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      }
+    ],
+    "markets": [
+      {
+        "market_name": "Phoenix",
+        "region": "West",
+        "facility_count": 1,
+        "total_open_tasks": 3,
+        "total_overdue_tasks": 2,
+        "high_risk_facilities": 1,
+        "avg_remediation_hours": 69.66666666666667,
+        "rank": 1
+      },
+      {
+        "market_name": "Denver",
+        "region": "Mountain",
+        "facility_count": 1,
+        "total_open_tasks": 2,
+        "total_overdue_tasks": 2,
+        "high_risk_facilities": 0,
+        "avg_remediation_hours": 135.0,
+        "rank": 2
+      },
+      {
+        "market_name": "Houston",
+        "region": "South Central",
+        "facility_count": 1,
+        "total_open_tasks": 1,
+        "total_overdue_tasks": 1,
+        "high_risk_facilities": 0,
+        "avg_remediation_hours": 278.0,
+        "rank": 3
+      },
+      {
+        "market_name": "Chicago",
+        "region": "Midwest",
+        "facility_count": 2,
+        "total_open_tasks": 2,
+        "total_overdue_tasks": 1,
+        "high_risk_facilities": 0,
+        "avg_remediation_hours": 71.75,
+        "rank": 4
+      },
+      {
+        "market_name": "Dallas",
+        "region": "South Central",
+        "facility_count": 2,
+        "total_open_tasks": 4,
+        "total_overdue_tasks": 0,
+        "high_risk_facilities": 0,
+        "avg_remediation_hours": 152.0,
+        "rank": 5
+      }
+    ],
+    "top_facilities_by_incident_sample": [
+      [
+        "2435",
+        9
+      ],
+      [
+        "3720",
+        7
+      ],
+      [
+        "3489",
+        6
+      ],
+      [
+        "2799",
+        4
+      ],
+      [
+        "1631",
+        4
+      ],
+      [
+        "1486",
+        3
+      ],
+      [
+        "5488",
+        3
+      ],
+      [
+        "2795",
+        3
+      ],
+      [
+        "2821",
+        3
+      ],
+      [
+        "2279",
+        3
+      ]
+    ]
+  },
+  "visit_planner": {
+    "route_facilities": [
+      {
+        "facility_id": 9012,
+        "facility_name": "Store #9012",
+        "market": "Houston",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 1,
+        "overdue_task_count": 1,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 278.0,
+        "risk_score": 55.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "division": "Div 4",
+        "open_task_count": 2,
+        "overdue_task_count": 2,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 135.0,
+        "risk_score": 70.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 5678,
+        "facility_name": "Store #5678",
+        "market": "Dallas",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 1,
+        "overdue_task_count": 0,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 234.0,
+        "risk_score": 25.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 7890,
+        "facility_name": "Store #7890",
+        "market": "Phoenix",
+        "region": "West",
+        "division": "Div 2",
+        "open_task_count": 3,
+        "overdue_task_count": 2,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 69.66666666666667,
+        "risk_score": 75.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "division": "Div 1",
+        "open_task_count": 3,
+        "overdue_task_count": 0,
+        "critical_task_count": 1,
+        "avg_remediation_hours": 70.0,
+        "risk_score": 35.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 9753,
+        "facility_name": "Store #9753",
+        "market": "Chicago",
+        "region": "Midwest",
+        "division": "Div 5",
+        "open_task_count": 2,
+        "overdue_task_count": 1,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 94.5,
+        "risk_score": 40.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      },
+      {
+        "facility_id": 5432,
+        "facility_name": "Store #5432",
+        "market": "Chicago",
+        "region": "Midwest",
+        "division": "Div 5",
+        "open_task_count": 0,
+        "overdue_task_count": 0,
+        "critical_task_count": 0,
+        "avg_remediation_hours": 49.0,
+        "risk_score": 0.0,
+        "latitude": 38.9072,
+        "longitude": -77.0369
+      }
+    ],
+    "nearby_facilities": [
+      {
+        "facility_id": 2468,
+        "city": "Ashland",
+        "state": "KY",
+        "facility_type": "Store",
+        "latitude": 38.4656,
+        "longitude": -82.632,
+        "recent_incidents": 0
+      },
+      {
+        "facility_id": 3473,
+        "city": "Ashland",
+        "state": "KY",
+        "facility_type": "Store",
+        "latitude": 38.459,
+        "longitude": -82.668,
+        "recent_incidents": 0
+      }
+    ],
+    "workflow": [
+      "Select high-risk facilities",
+      "Optimize route",
+      "Generate visit plan",
+      "Hand off travel needs to Hotel Intelligence"
+    ]
+  },
+  "hotel_intelligence": {
+    "workflow": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "Navigate to Hotel Intelligence",
+          "url": "/hotels/advanced",
+          "user_input": [
+            "destination",
+            "check_in",
+            "check_out",
+            "flight_info (optional)"
+          ]
+        },
+        {
+          "step": 2,
+          "action": "Click 'Analyze Safety & Get Recommendations'",
+          "system_action": "Call /api/hotels/search-advanced",
+          "processing_time": "~2 seconds"
+        },
+        {
+          "step": 3,
+          "action": "Review 2-3 safety-vetted hotel recommendations",
+          "displayed_data": [
+            "Safety score (0-100)",
+            "Crime index",
+            "Store incidents",
+            "Security features",
+            "Price comparison",
+            "Hotel images"
+          ]
+        },
+        {
+          "step": 4,
+          "action": "Click 'Open in Spotnana' button",
+          "system_action": "Open /spotnana-mock in new window with pre-filled hotels"
+        },
+        {
+          "step": 5,
+          "action": "Review hotels in Spotnana interface",
+          "notes": "Top hotel has 'RECOMMENDED BY FPI' badge and safety score"
+        },
+        {
+          "step": 6,
+          "action": "Click 'View rooms' on preferred hotel",
+          "system_action": "Show mock booking confirmation"
+        },
+        {
+          "step": 7,
+          "action": "Receive confirmation",
+          "output": "Booking number (SPT-XXXXXX) + email confirmation"
+        }
+      ],
+      "total_time": "~30 seconds",
+      "time_saved_vs_manual": "90% (from 30 minutes to 30 seconds)"
+    },
+    "safety_scoring": {
+      "name": "Hotel Safety Score Calculator",
+      "formula": "weighted_average(crime_score, incident_score, security_score, sentiment_score)",
+      "weights": {
+        "crime_index": 0.35,
+        "store_incidents": 0.25,
+        "security_features": 0.25,
+        "news_sentiment": 0.15
+      },
+      "scoring_logic": {
+        "crime_score": "100 - crime_index (lower crime = higher score)",
+        "incident_score": "max(0, 100 - (store_incidents * 10))",
+        "security_score": "(num_features / max_features) * 100",
+        "sentiment_score": "positive=100, neutral=60, negative=20"
+      },
+      "output_range": "0-100 (higher is safer)"
+    },
+    "recommendation_ranking": {
+      "primary_sort": "safety_score DESC",
+      "secondary_sort": "walmart_preferred DESC",
+      "tertiary_sort": "price_per_night ASC",
+      "limit": 3
+    },
+    "hotels": [
+      {
+        "hotel_id": "HOTEL-ASH-002",
+        "name": "Fairfield Inn & Suites Ashland",
+        "brand": "Marriott",
+        "address": "1100 US Route 60",
+        "city": "Ashland",
+        "state": "KY",
+        "zip_code": "41101",
+        "rating": 4.2,
+        "price_per_night": 109.65,
+        "safety_score": {
+          "overall_score": 90,
+          "crime_index": 22,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking"
+        ],
+        "distance_from_airport": 3.2
+      },
+      {
+        "hotel_id": "HOTEL-ASH-001",
+        "name": "Hampton Inn Ashland",
+        "brand": "Hampton",
+        "address": "1000 US Route 60",
+        "city": "Ashland",
+        "state": "KY",
+        "zip_code": "41101",
+        "rating": 4.3,
+        "price_per_night": 101.15,
+        "safety_score": {
+          "overall_score": 88,
+          "crime_index": 25,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Well-Lit Parking",
+            "Card Key Access"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Business Center"
+        ],
+        "distance_from_airport": 5.2
+      },
+      {
+        "hotel_id": "HOTEL-ASH-003",
+        "name": "Holiday Inn Express Ashland",
+        "brand": "IHG",
+        "address": "1200 US Route 60",
+        "city": "Ashland",
+        "state": "KY",
+        "zip_code": "41101",
+        "rating": 4.0,
+        "price_per_night": 96.9,
+        "safety_score": {
+          "overall_score": 84,
+          "crime_index": 28,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Well-Lit Parking"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=800&h=600&fit=crop",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Business Center"
+        ],
+        "distance_from_airport": 2.8
+      }
+    ]
+  },
+  "incident_intelligence": {
+    "stats": {
+      "generated_at": "2026-05-04T17:18:17.645903",
+      "source": "region_75_incidents (2).csv",
+      "statistics": {
+        "total": 855,
+        "recent": 66,
+        "by_type": {
+          "Threat of Violence": 520,
+          "Battery": 194,
+          "Aggravated Assault": 83,
+          "Burglary": 17,
+          "Person with a Gun": 16,
+          "Bomb Threat": 8,
+          "Robbery / Attempted": 7,
+          "Suicide / Attempt": 5,
+          "Vandalism / Criminal Mischief": 1,
+          "Non-Associate Accident": 1,
+          "Lost/Missing Person": 1,
+          "Harassment / Stalking": 1,
+          "Carjacking": 1
+        },
+        "top_facilities": [
+          [
+            2435,
+            "DUNDALK",
+            "MD",
+            36
+          ],
+          [
+            7032,
+            "HENRICO",
+            "VA",
+            31
+          ],
+          [
+            3720,
+            "ARBUTUS",
+            "MD",
+            28
+          ],
+          [
+            1893,
+            "BOWIE",
+            "MD",
+            27
+          ],
+          [
+            5488,
+            "NORFOLK",
+            "VA",
+            27
+          ],
+          [
+            3489,
+            "BALTIMORE",
+            "MD",
+            25
+          ],
+          [
+            2799,
+            "CLINTON",
+            "MD",
+            22
+          ],
+          [
+            3214,
+            "SUFFOLK",
+            "VA",
+            18
+          ],
+          [
+            3831,
+            "PORTSMOUTH",
+            "VA",
+            18
+          ],
+          [
+            2312,
+            "ROANOKE",
+            "VA",
+            17
+          ]
+        ]
+      },
+      "severity_mapping": {
+        "Aggravated Assault": 10,
+        "Battery": 8,
+        "Robbery": 9,
+        "Burglary": 7,
+        "Threat of Violence": 6,
+        "Vandalism / Criminal Mischief": 4,
+        "Theft": 3,
+        "Trespassing": 2,
+        "Other": 1
+      }
+    },
+    "recent_incident_sample": [
+      {
+        "id": 3064,
+        "facility_id": 1717,
+        "incident_date": "2026-05-03",
+        "incident_time": "20:35:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made threats of violence towards an associate due to a perceived lack of customer service. Law enforcement was notified, but the customer fled property prior to their arrival. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "WALDORF",
+        "state": "MD",
+        "region": 75,
+        "market": 508,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2873,
+        "facility_id": 3720,
+        "incident_date": "2026-05-02",
+        "incident_time": "22:00:00",
+        "incident_type": "Aggravated Assault",
+        "severity": 10,
+        "description": "Management reported that an individual struck an associate with pepper spray as they were attempting to flee property with unpaid merchandise. Law enforcement arrived and detained the individual. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "ARBUTUS",
+        "state": "MD",
+        "region": 75,
+        "market": 293,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2817,
+        "facility_id": 2435,
+        "incident_date": "2026-05-02",
+        "incident_time": "21:40:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported an individual made threats of violence in reference to an associate due to personal reasons. Law enforcement was notified but the individual fled the property. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "DUNDALK",
+        "state": "MD",
+        "region": 75,
+        "market": 282,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2738,
+        "facility_id": 3720,
+        "incident_date": "2026-05-02",
+        "incident_time": "19:15:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported that a customer struck an associate due to a personal dispute. Law enforcement was notified, arrived, and removed the customer without further issue. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "ARBUTUS",
+        "state": "MD",
+        "region": 75,
+        "market": 293,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2831,
+        "facility_id": 5731,
+        "incident_date": "2026-05-02",
+        "incident_time": "15:15:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made threats of violence towards an associate due to a lack of perceived customer service. Law enforcement was notified, but the customer fled property prior to their arrival. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "LOCUST GROVE",
+        "state": "VA",
+        "region": 75,
+        "market": 291,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2978,
+        "facility_id": 3720,
+        "incident_date": "2026-05-02",
+        "incident_time": "12:25:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported a customer physically assaulted an associate due to unknown reasons. No injuries were reported. Law enforcement responded, however, the customer fled. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "ARBUTUS",
+        "state": "MD",
+        "region": 75,
+        "market": 293,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3337,
+        "facility_id": 3216,
+        "incident_date": "2026-05-02",
+        "incident_time": "09:30:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported an associate made a threat of violence towards another associate due to personal reasons. No injuries were reported. Law enforcement was not notified. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "VIRGINIA BEACH",
+        "state": "VA",
+        "region": 75,
+        "market": 289,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2583,
+        "facility_id": 1486,
+        "incident_date": "2026-05-02",
+        "incident_time": "06:25:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made a threat of violence toward an associate due to domestic issues. Law enforcement was notified and no impact to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "FARMVILLE",
+        "state": "VA",
+        "region": 75,
+        "market": 314,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2636,
+        "facility_id": 5488,
+        "incident_date": "2026-05-01",
+        "incident_time": "20:10:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that an associate sent messages of physical violence towards two other associates. Law enforcement was not notified and no injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "NORFOLK",
+        "state": "VA",
+        "region": 75,
+        "market": 289,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3023,
+        "facility_id": 2160,
+        "incident_date": "2026-05-01",
+        "incident_time": "11:35:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported three customers were involved in a physical altercation due to an unknown reason, and management responded to the area in an attempt to deescalate the situation. Law enforcement also responded for assistance, but the involved customers fled the property prior to their arrival. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "PETERSBURG",
+        "state": "VA",
+        "region": 75,
+        "market": 290,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2830,
+        "facility_id": 1344,
+        "incident_date": "2026-04-30",
+        "incident_time": "22:15:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made threats of violence towards multiple associates after being refused to given a ride offsite. Law enforcement was notified, arrived, and assisted. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "STAUNTON",
+        "state": "VA",
+        "region": 75,
+        "market": 315,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2625,
+        "facility_id": 5382,
+        "incident_date": "2026-04-30",
+        "incident_time": "18:00:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that an individual made threats of physical violence towards a customer while referencing a firearm. Law enforcement was not notified and both parties left property without further issue. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "PASADENA",
+        "state": "MD",
+        "region": 75,
+        "market": 282,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3400,
+        "facility_id": 3489,
+        "incident_date": "2026-04-28",
+        "incident_time": "07:00:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a third-party delivery driver made verbal threats towards an associate in the parking lot due to personal reasons. Law enforcement was notified and made reports. No injuries were reported and no impact to business operations. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "BALTIMORE",
+        "state": "MD",
+        "region": 75,
+        "market": 281,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2907,
+        "facility_id": 1726,
+        "incident_date": "2026-04-28",
+        "incident_time": "00:00:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported reported one vendor physically assaulted another vendor due to unknown reasons. No injuries were reported. Law enforcement was not notified. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "HARRISONBURG",
+        "state": "VA",
+        "region": 75,
+        "market": 315,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3225,
+        "facility_id": 2795,
+        "incident_date": "2026-04-27",
+        "incident_time": "18:20:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a passenger to a third party delivery driver became irate regarding two associates dispensing an order. The individual proceeded to issue verbal threats and display a firearm to the associates. Law enforcement was contacted and a report was filed due to the suspect leaving the property. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "ASHLAND",
+        "state": "VA",
+        "region": 75,
+        "market": 287,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2679,
+        "facility_id": 2821,
+        "incident_date": "2026-04-27",
+        "incident_time": "11:00:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that an individual made a threat of physical harm toward an AP associate, claiming they were being watched. The individual left, then returned briefly to shoplift shoes, and left again without further incident. Law enforcement was notified. Threat Management on-call was engaged for further assistance. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "RICHMOND",
+        "state": "VA",
+        "region": 75,
+        "market": 290,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3196,
+        "facility_id": 1893,
+        "incident_date": "2026-04-27",
+        "incident_time": "10:13:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported a customer made threats of violence towards an associate in the parking lot due to unknown reasons. Law enforcement was not notified and no injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "BOWIE",
+        "state": "MD",
+        "region": 75,
+        "market": 508,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3098,
+        "facility_id": 5117,
+        "incident_date": "2026-04-26",
+        "incident_time": "11:35:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made threats of violence toward two associates on a social media post, due to a transaction dispute. Law enforcement was not notified, no injuries were reported, and store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "WAYNESBORO",
+        "state": "VA",
+        "region": 75,
+        "market": 315,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2861,
+        "facility_id": 3489,
+        "incident_date": "2026-04-25",
+        "incident_time": "08:23:00",
+        "incident_type": "Bomb Threat",
+        "severity": 1,
+        "description": "Update (4/25/26, 10:07 AM CDT): Law enforcement was able to place the subject into custody and gave the all clear. Business operations resumed after approximately one and half hours. Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "city": "BALTIMORE",
+        "state": "MD",
+        "region": 75,
+        "market": 281,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3211,
+        "facility_id": 3489,
+        "incident_date": "2026-04-25",
+        "incident_time": "08:23:00",
+        "incident_type": "Bomb Threat",
+        "severity": 1,
+        "description": "Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "city": "BALTIMORE",
+        "state": "MD",
+        "region": 75,
+        "market": 281,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2782,
+        "facility_id": 1309,
+        "incident_date": "2026-04-24",
+        "incident_time": "23:23:00",
+        "incident_type": "Aggravated Assault",
+        "severity": 10,
+        "description": "Management reported two individuals discharged an orbeeze gun and struck a customer. No injuries were reported. Law enforcement responded and made contact with the individuals. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "SALEM",
+        "state": "VA",
+        "region": 75,
+        "market": 312,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3071,
+        "facility_id": 2279,
+        "incident_date": "2026-04-24",
+        "incident_time": "21:05:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that an associate made a threat toward two members of management during their termination. The associate left without further incident. Law enforcement assistance was not needed. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "GLEN BURNIE",
+        "state": "MD",
+        "region": 75,
+        "market": 282,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3324,
+        "facility_id": 3219,
+        "incident_date": "2026-04-24",
+        "incident_time": "20:37:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported an associate informed them of a social media post where another associate made a comment that included threat of violence in reference to the facility. Management is currently investigating. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "WILLIAMSBURG",
+        "state": "VA",
+        "region": 75,
+        "market": 287,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3024,
+        "facility_id": 3481,
+        "incident_date": "2026-04-24",
+        "incident_time": "18:00:00",
+        "incident_type": "Aggravated Assault",
+        "severity": 10,
+        "description": "Management reported that a shoplifter used pepper spray to assault them after they had attempted to stop the shoplifter from fleeing the site. Law enforcement responded and are searching for the shoplifter offsite. EMS was not notified, the member of management did not seek medical treatment. Store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "BALTIMORE",
+        "state": "MD",
+        "region": 75,
+        "market": 282,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3022,
+        "facility_id": 5488,
+        "incident_date": "2026-04-24",
+        "incident_time": "17:45:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported that two minors engaged in a physical altercation on the sales floor for unknown reasons. No injuries or impacts to operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "NORFOLK",
+        "state": "VA",
+        "region": 75,
+        "market": 289,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3292,
+        "facility_id": 1344,
+        "incident_date": "2026-04-23",
+        "incident_time": "15:59:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported that individual spat on a tenant employee for unknown reasons. Law enforcement was notified, but the individual fled prior to their arrival. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "STAUNTON",
+        "state": "VA",
+        "region": 75,
+        "market": 315,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3279,
+        "facility_id": 3831,
+        "incident_date": "2026-04-23",
+        "incident_time": "13:05:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer made verbal threats towards an associate due asking for a receipt check. Law enforcement was notified, no injuries were reported, and no impact to business operations. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "PORTSMOUTH",
+        "state": "VA",
+        "region": 75,
+        "market": 288,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 3408,
+        "facility_id": 2821,
+        "incident_date": "2026-04-20",
+        "incident_time": "18:38:00",
+        "incident_type": "Battery",
+        "severity": 8,
+        "description": "Management reported that a customer pushed an associate for unknown reasons before leaving the facility. Law enforcement was not notified and no injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "RICHMOND",
+        "state": "VA",
+        "region": 75,
+        "market": 290,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2662,
+        "facility_id": 2799,
+        "incident_date": "2026-04-20",
+        "incident_time": "14:50:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that a customer verbally threatened another customer due to the second customer yelling at an associate for not being fast while checking customers out. Law enforcement was not contacted and both of the customers left the facility without further incident. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "CLINTON",
+        "state": "MD",
+        "region": 75,
+        "market": 508,
+        "created_at": "2026-05-04 22:18:17"
+      },
+      {
+        "id": 2990,
+        "facility_id": 7032,
+        "incident_date": "2026-04-19",
+        "incident_time": "17:35:00",
+        "incident_type": "Threat of Violence",
+        "severity": 6,
+        "description": "Management reported that an associate made a threat of violence toward a customer due to unknown reasons. The customer notified law enforcement and had an officer follow them as they continued shopping in the facility. Management is further investigating the incident. Store operations were not impacted and no injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "city": "HENRICO",
+        "state": "VA",
+        "region": 75,
+        "market": 287,
+        "created_at": "2026-05-04 22:18:17"
+      }
+    ],
+    "incident_type_counts": [
+      [
+        "Threat of Violence",
+        72
+      ],
+      [
+        "Battery",
+        31
+      ],
+      [
+        "Aggravated Assault",
+        10
+      ],
+      [
+        "Person with a Gun",
+        3
+      ],
+      [
+        "Bomb Threat",
+        2
+      ],
+      [
+        "Carjacking",
+        1
+      ],
+      [
+        "Suicide / Attempt",
+        1
+      ]
+    ],
+    "severity_counts": [
+      [
+        "6",
+        72
+      ],
+      [
+        "8",
+        31
+      ],
+      [
+        "10",
+        10
+      ],
+      [
+        "1",
+        7
+      ]
+    ],
+    "state_counts": [
+      [
+        "VA",
+        72
+      ],
+      [
+        "MD",
+        48
+      ]
+    ]
+  },
+  "security_mitigation": {
+    "incidents": [
+      {
+        "id": 144,
+        "date": "2026-05-01T20:03:01.683573",
+        "store_number": 7890,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 120378.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 66,
+        "date": "2026-05-01T19:37:59.495520",
+        "store_number": 4567,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 298988.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 73,
+        "date": "2026-04-29T19:37:59.495520",
+        "store_number": 1023,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 48677.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 97,
+        "date": "2026-04-28T19:37:59.495520",
+        "store_number": 3456,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 7290.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 6,
+        "date": "2026-04-28T19:37:52.517527",
+        "store_number": 8901,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 68075.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 76,
+        "date": "2026-04-11T19:37:59.495520",
+        "store_number": 6789,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 65515.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 151,
+        "date": "2026-04-04T20:22:09.732935",
+        "store_number": 2638,
+        "incident_type": "assault",
+        "severity": "high",
+        "description": "Customer confrontation escalated to physical altercation in parking lot",
+        "estimated_lawsuit_cost": 350000.0,
+        "actual_payout": null,
+        "location": "Parking lot - east side",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 47,
+        "date": "2026-04-04T19:37:52.517527",
+        "store_number": 3456,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 12247.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 70,
+        "date": "2026-03-28T19:37:59.495520",
+        "store_number": 8901,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 147053.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 27,
+        "date": "2026-03-17T19:37:52.517527",
+        "store_number": 5678,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 103046.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 80,
+        "date": "2026-03-16T19:37:59.495520",
+        "store_number": 4567,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 11687.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 126,
+        "date": "2026-03-14T20:03:01.683573",
+        "store_number": 1234,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 388135.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 93,
+        "date": "2026-03-14T19:37:59.495520",
+        "store_number": 7890,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 40169.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 152,
+        "date": "2026-03-05T20:22:09.742261",
+        "store_number": 2638,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer's vehicle stolen while shopping, recovered 2 days later",
+        "estimated_lawsuit_cost": 280000.0,
+        "actual_payout": null,
+        "location": "Parking lot - far end",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 128,
+        "date": "2026-03-05T20:03:01.683573",
+        "store_number": 4567,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 12476.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 8,
+        "date": "2026-03-03T19:37:52.517527",
+        "store_number": 8901,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 77473.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 3,
+        "date": "2026-03-02T19:37:52.517527",
+        "store_number": 8901,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 47586.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 41,
+        "date": "2026-02-19T19:37:52.517527",
+        "store_number": 1023,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 2741.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 88,
+        "date": "2026-02-15T19:37:59.495520",
+        "store_number": 1023,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 8600.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 57,
+        "date": "2026-02-14T19:37:59.495520",
+        "store_number": 9012,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 49284.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 130,
+        "date": "2026-02-08T20:03:01.683573",
+        "store_number": 4567,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 13802.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 153,
+        "date": "2026-02-03T20:22:09.750708",
+        "store_number": 2638,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery attempt at customer service desk during evening hours",
+        "estimated_lawsuit_cost": 650000.0,
+        "actual_payout": null,
+        "location": "Customer service desk",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 89,
+        "date": "2026-01-14T19:37:59.495520",
+        "store_number": 5678,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 134349.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 149,
+        "date": "2026-01-06T20:03:01.683573",
+        "store_number": 9012,
+        "incident_type": "assault",
+        "severity": "high",
+        "description": "Customer assaulted by another customer in parking lot. Injuries sustained.",
+        "estimated_lawsuit_cost": 85308.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:02"
+      },
+      {
+        "id": 154,
+        "date": "2026-01-04T20:22:09.760024",
+        "store_number": 2638,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime - high-value electronics theft",
+        "estimated_lawsuit_cost": 125000.0,
+        "actual_payout": null,
+        "location": "Electronics department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 109,
+        "date": "2026-01-01T20:03:01.683573",
+        "store_number": 2345,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 183960.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 123,
+        "date": "2025-12-30T20:03:01.683573",
+        "store_number": 6789,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 50019.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 133,
+        "date": "2025-12-27T20:03:01.683573",
+        "store_number": 7890,
+        "incident_type": "assault",
+        "severity": "high",
+        "description": "Customer assaulted by another customer in parking lot. Injuries sustained.",
+        "estimated_lawsuit_cost": 204316.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 49,
+        "date": "2025-12-25T19:37:52.517527",
+        "store_number": 1023,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 102781.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 96,
+        "date": "2025-12-14T19:37:59.495520",
+        "store_number": 6789,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 10293.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 155,
+        "date": "2025-12-05T20:22:09.768736",
+        "store_number": 2638,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Graffiti on exterior walls and broken storefront window",
+        "estimated_lawsuit_cost": 45000.0,
+        "actual_payout": null,
+        "location": "Store front exterior",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 24,
+        "date": "2025-11-28T19:37:52.517527",
+        "store_number": 5678,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 171999.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 87,
+        "date": "2025-11-26T19:37:59.495520",
+        "store_number": 5678,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 12761.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 72,
+        "date": "2025-11-17T19:37:59.495520",
+        "store_number": 1234,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 24458.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 112,
+        "date": "2025-11-13T20:03:01.683573",
+        "store_number": 4567,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 117116.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 90,
+        "date": "2025-11-12T19:37:59.495520",
+        "store_number": 6789,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 71719.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 25,
+        "date": "2025-11-09T19:37:52.517527",
+        "store_number": 7890,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 13570.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 82,
+        "date": "2025-11-06T19:37:59.495520",
+        "store_number": 4567,
+        "incident_type": "assault",
+        "severity": "high",
+        "description": "Customer assaulted by another customer in parking lot. Injuries sustained.",
+        "estimated_lawsuit_cost": 198435.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 9,
+        "date": "2025-11-06T19:37:52.517527",
+        "store_number": 1234,
+        "incident_type": "slip_fall",
+        "severity": "high",
+        "description": "Customer slip and fall incident. Medical attention required.",
+        "estimated_lawsuit_cost": 100207.0,
+        "actual_payout": null,
+        "location": "Entrance",
+        "injuries": 1,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 156,
+        "date": "2025-11-05T20:22:09.777010",
+        "store_number": 2638,
+        "incident_type": "assault",
+        "severity": "critical",
+        "description": "Associate assaulted by shoplifter during apprehension attempt",
+        "estimated_lawsuit_cost": 520000.0,
+        "actual_payout": null,
+        "location": "Store entrance",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 119,
+        "date": "2025-11-01T20:03:01.683573",
+        "store_number": 2345,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 22176.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 145,
+        "date": "2025-10-27T20:03:01.683573",
+        "store_number": 9012,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 63653.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 15,
+        "date": "2025-10-23T19:37:52.517527",
+        "store_number": 3456,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 37714.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 30,
+        "date": "2025-10-23T19:37:52.517527",
+        "store_number": 6789,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 209828.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 111,
+        "date": "2025-10-18T20:03:01.683573",
+        "store_number": 1234,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 118751.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 121,
+        "date": "2025-10-17T20:03:01.683573",
+        "store_number": 9012,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 372778.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 117,
+        "date": "2025-10-14T20:03:01.683573",
+        "store_number": 9012,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 14968.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 148,
+        "date": "2025-10-11T20:03:01.683573",
+        "store_number": 5678,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 10246.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:02"
+      },
+      {
+        "id": 146,
+        "date": "2025-10-09T20:03:01.683573",
+        "store_number": 5678,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 21732.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 157,
+        "date": "2025-10-06T20:22:09.784812",
+        "store_number": 2638,
+        "incident_type": "harassment",
+        "severity": "high",
+        "description": "Customer verbal harassment and threats toward associate",
+        "estimated_lawsuit_cost": 275000.0,
+        "actual_payout": null,
+        "location": "Checkout lanes",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 74,
+        "date": "2025-09-27T19:37:59.495520",
+        "store_number": 3456,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 104823.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 129,
+        "date": "2025-09-26T20:03:01.683573",
+        "store_number": 1234,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 12219.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 40,
+        "date": "2025-09-22T19:37:52.517527",
+        "store_number": 8901,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 146093.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 115,
+        "date": "2025-09-19T20:03:01.683573",
+        "store_number": 7890,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 12460.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 56,
+        "date": "2025-09-19T19:37:59.495520",
+        "store_number": 1234,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 3577.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 143,
+        "date": "2025-09-18T20:03:01.683573",
+        "store_number": 6789,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 22764.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 11,
+        "date": "2025-09-17T19:37:52.517527",
+        "store_number": 7890,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 13375.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 100,
+        "date": "2025-09-09T19:37:59.495520",
+        "store_number": 1234,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 128608.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 158,
+        "date": "2025-09-06T20:22:09.792262",
+        "store_number": 2638,
+        "incident_type": "vehicle_theft",
+        "severity": "medium",
+        "description": "Attempted vehicle break-in interrupted by security",
+        "estimated_lawsuit_cost": 150000.0,
+        "actual_payout": null,
+        "location": "Parking lot - middle section",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:22:09"
+      },
+      {
+        "id": 113,
+        "date": "2025-09-03T20:03:01.683573",
+        "store_number": 1234,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 17747.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 65,
+        "date": "2025-09-03T19:37:59.495520",
+        "store_number": 6789,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 95529.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 46,
+        "date": "2025-09-02T19:37:52.517527",
+        "store_number": 2345,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 406747.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 138,
+        "date": "2025-08-29T20:03:01.683573",
+        "store_number": 8901,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 16437.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 10,
+        "date": "2025-08-29T19:37:52.517527",
+        "store_number": 8901,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 118112.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 34,
+        "date": "2025-08-18T19:37:52.517527",
+        "store_number": 1023,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 72789.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 45,
+        "date": "2025-08-17T19:37:52.517527",
+        "store_number": 6789,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 79302.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 22,
+        "date": "2025-08-14T19:37:52.517527",
+        "store_number": 4567,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 11310.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 36,
+        "date": "2025-08-14T19:37:52.517527",
+        "store_number": 6789,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 40254.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 118,
+        "date": "2025-08-13T20:03:01.683573",
+        "store_number": 5678,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 138481.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 18,
+        "date": "2025-08-13T19:37:52.517527",
+        "store_number": 1234,
+        "incident_type": "robbery",
+        "severity": "critical",
+        "description": "Armed robbery at store entrance. Employee threatened.",
+        "estimated_lawsuit_cost": 130991.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 1,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 54,
+        "date": "2025-07-24T19:37:59.495520",
+        "store_number": 8901,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 2946.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 51,
+        "date": "2025-07-23T19:37:59.495520",
+        "store_number": 3456,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 28642.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 110,
+        "date": "2025-07-13T20:03:01.683573",
+        "store_number": 9012,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 43570.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 20,
+        "date": "2025-06-26T19:37:52.517527",
+        "store_number": 9012,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 14935.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:52"
+      },
+      {
+        "id": 59,
+        "date": "2025-06-22T19:37:59.495520",
+        "store_number": 5678,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 11397.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      },
+      {
+        "id": 134,
+        "date": "2025-06-21T20:03:01.683573",
+        "store_number": 3456,
+        "incident_type": "harassment",
+        "severity": "medium",
+        "description": "Customer harassment incident. Threatening behavior.",
+        "estimated_lawsuit_cost": 44468.0,
+        "actual_payout": null,
+        "location": "Store Front",
+        "injuries": 0,
+        "police_report": 0,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 139,
+        "date": "2025-06-21T20:03:01.683573",
+        "store_number": 1234,
+        "incident_type": "vehicle_theft",
+        "severity": "high",
+        "description": "Customer vehicle stolen from parking lot.",
+        "estimated_lawsuit_cost": 145690.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 127,
+        "date": "2025-06-07T20:03:01.683573",
+        "store_number": 2345,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 13523.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 140,
+        "date": "2025-06-05T20:03:01.683573",
+        "store_number": 4567,
+        "incident_type": "vandalism",
+        "severity": "low",
+        "description": "Vehicle vandalism in parking lot. Customer vehicle damaged.",
+        "estimated_lawsuit_cost": 10931.0,
+        "actual_payout": null,
+        "location": "Parking Lot",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 01:03:01"
+      },
+      {
+        "id": 55,
+        "date": "2025-06-01T19:37:59.495520",
+        "store_number": 9012,
+        "incident_type": "theft",
+        "severity": "medium",
+        "description": "Organized retail crime group stole high-value electronics.",
+        "estimated_lawsuit_cost": 20146.0,
+        "actual_payout": null,
+        "location": "Electronics Department",
+        "injuries": 0,
+        "police_report": 1,
+        "prevented_by": null,
+        "created_at": "2026-05-05 00:37:59"
+      }
+    ],
+    "solutions": [
+      {
+        "id": 21,
+        "name": "Armed Security Team",
+        "solution_type": "armed_security_guard",
+        "upfront_cost": 0.0,
+        "annual_cost": 600000.0,
+        "coverage_area": "24/7 armed security",
+        "effectiveness_rating": 95.0,
+        "prevents_incident_types": "robbery,assault,theft,trespassing",
+        "notes": "Full-time armed security team",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 20,
+        "name": "Axon Body Camera (16 units)",
+        "solution_type": "body_camera",
+        "upfront_cost": 7500.0,
+        "annual_cost": 0.0,
+        "coverage_area": "16 associates with body cameras",
+        "effectiveness_rating": 85.0,
+        "prevents_incident_types": "assault,harassment,theft",
+        "notes": "16 Axon body cameras with cloud storage",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 19,
+        "name": "Axon Body Camera (8 units)",
+        "solution_type": "body_camera",
+        "upfront_cost": 4000.0,
+        "annual_cost": 0.0,
+        "coverage_area": "8 associates with body cameras",
+        "effectiveness_rating": 80.0,
+        "prevents_incident_types": "assault,harassment,theft",
+        "notes": "8 Axon body cameras with cloud storage",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 24,
+        "name": "High Security Lighting Package",
+        "solution_type": "enhanced_lighting",
+        "upfront_cost": 200000.0,
+        "annual_cost": 0.0,
+        "coverage_area": "Full parking lot illumination",
+        "effectiveness_rating": 70.0,
+        "prevents_incident_types": "vehicle_theft,robbery,vandalism,assault",
+        "notes": "High-intensity LED lighting system",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 23,
+        "name": "License Plate Reader",
+        "solution_type": "license_plate_recognition",
+        "upfront_cost": 35000.0,
+        "annual_cost": 0.0,
+        "coverage_area": "Parking lot entry/exit",
+        "effectiveness_rating": 90.0,
+        "prevents_incident_types": "vehicle_theft,robbery,trespassing",
+        "notes": "Automated LPR with hotlist alerts",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 17,
+        "name": "Lot Cop",
+        "solution_type": "parking_lot_camera",
+        "upfront_cost": 65000.0,
+        "annual_cost": 0.0,
+        "coverage_area": "Full parking lot - mobile tower",
+        "effectiveness_rating": 85.0,
+        "prevents_incident_types": "vehicle_theft,robbery,vandalism,assault",
+        "notes": "Mobile surveillance tower with 360 cameras",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 18,
+        "name": "Pole Cop",
+        "solution_type": "parking_lot_camera",
+        "upfront_cost": 18000.0,
+        "annual_cost": 0.0,
+        "coverage_area": "Parking lot zones - pole-mounted",
+        "effectiveness_rating": 75.0,
+        "prevents_incident_types": "vehicle_theft,robbery,vandalism",
+        "notes": "Fixed pole-mounted camera system",
+        "created_at": "2026-05-05 01:15:13"
+      },
+      {
+        "id": 22,
+        "name": "Unarmed Security",
+        "solution_type": "security_guard",
+        "upfront_cost": 0.0,
+        "annual_cost": 150000.0,
+        "coverage_area": "Store entrance and patrol",
+        "effectiveness_rating": 75.0,
+        "prevents_incident_types": "theft,trespassing,vandalism,harassment",
+        "notes": "Uniformed security guard",
+        "created_at": "2026-05-05 01:15:13"
+      }
+    ],
+    "incident_type_counts": [
+      [
+        "vehicle_theft",
+        27
+      ],
+      [
+        "harassment",
+        26
+      ],
+      [
+        "vandalism",
+        24
+      ],
+      [
+        "robbery",
+        23
+      ],
+      [
+        "theft",
+        23
+      ],
+      [
+        "slip_fall",
+        20
+      ],
+      [
+        "assault",
+        15
+      ]
+    ],
+    "store_counts": [
+      [
+        "1234",
+        19
+      ],
+      [
+        "4567",
+        17
+      ],
+      [
+        "8901",
+        17
+      ],
+      [
+        "5678",
+        17
+      ],
+      [
+        "7890",
+        16
+      ],
+      [
+        "6789",
+        16
+      ],
+      [
+        "9012",
+        16
+      ],
+      [
+        "1023",
+        13
+      ],
+      [
+        "3456",
+        12
+      ],
+      [
+        "2638",
+        8
+      ],
+      [
+        "2345",
+        7
+      ]
+    ],
+    "cost_by_type": [
+      [
+        "robbery",
+        6603136.0
+      ],
+      [
+        "assault",
+        3115524.0
+      ],
+      [
+        "vehicle_theft",
+        2946036.0
+      ],
+      [
+        "slip_fall",
+        2291973.0
+      ],
+      [
+        "harassment",
+        1354897.0
+      ],
+      [
+        "theft",
+        445947.0
+      ],
+      [
+        "vandalism",
+        268099.0
+      ]
+    ],
+    "recommender_rules": [
+      "License Plate Reader -> repeat (store, incident_type) patterns",
+      "Armed Security Team -> incidents mentioning weapons/firearms",
+      "Lot Cop -> 3+ parking-lot incidents (heavier investment threshold)",
+      "Pole Cop -> any parking-lot incident (cheaper first step)",
+      "High Security Lighting -> any parking-lot incident (passive deterrent)",
+      "Unarmed Security -> parking-lot incidents WITHOUT high weapon involvement",
+      "Axon Body Camera (8 or 16) -> 2+ associate-facing incidents; 16-pack at 5+"
+    ],
+    "roi_formula": {
+      "annualized_risk": "sum(incident.estimated_lawsuit_cost) / HISTORICAL_YEARS (=5)",
+      "solo_projected_prevention": "annualized_risk * analysis_years * (effectiveness/100)",
+      "bundle_dedup_rule": "Each incident credited to the highest-effectiveness solution that prevents it - never double-counted across overlapping solutions.",
+      "net_savings": "projected_prevention - solution_cost",
+      "roi_pct": "(net_savings / solution_cost) * 100",
+      "payback_months": "(upfront / (annual_prevention - annual_cost)) * 12"
+    }
+  },
+  "tasks_governance": {
+    "tasks": [
+      {
+        "task_id": "TSK-1000",
+        "facility_id": 9012,
+        "facility_name": "Store #9012",
+        "market": "Houston",
+        "region": "South Central",
+        "owner_role": "Corporate",
+        "owner_name": "Sarah Chen",
+        "priority": "Low",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Repair HVAC control module",
+        "description": "Synthetic remediation task for Store #9012 - Network Outage",
+        "created_at": "2026-04-27T10:38:40.206315",
+        "due_date": "2026-05-04T10:38:40.206315",
+        "updated_at": "2026-05-04T13:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1001",
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "owner_role": "Field Engineer",
+        "owner_name": "Jessica Park",
+        "priority": "Medium",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Repair HVAC control module",
+        "description": "Synthetic remediation task for Store #8642 - Camera Offline",
+        "created_at": "2026-05-01T10:38:40.206315",
+        "due_date": "2026-05-04T10:38:40.206315",
+        "updated_at": "2026-05-04T00:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1002",
+        "facility_id": 5678,
+        "facility_name": "Store #5678",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Field Lead",
+        "owner_name": "Sarah Chen",
+        "priority": "Low",
+        "status": "Blocked",
+        "evidence_required": false,
+        "title": "Replace emergency exit light battery",
+        "description": "Synthetic remediation task for Store #5678 - Access Control Failure",
+        "created_at": "2026-05-01T23:38:40.206315",
+        "due_date": "2026-05-08T23:38:40.206315",
+        "updated_at": "2026-05-03T22:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1003",
+        "facility_id": 7890,
+        "facility_name": "Store #7890",
+        "market": "Phoenix",
+        "region": "West",
+        "owner_role": "Corporate",
+        "owner_name": "Sarah Chen",
+        "priority": "High",
+        "status": "In Progress",
+        "evidence_required": true,
+        "title": "Repair rear door alarm system",
+        "description": "Synthetic remediation task for Store #7890 - HVAC Critical Fault",
+        "created_at": "2026-05-03T13:38:40.206315",
+        "due_date": "2026-05-04T13:38:40.206315",
+        "updated_at": "2026-05-04T14:38:40.206315",
+        "sla_hours": 24,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1004",
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Corporate",
+        "owner_name": "Sarah Chen",
+        "priority": "Critical",
+        "status": "In Progress",
+        "evidence_required": true,
+        "title": "Service fire suppression system",
+        "description": "Synthetic remediation task for Store #1234 - Emergency Lighting Failure",
+        "created_at": "2026-05-04T18:38:40.206315",
+        "due_date": "2026-05-04T22:38:40.206315",
+        "updated_at": "2026-05-04T00:38:40.206315",
+        "sla_hours": 4,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1005",
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Store Manager",
+        "owner_name": "David Rodriguez",
+        "priority": "Low",
+        "status": "Pending Verification",
+        "evidence_required": false,
+        "title": "Reset access control panel",
+        "description": "Synthetic remediation task for Store #1234 - Fire Suppression Fault",
+        "created_at": "2026-04-30T21:38:40.206315",
+        "due_date": "2026-05-07T21:38:40.206315",
+        "updated_at": "2026-05-04T03:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": "https://evidence.walmart.com/task_0005.jpg",
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1006",
+        "facility_id": 7890,
+        "facility_name": "Store #7890",
+        "market": "Phoenix",
+        "region": "West",
+        "owner_role": "Regional Manager",
+        "owner_name": "Sarah Chen",
+        "priority": "High",
+        "status": "Pending Verification",
+        "evidence_required": true,
+        "title": "Repair HVAC control module",
+        "description": "Synthetic remediation task for Store #7890 - Fire Suppression Fault",
+        "created_at": "2026-04-30T21:38:40.206315",
+        "due_date": "2026-05-01T21:38:40.206315",
+        "updated_at": "2026-05-04T03:38:40.206315",
+        "sla_hours": 24,
+        "evidence_url": "https://evidence.walmart.com/task_0006.jpg",
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1007",
+        "facility_id": 9753,
+        "facility_name": "Store #9753",
+        "market": "Chicago",
+        "region": "Midwest",
+        "owner_role": "Regional Manager",
+        "owner_name": "Sarah Chen",
+        "priority": "Medium",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Replace offline camera in produce section",
+        "description": "Synthetic remediation task for Store #9753 - Fire Suppression Fault",
+        "created_at": "2026-05-01T07:38:40.206315",
+        "due_date": "2026-05-04T07:38:40.206315",
+        "updated_at": "2026-05-04T00:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1008",
+        "facility_id": 5678,
+        "facility_name": "Store #5678",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Corporate",
+        "owner_name": "Sarah Chen",
+        "priority": "Critical",
+        "status": "Closed",
+        "evidence_required": true,
+        "title": "Service fire suppression system",
+        "description": "Synthetic remediation task for Store #5678 - Intrusion Detection Alert",
+        "created_at": "2026-04-30T17:38:40.206315",
+        "due_date": "2026-04-30T21:38:40.206315",
+        "updated_at": "2026-05-03T21:38:40.206315",
+        "sla_hours": 4,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T12:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1009",
+        "facility_id": 5432,
+        "facility_name": "Store #5432",
+        "market": "Chicago",
+        "region": "Midwest",
+        "owner_role": "Corporate",
+        "owner_name": "Sarah Chen",
+        "priority": "Medium",
+        "status": "Closed",
+        "evidence_required": false,
+        "title": "Replace offline camera in produce section",
+        "description": "Synthetic remediation task for Store #5432 - Door Alarm",
+        "created_at": "2026-05-02T19:38:40.206315",
+        "due_date": "2026-05-05T19:38:40.206315",
+        "updated_at": "2026-05-04T20:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T14:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1010",
+        "facility_id": 5678,
+        "facility_name": "Store #5678",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Field Lead",
+        "owner_name": "Sarah Chen",
+        "priority": "Low",
+        "status": "Closed",
+        "evidence_required": false,
+        "title": "Replace emergency exit light battery",
+        "description": "Synthetic remediation task for Store #5678 - Fire Suppression Fault",
+        "created_at": "2026-05-02T02:38:40.206315",
+        "due_date": "2026-05-09T02:38:40.206315",
+        "updated_at": "2026-05-03T20:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T06:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1011",
+        "facility_id": 9012,
+        "facility_name": "Store #9012",
+        "market": "Houston",
+        "region": "South Central",
+        "owner_role": "Regional Manager",
+        "owner_name": "Michael Thompson",
+        "priority": "Critical",
+        "status": "Closed",
+        "evidence_required": true,
+        "title": "Repair HVAC control module",
+        "description": "Synthetic remediation task for Store #9012 - Intrusion Detection Alert",
+        "created_at": "2026-04-30T16:38:40.206315",
+        "due_date": "2026-04-30T20:38:40.206315",
+        "updated_at": "2026-05-04T15:38:40.206315",
+        "sla_hours": 4,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T04:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1012",
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "owner_role": "Field Lead",
+        "owner_name": "Michael Thompson",
+        "priority": "High",
+        "status": "Open",
+        "evidence_required": true,
+        "title": "Service fire suppression system",
+        "description": "Synthetic remediation task for Store #8642 - HVAC Critical Fault",
+        "created_at": "2026-05-01T05:38:40.206315",
+        "due_date": "2026-05-02T05:38:40.206315",
+        "updated_at": "2026-05-04T19:38:40.206315",
+        "sla_hours": 24,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1013",
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Store Manager",
+        "owner_name": "Emily Johnson",
+        "priority": "Medium",
+        "status": "Closed",
+        "evidence_required": false,
+        "title": "Restore network connectivity to security DVR",
+        "description": "Synthetic remediation task for Store #1234 - Emergency Lighting Failure",
+        "created_at": "2026-04-30T12:38:40.206315",
+        "due_date": "2026-05-03T12:38:40.206315",
+        "updated_at": "2026-05-03T21:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T03:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1014",
+        "facility_id": 9753,
+        "facility_name": "Store #9753",
+        "market": "Chicago",
+        "region": "Midwest",
+        "owner_role": "Field Engineer",
+        "owner_name": "Jessica Park",
+        "priority": "Medium",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Repair rear door alarm system",
+        "description": "Synthetic remediation task for Store #9753 - HVAC Critical Fault",
+        "created_at": "2026-05-04T18:38:40.206315",
+        "due_date": "2026-05-07T18:38:40.206315",
+        "updated_at": "2026-05-04T09:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1015",
+        "facility_id": 7890,
+        "facility_name": "Store #7890",
+        "market": "Phoenix",
+        "region": "West",
+        "owner_role": "Store Manager",
+        "owner_name": "Emily Johnson",
+        "priority": "Low",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Restore network connectivity to security DVR",
+        "description": "Synthetic remediation task for Store #7890 - Door Alarm",
+        "created_at": "2026-05-01T09:38:40.206315",
+        "due_date": "2026-05-08T09:38:40.206315",
+        "updated_at": "2026-05-04T14:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1016",
+        "facility_id": 9753,
+        "facility_name": "Store #9753",
+        "market": "Chicago",
+        "region": "Midwest",
+        "owner_role": "Field Engineer",
+        "owner_name": "Jessica Park",
+        "priority": "Low",
+        "status": "Closed",
+        "evidence_required": false,
+        "title": "Reset access control panel",
+        "description": "Synthetic remediation task for Store #9753 - HVAC Critical Fault",
+        "created_at": "2026-04-30T14:38:40.206315",
+        "due_date": "2026-05-07T14:38:40.206315",
+        "updated_at": "2026-05-04T00:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T12:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1017",
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "owner_role": "Field Lead",
+        "owner_name": "Michael Thompson",
+        "priority": "High",
+        "status": "Closed",
+        "evidence_required": true,
+        "title": "Reset access control panel",
+        "description": "Synthetic remediation task for Store #8642 - HVAC Critical Fault",
+        "created_at": "2026-05-03T22:38:40.206315",
+        "due_date": "2026-05-04T22:38:40.206315",
+        "updated_at": "2026-05-04T09:38:40.206315",
+        "sla_hours": 24,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T09:38:40.206315"
+      },
+      {
+        "task_id": "TSK-1018",
+        "facility_id": 1234,
+        "facility_name": "Store #1234",
+        "market": "Dallas",
+        "region": "South Central",
+        "owner_role": "Field Lead",
+        "owner_name": "Sarah Chen",
+        "priority": "Low",
+        "status": "Open",
+        "evidence_required": false,
+        "title": "Service fire suppression system",
+        "description": "Synthetic remediation task for Store #1234 - Intrusion Detection Alert",
+        "created_at": "2026-05-04T11:38:40.206315",
+        "due_date": "2026-05-11T11:38:40.206315",
+        "updated_at": "2026-05-04T00:38:40.206315",
+        "sla_hours": 168,
+        "evidence_url": null,
+        "closed_at": null
+      },
+      {
+        "task_id": "TSK-1019",
+        "facility_id": 8642,
+        "facility_name": "Store #8642",
+        "market": "Denver",
+        "region": "Mountain",
+        "owner_role": "Store Manager",
+        "owner_name": "David Rodriguez",
+        "priority": "Medium",
+        "status": "Closed",
+        "evidence_required": false,
+        "title": "Repair HVAC control module",
+        "description": "Synthetic remediation task for Store #8642 - Fire Suppression Fault",
+        "created_at": "2026-05-01T13:38:40.206315",
+        "due_date": "2026-05-04T13:38:40.206315",
+        "updated_at": "2026-05-04T10:38:40.206315",
+        "sla_hours": 72,
+        "evidence_url": null,
+        "closed_at": "2026-05-04T06:38:40.206315"
+      }
+    ],
+    "remediations": [
+      {
+        "remediation_id": "REM-2000",
+        "risk_id": "RISK-5000",
+        "task_id": "TSK-1000",
+        "risk_type": "HVAC Critical Fault",
+        "severity": "Low",
+        "status": "Open",
+        "sla_hours": 168,
+        "reopened_count": 2,
+        "created_at": "2026-04-27T10:38:40.206315",
+        "last_reopened_at": "2026-04-27T22:38:40.206315",
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2001",
+        "risk_id": "RISK-5001",
+        "task_id": "TSK-1001",
+        "risk_type": "Fire Suppression Fault",
+        "severity": "Medium",
+        "status": "Open",
+        "sla_hours": 72,
+        "reopened_count": 2,
+        "created_at": "2026-05-01T10:38:40.206315",
+        "last_reopened_at": "2026-05-01T22:38:40.206315",
+        "verified_at": null,
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2002",
+        "risk_id": "RISK-5002",
+        "task_id": "TSK-1002",
+        "risk_type": "Network Outage",
+        "severity": "Low",
+        "status": "Blocked",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-05-01T23:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2003",
+        "risk_id": "RISK-5003",
+        "task_id": "TSK-1003",
+        "risk_type": "HVAC Critical Fault",
+        "severity": "High",
+        "status": "In Progress",
+        "sla_hours": 24,
+        "reopened_count": 0,
+        "created_at": "2026-05-03T13:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2004",
+        "risk_id": "RISK-5004",
+        "task_id": "TSK-1004",
+        "risk_type": "Door Alarm",
+        "severity": "Critical",
+        "status": "In Progress",
+        "sla_hours": 4,
+        "reopened_count": 0,
+        "created_at": "2026-05-04T18:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2005",
+        "risk_id": "RISK-5005",
+        "task_id": "TSK-1005",
+        "risk_type": "Intrusion Detection Alert",
+        "severity": "Low",
+        "status": "Pending Verification",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T21:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2006",
+        "risk_id": "RISK-5006",
+        "task_id": "TSK-1006",
+        "risk_type": "Intrusion Detection Alert",
+        "severity": "High",
+        "status": "Pending Verification",
+        "sla_hours": 24,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T21:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2007",
+        "risk_id": "RISK-5007",
+        "task_id": "TSK-1007",
+        "risk_type": "Fire Suppression Fault",
+        "severity": "Medium",
+        "status": "Open",
+        "sla_hours": 72,
+        "reopened_count": 0,
+        "created_at": "2026-05-01T07:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2008",
+        "risk_id": "RISK-5008",
+        "task_id": "TSK-1008",
+        "risk_type": "Network Outage",
+        "severity": "Critical",
+        "status": "Closed",
+        "sla_hours": 4,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T17:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T12:38:40.206315",
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2009",
+        "risk_id": "RISK-5009",
+        "task_id": "TSK-1009",
+        "risk_type": "Fire Suppression Fault",
+        "severity": "Medium",
+        "status": "Closed",
+        "sla_hours": 72,
+        "reopened_count": 0,
+        "created_at": "2026-05-02T19:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T14:38:40.206315",
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2010",
+        "risk_id": "RISK-5010",
+        "task_id": "TSK-1010",
+        "risk_type": "Network Outage",
+        "severity": "Low",
+        "status": "Closed",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-05-02T02:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T06:38:40.206315",
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2011",
+        "risk_id": "RISK-5011",
+        "task_id": "TSK-1011",
+        "risk_type": "Camera Offline",
+        "severity": "Critical",
+        "status": "Closed",
+        "sla_hours": 4,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T16:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T04:38:40.206315",
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2012",
+        "risk_id": "RISK-5012",
+        "task_id": "TSK-1012",
+        "risk_type": "Fire Suppression Fault",
+        "severity": "High",
+        "status": "Open",
+        "sla_hours": 24,
+        "reopened_count": 0,
+        "created_at": "2026-05-01T05:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Michael Thompson"
+        ]
+      },
+      {
+        "remediation_id": "REM-2013",
+        "risk_id": "RISK-5013",
+        "task_id": "TSK-1013",
+        "risk_type": "Emergency Lighting Failure",
+        "severity": "Medium",
+        "status": "Closed",
+        "sla_hours": 72,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T12:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T03:38:40.206315",
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2014",
+        "risk_id": "RISK-5014",
+        "task_id": "TSK-1014",
+        "risk_type": "Access Control Failure",
+        "severity": "Medium",
+        "status": "Open",
+        "sla_hours": 72,
+        "reopened_count": 0,
+        "created_at": "2026-05-04T18:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Jessica Park"
+        ]
+      },
+      {
+        "remediation_id": "REM-2015",
+        "risk_id": "RISK-5015",
+        "task_id": "TSK-1015",
+        "risk_type": "HVAC Critical Fault",
+        "severity": "Low",
+        "status": "Open",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-05-01T09:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2016",
+        "risk_id": "RISK-5016",
+        "task_id": "TSK-1016",
+        "risk_type": "Access Control Failure",
+        "severity": "Low",
+        "status": "Closed",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-04-30T14:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T12:38:40.206315",
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Jessica Park"
+        ]
+      },
+      {
+        "remediation_id": "REM-2017",
+        "risk_id": "RISK-5017",
+        "task_id": "TSK-1017",
+        "risk_type": "Access Control Failure",
+        "severity": "High",
+        "status": "Closed",
+        "sla_hours": 24,
+        "reopened_count": 0,
+        "created_at": "2026-05-03T22:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T09:38:40.206315",
+        "notes": []
+      },
+      {
+        "remediation_id": "REM-2018",
+        "risk_id": "RISK-5018",
+        "task_id": "TSK-1018",
+        "risk_type": "Intrusion Detection Alert",
+        "severity": "Low",
+        "status": "Open",
+        "sla_hours": 168,
+        "reopened_count": 0,
+        "created_at": "2026-05-04T11:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": null,
+        "notes": [
+          "Initial triage completed",
+          "Assigned to Sarah Chen"
+        ]
+      },
+      {
+        "remediation_id": "REM-2019",
+        "risk_id": "RISK-5019",
+        "task_id": "TSK-1019",
+        "risk_type": "Emergency Lighting Failure",
+        "severity": "Medium",
+        "status": "Closed",
+        "sla_hours": 72,
+        "reopened_count": 0,
+        "created_at": "2026-05-01T13:38:40.206315",
+        "last_reopened_at": null,
+        "verified_at": "2026-05-04T06:38:40.206315",
+        "notes": []
+      }
+    ],
+    "features": [
+      {
+        "feature_name": "My Tasks layout reorder",
+        "description": "Moved Critical Incidents alert BELOW the task list so the actionable tasks take visual priority. Critical incidents remain accessible as contextual reference at the bottom.",
+        "url": "/my-tasks",
+        "new_section_order": [
+          "Filter Tabs (All / Overdue / Critical)",
+          "Task List (top - actionable items first)",
+          "Critical Incidents Requiring Attention (now bottom - context)",
+          "SLA Policy reference"
+        ]
+      }
+    ]
+  }
+}

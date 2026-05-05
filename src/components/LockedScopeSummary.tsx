@@ -18,7 +18,7 @@ export function LockedScopeSummary({ sites, scope, onChangeScope }: LockedScopeS
       <div>
         <p className="eyebrow">Locked app scope</p>
         <h2 id="locked-scope-title">{summary}</h2>
-        <p>This scope was selected in Executive Protection Readiness and now applies across service views.</p>
+        <p>This canonical facility scope is managed in Settings and applies across Command Center, EPR, and service views.</p>
         <div className="locked-scope-chip-list" aria-label="Selected stores or regions">
           {selections.map((selection) => <span className="scope-chip selected" key={selection}>{selection}</span>)}
         </div>
@@ -27,14 +27,14 @@ export function LockedScopeSummary({ sites, scope, onChangeScope }: LockedScopeS
         <StatusPill label={getStoreScopeModeLabel(scope)} tone="ready" />
         <strong>{included}</strong>
         <span>stores in current view</span>
-        <button type="button" onClick={onChangeScope}>Change in Executive Readiness</button>
+        <button type="button" onClick={onChangeScope}>Change in Settings</button>
       </div>
     </section>
   );
 }
 
 function getSelectionLabels(sites: FireAlarmSite[], scope: StoreScopeState): string[] {
-  if (scope.mode === 'all') return ['All fire-system stores'];
+  if (scope.mode === 'all') return ['All canonical FPI stores'];
   if (scope.mode === 'regions') return scope.selectedRegionNames.length > 0 ? scope.selectedRegionNames : ['No regions selected'];
 
   const selectedSites = sites.filter((site) => scope.selectedStoreIds.includes(site.id));

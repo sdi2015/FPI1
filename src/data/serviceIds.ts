@@ -1,5 +1,6 @@
 export const SERVICE_IDS = {
-  READINESS: 'readiness',
+  EPR: 'epr',
+  COMMAND_CENTER: 'command-center',
   FIRE_SYSTEM: 'fire-system',
   CAMERA_CONTROLS: 'camera-controls',
   DEVICE_POSTURE: 'device-posture',
@@ -13,7 +14,8 @@ export const SERVICE_IDS = {
 export type ServiceId = (typeof SERVICE_IDS)[keyof typeof SERVICE_IDS];
 
 const CAPABILITY_TO_SERVICE_ID: Record<string, ServiceId> = {
-  'executive-readiness': SERVICE_IDS.READINESS,
+  'executive-readiness': SERVICE_IDS.EPR,
+  'command-center': SERVICE_IDS.COMMAND_CENTER,
   'fire-system-monitoring': SERVICE_IDS.FIRE_SYSTEM,
   'camera-technical-control': SERVICE_IDS.CAMERA_CONTROLS,
   'network-device-posture': SERVICE_IDS.DEVICE_POSTURE,
@@ -29,9 +31,9 @@ const SERVICE_TO_CAPABILITY_ID: Record<ServiceId, string> = Object.entries(CAPAB
 );
 
 export function serviceIdForCapability(capabilityId: string): ServiceId {
-  return CAPABILITY_TO_SERVICE_ID[capabilityId] ?? SERVICE_IDS.READINESS;
+  return CAPABILITY_TO_SERVICE_ID[capabilityId] ?? SERVICE_IDS.COMMAND_CENTER;
 }
 
 export function capabilityIdForService(serviceId: ServiceId): string {
-  return SERVICE_TO_CAPABILITY_ID[serviceId] ?? 'executive-readiness';
+  return SERVICE_TO_CAPABILITY_ID[serviceId] ?? 'command-center';
 }

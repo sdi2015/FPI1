@@ -18,7 +18,7 @@ export function SettingsView({ fireSites, fireAlarmLoading, fireAlarmError, stor
           <p className="eyebrow">Application settings</p>
           <h1>Scope, preferences, and dashboard controls</h1>
           <p>
-            Manage the store or region population once here. The selected scope flows across Executive Protection Readiness,
+            Manage the canonical facility or region population once here. The selected scope flows across Command Center, EPR,
             Fire-System Monitoring, and future FPI service dashboards so operational pages stay clean and focused.
           </p>
         </div>
@@ -36,8 +36,8 @@ export function SettingsView({ fireSites, fireAlarmLoading, fireAlarmError, stor
         </article>
         <article className="panel settings-card">
           <p className="eyebrow">Data mode</p>
-          <h2>Mock demo dataset</h2>
-          <p>Current build uses local JSON files only. No backend, auth, write-back, dispatch, or production integrations are enabled.</p>
+          <h2>Canonical demo dataset</h2>
+          <p>Current build uses local JSON generated from the shared FPI data folder. No backend, auth, write-back, dispatch, or production integrations are enabled.</p>
         </article>
         <article className="panel settings-card">
           <p className="eyebrow">Governance</p>
@@ -46,7 +46,7 @@ export function SettingsView({ fireSites, fireAlarmLoading, fireAlarmError, stor
         </article>
       </section>
 
-      {fireAlarmLoading ? <StatePanel title="Loading fire-system store list" message="Preparing the fire alarm store population for scope settings." /> : null}
+      {fireAlarmLoading ? <StatePanel title="Loading canonical store list" message="Preparing the shared FPI facility population for scope settings." /> : null}
       {fireAlarmError ? <StatePanel title="Store settings unavailable" message={fireAlarmError} tone="critical" /> : null}
       {!fireAlarmLoading && !fireAlarmError ? <StoreScopeSelector sites={fireSites} scope={storeScope} onScopeChange={onStoreScopeChange} /> : null}
     </section>

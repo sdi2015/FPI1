@@ -1,0 +1,40 @@
+/* Executive Protection Readiness workspace */
+.epr-page { display: grid; gap: 14px; }
+.epr-header { border-color: rgba(255, 194, 32, 0.28); background: radial-gradient(circle at 88% 12%, rgba(255,194,32,0.18), transparent 18rem), linear-gradient(135deg, rgba(0,83,226,0.24), rgba(255,255,255,0.05)); }
+.epr-tab-bar { position: sticky; top: 0; z-index: 4; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); background: rgba(2, 8, 23, 0.82); box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
+.epr-tab { min-height: 60px; padding: 10px 12px; color: var(--text-secondary); border: 1px solid rgba(169,221,247,0.14); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); font-weight: 900; text-align: left; transition: transform var(--motion-normal), border-color var(--motion-normal), background var(--motion-normal); }
+.epr-tab span { display: block; margin-bottom: 4px; color: var(--yellow); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.epr-tab:hover, .epr-tab.active { transform: translateY(-2px); color: var(--white); border-color: rgba(255,194,32,0.42); background: linear-gradient(135deg, rgba(0,83,226,0.34), rgba(77,189,245,0.1)); }
+.epr-grid { margin-top: 0; }
+.epr-workflow-list { margin-top: 16px; }
+.top-risk-item.readonly { cursor: default; }
+.epr-hotel-grid { display: grid; grid-column: span 5; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.epr-hotel-card { display: flex; min-height: 100%; flex-direction: column; overflow: hidden; }
+.epr-hotel-card img { width: calc(100% + 36px); height: 145px; margin: -18px -18px 16px; object-fit: cover; border-bottom: 1px solid var(--border-subtle); filter: saturate(1.05) contrast(1.02); }
+.epr-hotel-card .service-meta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
+.badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 14px; }
+.epr-table-shell { max-height: 560px; overflow: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.epr-table-shell table { width: 100%; min-width: 760px; border-collapse: collapse; }
+.epr-table-shell th { position: sticky; top: 0; z-index: 1; padding: 12px; color: var(--sky-blue); border-bottom: 1px solid var(--border-subtle); background: rgba(0,30,96,0.96); font-size: 0.7rem; letter-spacing: 0.1em; text-align: left; text-transform: uppercase; }
+.epr-table-shell td { padding: 12px; color: var(--text-secondary); border-top: 1px solid rgba(169,221,247,0.1); font-size: 0.84rem; vertical-align: top; }
+.epr-table-shell tr:hover td { background: rgba(77,189,245,0.07); }
+.epr-table-shell strong { display: block; color: var(--white); line-height: 1.25; }
+.epr-table-shell small { display: block; margin-top: 4px; color: var(--text-muted); line-height: 1.35; }
+.epr-card-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-height: 560px; overflow: auto; padding-right: 3px; }
+.epr-solution-card { background: rgba(0,30,96,0.28); }
+.epr-rule-map { margin-top: 14px; }
+.epr-rule-map .module-chip { min-height: 82px; }
+
+@media (max-width: 1280px) {
+  .epr-tab-bar { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .epr-hotel-grid { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .epr-tab-bar { position: relative; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .epr-hotel-grid, .epr-card-list { grid-template-columns: 1fr; }
+  .epr-hotel-card .service-meta-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .epr-tab-bar { grid-template-columns: 1fr; }
+  .epr-tab { min-height: 52px; }
+}

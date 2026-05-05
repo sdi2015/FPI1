@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
+import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
+import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
+import { ExternalCoordinationView } from './components/views/ExternalCoordinationView';
 import { FireSystemServiceView } from './components/views/FireSystemServiceView';
+import { NetworkDevicePostureView } from './components/views/NetworkDevicePostureView';
 import { PlaceholderServiceView } from './components/views/PlaceholderServiceView';
 import { ReadinessOverviewView } from './components/views/ReadinessOverviewView';
+import { RemediationOrchestrationView } from './components/views/RemediationOrchestrationView';
 import { SettingsView } from './components/views/SettingsView';
+import { ThreatDetectionRiskScoringView } from './components/views/ThreatDetectionRiskScoringView';
+import { VendorIntelligenceRecommendationsView } from './components/views/VendorIntelligenceRecommendationsView';
 import { getFacilityDetailModel } from './data/fpiSelectors';
 import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
-import { applyFacilityScope, createAllFacilitiesScope, hasEmptySelectedScope, isFacilityInScope, type FacilityScopeState } from './data/fpiScope';
-import { createAllStoresScope, type StoreScopeState } from './data/storeScope';
+import { applyStoreScopeToFpiProgram } from './data/fpiStoreScope';
+import { createAllStoresScope, hasEmptyStoreScope, type StoreScopeState } from './data/storeScope';
 import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
 import { capabilities, pillars, type Capability, type Pillar } from './data/program';
 import { capabilityIdForService, serviceIdForCapability, SERVICE_IDS, type ServiceId } from './data/serviceIds';
@@ -17,7 +24,7 @@ import { useFireAlarmData } from './data/useFireAlarmData';
 
 type Screen = 'landing' | 'dashboard';
 
-const defaultServiceId = SERVICE_IDS.READINESS;
+const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
 
 function App() {
   const [screen, setScreen] = useState<Screen>('landing');
@@ -183,20 +190,20 @@ function DashboardShell({
   fpiState: FpiProgramDataState;
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
-  const [facilityScope, setFacilityScope] = useState<FacilityScopeState>(createAllFacilitiesScope());
   const [storeScope, setStoreScope] = useState<StoreScopeState>(createAllStoresScope());
   const fireAlarmState = useFireAlarmData();
   const globalMetrics = fpiState.data?.dashboardMetrics;
   const programData = fpiState.data?.programData;
+  const fireSites = fireAlarmState.data?.sites ?? [];
   const scopedProgramData = useMemo(
-    () => (programData ? applyFacilityScope(programData, facilityScope) : null),
-    [programData, facilityScope],
+    () => (programData ? applyStoreScopeToFpiProgram(programData, fireSites, storeScope) : null),
+    [programData, fireSites, storeScope],
   );
   const metrics = useMemo(
     () => (scopedProgramData ? calculateFpiDashboardMetrics(scopedProgramData) : globalMetrics),
     [scopedProgramData, globalMetrics],
   );
-  const isEmptyScope = hasEmptySelectedScope(facilityScope);
+  const isEmptyScope = hasEmptyStoreScope(storeScope);
   const selectedFacility = useMemo(
     () => (scopedProgramData && selectedFacilityId ? getFacilityDetailModel(scopedProgramData, selectedFacilityId) : null),
     [scopedProgramData, selectedFacilityId],
@@ -207,11 +214,11 @@ function DashboardShell({
   );
 
   useEffect(() => {
-    if (!selectedFacilityId) return;
-    if (!isFacilityInScope(selectedFacilityId, facilityScope)) {
+    if (!selectedFacilityId || !scopedProgramData) return;
+    if (!scopedProgramData.facilities.some((facility) => facility.facilityId === selectedFacilityId)) {
       setSelectedFacilityId(null);
     }
-  }, [facilityScope, selectedFacilityId]);
+  }, [scopedProgramData, selectedFacilityId]);
 
   function handleCapabilitySelect(capabilityId: string) {
     onSelectService(serviceIdForCapability(capabilityId));
@@ -234,13 +241,21 @@ function DashboardShell({
 
         {metrics && programData && scopedProgramData ? (
           <>
-            {isEmptyScope ? (
+            {selectedService === SERVICE_IDS.SETTINGS ? (
+              <SettingsView
+                fireSites={fireSites}
+                fireAlarmLoading={fireAlarmState.loading}
+                fireAlarmError={fireAlarmState.error}
+                storeScope={storeScope}
+                onStoreScopeChange={setStoreScope}
+              />
+            ) : isEmptyScope ? (
               <>
                 <PlaceholderServiceView
                   title={activeCapability.title}
                   description={activeCapability.description}
-                  facilities={programData.facilities}
-                  fireSites={fireAlarmState.data?.sites ?? []}
+                  facilities={scopedProgramData.facilities}
+                  fireSites={fireSites}
                   storeScope={storeScope}
                   onChangeScopeRequest={handleChangeStoreScopeRequest}
                 />
@@ -250,27 +265,29 @@ function DashboardShell({
                   tone="watch"
                 />
               </>
-            ) : selectedService === SERVICE_IDS.SETTINGS ? (
-              <SettingsView
-                fireSites={fireAlarmState.data?.sites ?? []}
-                fireAlarmLoading={fireAlarmState.loading}
-                fireAlarmError={fireAlarmState.error}
-                storeScope={storeScope}
-                onStoreScopeChange={setStoreScope}
-              />
-            ) : selectedService === SERVICE_IDS.READINESS ? (
+            ) : selectedService === SERVICE_IDS.COMMAND_CENTER ? (
               <ReadinessOverviewView
-                facilities={programData.facilities}
+                facilities={scopedProgramData.facilities}
                 dashboardMetrics={metrics}
                 activeCapability={activeCapability}
                 serviceMetrics={serviceMetrics}
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
                 onFacilitySelect={setSelectedFacilityId}
                 onCapabilitySelect={handleCapabilitySelect}
+              />
+            ) : selectedService === SERVICE_IDS.EPR ? (
+              <ExecutiveProtectionReadinessView
+                facilities={scopedProgramData.facilities}
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
               />
             ) : selectedService === SERVICE_IDS.FIRE_SYSTEM ? (
               <FireSystemServiceView
                 programData={scopedProgramData}
-                facilities={programData.facilities}
+                facilities={scopedProgramData.facilities}
                 fireAlarmData={fireAlarmState.data}
                 fireAlarmLoading={fireAlarmState.loading}
                 fireAlarmError={fireAlarmState.error}
@@ -278,12 +295,48 @@ function DashboardShell({
                 onChangeScopeRequest={handleChangeStoreScopeRequest}
                 onFacilitySelect={setSelectedFacilityId}
               />
+            ) : selectedService === SERVICE_IDS.CAMERA_CONTROLS ? (
+              <CameraTechnicalControlView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
+            ) : selectedService === SERVICE_IDS.DEVICE_POSTURE ? (
+              <NetworkDevicePostureView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
+            ) : selectedService === SERVICE_IDS.THREAT_RISK ? (
+              <ThreatDetectionRiskScoringView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
+            ) : selectedService === SERVICE_IDS.REMEDIATION ? (
+              <RemediationOrchestrationView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
+            ) : selectedService === SERVICE_IDS.VENDOR_INTELLIGENCE ? (
+              <VendorIntelligenceRecommendationsView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
+            ) : selectedService === SERVICE_IDS.EXTERNAL_COORDINATION ? (
+              <ExternalCoordinationView
+                fireSites={fireSites}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
+              />
             ) : (
               <PlaceholderServiceView
                 title={activeCapability.title}
                 description={activeCapability.description}
-                facilities={programData.facilities}
-                fireSites={fireAlarmState.data?.sites ?? []}
+                facilities={scopedProgramData.facilities}
+                fireSites={fireSites}
                 storeScope={storeScope}
                 onChangeScopeRequest={handleChangeStoreScopeRequest}
               />
@@ -305,6 +358,9 @@ function SidebarNav({
   onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
 }) {
+  const commandCenterCapability = capabilities.find((capability) => serviceIdForCapability(capability.id) === SERVICE_IDS.COMMAND_CENTER);
+  const programServiceCapabilities = capabilities.filter((capability) => serviceIdForCapability(capability.id) !== SERVICE_IDS.COMMAND_CENTER);
+
   return (
     <aside className="sidebar" aria-label="FPI dashboard navigation">
       <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
@@ -315,9 +371,23 @@ function SidebarNav({
         </span>
       </button>
 
+      {commandCenterCapability ? (
+        <nav aria-label="Command Center navigation" className="sidebar-command-nav">
+          <button
+            className={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'nav-item active command-center-nav-item' : 'nav-item command-center-nav-item'}
+            type="button"
+            aria-current={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'page' : undefined}
+            onClick={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
+          >
+            <span>{commandCenterCapability.eyebrow}</span>
+            {commandCenterCapability.navLabel ?? commandCenterCapability.title}
+          </button>
+        </nav>
+      ) : null}
+
       <nav aria-label="Program service navigation">
         <p className="nav-label">Program services</p>
-        {capabilities.map((capability) => {
+        {programServiceCapabilities.map((capability) => {
           const serviceId = serviceIdForCapability(capability.id);
           return (
             <button
@@ -328,7 +398,7 @@ function SidebarNav({
               onClick={() => onSelectService(serviceId)}
             >
               <span>{capability.eyebrow}</span>
-              {capability.title}
+              {capability.navLabel ?? capability.title}
             </button>
           );
         })}

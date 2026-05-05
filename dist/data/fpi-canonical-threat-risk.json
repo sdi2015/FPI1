@@ -1,0 +1,1821 @@
+{
+  "metadata": {
+    "generatedAt": "2026-05-05T12:00:00+00:00",
+    "dataMode": "canonical_demo",
+    "classification": "Walmart Internal / Synthetic Demo",
+    "scopeKey": "facility_id",
+    "sourceFiles": [
+      "facilities.csv",
+      "tasks.csv",
+      "remediations.csv",
+      "security_technology.csv",
+      "region_75_incidents (2).csv"
+    ],
+    "governanceNote": "Risk score supports prioritization and does not replace formal threat assessment, law enforcement guidance, or corporate security judgment."
+  },
+  "summary": {
+    "facilities": 12,
+    "criticalFacilities": 1,
+    "highFacilities": 0,
+    "threatSignals": 56,
+    "severeSignals": 33,
+    "openThreatTasks": 15,
+    "averageRiskScore": 52.2
+  },
+  "sources": [
+    {
+      "sourceId": "srm-placeholder",
+      "sourceName": "SRM",
+      "sourceType": "Internal System",
+      "integrationStatus": "Adapter Planned",
+      "freshnessStatus": "Unknown",
+      "confidence": "Reference",
+      "recordsLoaded": 0,
+      "notes": "Reserved seam for security/risk/case management signals once approved access or exports exist."
+    },
+    {
+      "sourceId": "fpp-placeholder",
+      "sourceName": "FPP",
+      "sourceType": "Walmart Program",
+      "integrationStatus": "Adapter Planned",
+      "freshnessStatus": "Unknown",
+      "confidence": "Reference",
+      "recordsLoaded": 0,
+      "notes": "Reserved seam for facility protection profiles and control maturity scoring."
+    },
+    {
+      "sourceId": "incident-csv",
+      "sourceName": "Region 75 incident CSV",
+      "sourceType": "Manual Upload",
+      "integrationStatus": "Loaded",
+      "freshnessStatus": "Current",
+      "confidence": "Medium",
+      "recordsLoaded": 56,
+      "notes": "Used for threat signal and incident pattern detection in this demo."
+    },
+    {
+      "sourceId": "canonical-technology",
+      "sourceName": "Technology Health",
+      "sourceType": "Internal System",
+      "integrationStatus": "Loaded",
+      "freshnessStatus": "Current",
+      "confidence": "High",
+      "recordsLoaded": 12,
+      "notes": "Camera, NVR, access, network, and technical-control posture."
+    },
+    {
+      "sourceId": "public-safety-guidance",
+      "sourceName": "FBI / DHS-CISA / OSHA / NFPA references",
+      "sourceType": "Public Safety Guidance",
+      "integrationStatus": "Reference Only",
+      "freshnessStatus": "Unknown",
+      "confidence": "Reference",
+      "recordsLoaded": 5,
+      "notes": "Guidance library for recommended actions; not a live threat-intel feed."
+    }
+  ],
+  "facilities": [
+    {
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "market": "Dallas",
+      "region": "South Central",
+      "city": "Dallas",
+      "state": "TX",
+      "riskScore": 100,
+      "riskTier": "Critical",
+      "incidentCount": 10,
+      "severeIncidentCount": 7,
+      "openTaskCount": 8,
+      "criticalTaskCount": 3,
+      "highTaskCount": 3,
+      "technicalIssueCount": 6,
+      "fireTroubleCount": 6,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "7 high-severity incident signals",
+        "3 open critical tasks",
+        "6 technical-control gaps",
+        "6 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Escalate to FPI/AP leadership, validate evidence paths, and coordinate vendor/law-enforcement readiness."
+    },
+    {
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "market": "Phoenix",
+      "region": "West",
+      "city": "Phoenix",
+      "state": "AZ",
+      "riskScore": 64.9,
+      "riskTier": "Medium",
+      "incidentCount": 10,
+      "severeIncidentCount": 7,
+      "openTaskCount": 3,
+      "criticalTaskCount": 2,
+      "highTaskCount": 0,
+      "technicalIssueCount": 4,
+      "fireTroubleCount": 1,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "7 high-severity incident signals",
+        "2 open critical tasks",
+        "4 technical-control gaps",
+        "1 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "market": "Houston",
+      "region": "South Central",
+      "city": "Houston",
+      "state": "TX",
+      "riskScore": 63.0,
+      "riskTier": "Medium",
+      "incidentCount": 10,
+      "severeIncidentCount": 4,
+      "openTaskCount": 2,
+      "criticalTaskCount": 2,
+      "highTaskCount": 0,
+      "technicalIssueCount": 2,
+      "fireTroubleCount": 2,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "4 high-severity incident signals",
+        "2 open critical tasks",
+        "2 technical-control gaps",
+        "2 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "market": "Denver",
+      "region": "Mountain",
+      "city": "Denver",
+      "state": "CO",
+      "riskScore": 56.5,
+      "riskTier": "Medium",
+      "incidentCount": 10,
+      "severeIncidentCount": 6,
+      "openTaskCount": 2,
+      "criticalTaskCount": 1,
+      "highTaskCount": 1,
+      "technicalIssueCount": 3,
+      "fireTroubleCount": 1,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "6 high-severity incident signals",
+        "1 open critical tasks",
+        "3 technical-control gaps",
+        "1 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "market": "Houston",
+      "region": "South Central",
+      "city": "Houston",
+      "state": "TX",
+      "riskScore": 55.7,
+      "riskTier": "Medium",
+      "incidentCount": 10,
+      "severeIncidentCount": 5,
+      "openTaskCount": 2,
+      "criticalTaskCount": 0,
+      "highTaskCount": 1,
+      "technicalIssueCount": 7,
+      "fireTroubleCount": 1,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "5 high-severity incident signals",
+        "7 technical-control gaps",
+        "1 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "market": "Chicago",
+      "region": "Midwest",
+      "city": "Chicago",
+      "state": "IL",
+      "riskScore": 53.3,
+      "riskTier": "Medium",
+      "incidentCount": 10,
+      "severeIncidentCount": 6,
+      "openTaskCount": 2,
+      "criticalTaskCount": 0,
+      "highTaskCount": 0,
+      "technicalIssueCount": 5,
+      "fireTroubleCount": 2,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "6 high-severity incident signals",
+        "5 technical-control gaps",
+        "2 fire/life-safety assurance exceptions"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "market": "Phoenix",
+      "region": "West",
+      "city": "Phoenix",
+      "state": "AZ",
+      "riskScore": 44.2,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 6,
+      "openTaskCount": 1,
+      "criticalTaskCount": 0,
+      "highTaskCount": 1,
+      "technicalIssueCount": 3,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "6 high-severity incident signals",
+        "3 technical-control gaps"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "market": "Dallas",
+      "region": "South Central",
+      "city": "Dallas",
+      "state": "TX",
+      "riskScore": 42.0,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 5,
+      "openTaskCount": 1,
+      "criticalTaskCount": 1,
+      "highTaskCount": 0,
+      "technicalIssueCount": 2,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "5 high-severity incident signals",
+        "1 open critical tasks",
+        "2 technical-control gaps"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "market": "Dallas",
+      "region": "South Central",
+      "city": "Dallas",
+      "state": "TX",
+      "riskScore": 41.5,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 2,
+      "openTaskCount": 1,
+      "criticalTaskCount": 0,
+      "highTaskCount": 0,
+      "technicalIssueCount": 4,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "2 high-severity incident signals",
+        "4 technical-control gaps"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "market": "Chicago",
+      "region": "Midwest",
+      "city": "Chicago",
+      "state": "IL",
+      "riskScore": 40.4,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 7,
+      "openTaskCount": 1,
+      "criticalTaskCount": 0,
+      "highTaskCount": 0,
+      "technicalIssueCount": 4,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "7 high-severity incident signals",
+        "4 technical-control gaps"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "market": "Atlanta",
+      "region": "Southeast",
+      "city": "Atlanta",
+      "state": "GA",
+      "riskScore": 37.7,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 7,
+      "openTaskCount": 0,
+      "criticalTaskCount": 0,
+      "highTaskCount": 0,
+      "technicalIssueCount": 4,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "7 high-severity incident signals",
+        "4 technical-control gaps"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    },
+    {
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "market": "Atlanta",
+      "region": "Southeast",
+      "city": "Atlanta",
+      "state": "GA",
+      "riskScore": 26.7,
+      "riskTier": "Low",
+      "incidentCount": 10,
+      "severeIncidentCount": 8,
+      "openTaskCount": 0,
+      "criticalTaskCount": 0,
+      "highTaskCount": 0,
+      "technicalIssueCount": 0,
+      "fireTroubleCount": 0,
+      "topDriver": "10 recent threat/security incidents",
+      "drivers": [
+        "10 recent threat/security incidents",
+        "8 high-severity incident signals"
+      ],
+      "recommendedAction": "Monitor under standard assurance cadence and close evidence gaps."
+    }
+  ],
+  "signals": [
+    {
+      "id": "THR-TASK-TSK-1000",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Technology Gap",
+      "signalType": "Replace offline camera in produce section",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-03 23:50:56",
+      "summary": "Store 2638 - Replace offline camera in produce section - Requires immediate attention",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1002",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Fire/Life Safety",
+      "signalType": "Service fire suppression system",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-04 12:50:56",
+      "summary": "Store 2638 - Service fire suppression system - Requires immediate attention",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1024",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Fire/Life Safety",
+      "signalType": "Investigate intrusion sensor false positive",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-01 03:50:56",
+      "summary": "Synthetic remediation task for Store #2941 - Camera Offline",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1015",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Fire/Life Safety",
+      "signalType": "Service fire suppression system",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-03 03:50:56",
+      "summary": "Synthetic remediation task for Store #4567 - Emergency Lighting Failure",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1021",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Fire/Life Safety",
+      "signalType": "Replace emergency exit light battery",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-02 14:50:56",
+      "summary": "Synthetic remediation task for Store #4567 - Intrusion Detection Alert",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1008",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Fire/Life Safety",
+      "signalType": "Repair HVAC control module",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-02 03:50:56",
+      "summary": "Synthetic remediation task for Store #2789 - HVAC Critical Fault",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1020",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Fire/Life Safety",
+      "signalType": "Repair HVAC control module",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-04-30 13:50:56",
+      "summary": "Synthetic remediation task for Store #2789 - Camera Offline",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-TASK-TSK-1011",
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "category": "Fire/Life Safety",
+      "signalType": "Replace emergency exit light battery",
+      "severity": "Critical",
+      "confidence": "High",
+      "occurredAt": "2026-05-02 18:50:56",
+      "summary": "Synthetic remediation task for Store #4123 - Fire Suppression Fault",
+      "riskContribution": 8,
+      "sourceIds": [
+        "remediation-task-csv",
+        "fpp-placeholder"
+      ],
+      "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
+      "bestPracticeRefs": [
+        "dhs-protective-measures",
+        "internal-fpi-evidence-loop"
+      ]
+    },
+    {
+      "id": "THR-INC-1",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "02/21/2026 09:08 PM CDT",
+      "summary": "Management reported that a customer made verbal threats towards an associate due to being stopped for a transaction issue. Law enforcement was notified and escorted the customer off property. No injuries were reported and no impact to business operations. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-13",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "08/28/2025 01:00 PM CDT",
+      "summary": "Management reported that on 8/27/25 a former associate sent a threatening text message to an associate due to a personal issue. The victim associate will notify law enforcement for assistance. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-25",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "06/15/2025 11:32 AM CST",
+      "summary": "Management reported a customer allegedly made threats of violence towards a third party delivery driver, due to unknown reasons. No additional information was provided at this time.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-37",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "02/19/2026 09:00 PM CDT",
+      "summary": "Management reported that an associate allegedly made a threat of physical harm against the store manager for an unknown reason. Management is investigating, and no injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-14",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "10/22/2025 07:28 PM CDT",
+      "summary": "Management reported a customer made a threat of violence towards an associate due to being approached for skip scanning. No injuries were reported. Law enforcement was not notified. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-38",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "07/24/2025 07:00 PM CDT",
+      "summary": "Management reported an unknown individual made a verbal threat of violence towards associates and law enforcement. No injuries or damage to the facility were reported. Law enforcement apprehended the individual.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-4",
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "05/17/2025 08:00 PM CST",
+      "summary": "Management reported that an associate was terminated for gross misconduct and caused a disturbance by refusing to leave and making verbal threats toward the facility. Law enforcement was notified, but the individual left the property before their arrival. No impact to business operations.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-18",
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "05/02/2026 06:25 AM CDT",
+      "summary": "Management reported that a customer made a threat of violence toward an associate due to domestic issues. Law enforcement was notified and no impact to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-30",
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "09/18/2025 09:00 PM CDT",
+      "summary": "Management reported that on 9/18/25 an associate made a threat of violence, referencing a firearm, via a gaming platform to another associate due to a personal issue. Management was made aware of the incident and statements were collected. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-31",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "11/06/2025 09:51 PM CDT",
+      "summary": "Management reported an unknown individual made a threat of violence towards an associate over the phone for unknown reasons. Law enforcement was not contacted. No impacts to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-43",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "10/22/2025 07:28 PM CDT",
+      "summary": "Management reported that a customer threatened an associate with physical violence after getting caught miss scanning merchandise. Law enforcement was not notified. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-8",
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "03/10/2026 06:10 AM CDT",
+      "summary": "Management reported that a customer made threats of violence including threatening hand gestures towards an associate and nearby customers due to unknown reasons. Law enforcement was notified, but the customer fled the premises prior to their arrival. No injuries were reported, and store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-20",
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "04/09/2026 07:27 PM CDT",
+      "summary": "Management reported that an associate made concerning comments and behaviors while speaking with a member management. Law enforcement was not notified and no injuries, damages, or impacts to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form. Call Lyra at 1-800-825-3555 or email care@lyrahealth.com. Learn more at walmart.lyrahealth.com",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-32",
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "08/29/2025 01:00 PM CDT",
+      "summary": "Management reported an individual sent threatening text messages to an associate due to a personal issue. Law enforcement has not been notified at this time. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-9",
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "11/01/2025 09:00 PM CDT",
+      "summary": "Management reported that an associate made threats of physical harm towards two associates due to a work matter. Made one associate even quit their job at the facility. Law enforcement was notified, and management are further investigating the incident. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form:",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-21",
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "08/25/2025 10:45 AM CDT",
+      "summary": "Management reported an associate made comments of self harm due to work related and personal issues. Resources for Lyra will be provided. Law enforcement assistance was not needed. Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-33",
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "11/06/2025 09:00 PM CDT",
+      "summary": "Management reported that a customer made a threat of violence towards an associate due to unknown reasons. Law enforcement was not notified, and store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-45",
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "06/09/2025 08:30 AM CST",
+      "summary": "Management reported that a customer issued a threat of violence towards an associate. Law enforcement was notified and no injuries or impact to business operations were reported. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-10",
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "01/16/2026 06:08 PM CDT",
+      "summary": "Management reported a customer verbally threatened an associate due to a miscommunication between the associate and customer. Law enforcement was not contacted as the customer left shortly after the incident occurred. Management will also fill out a threat assessment for further support. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-11",
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "11/15/2025 02:00 PM CDT",
+      "summary": "Management reported that a customer became irate and made threats toward an associate, alleging the associate was looking at their child. Law enforcement was notified, but the customer left the premises before officers arrived. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-23",
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "01/23/2026 06:50 AM CDT",
+      "summary": "Management reported a suspected shoplifter displayed a knife and made a threat of physical harm, directed toward an associate, after they initiated a receipt check. The subject then left the facility without further incident. Law enforcement was not notified, and business operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-35",
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "11/21/2025 05:25 PM CDT",
+      "summary": "Management reported that a customer expressed thoughts of self-harm at the front end. Emergency services arrived and transported them to an undisclosed location in stable condition. No injuries were reported, and store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-47",
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "10/13/2025 02:10 PM CDT",
+      "summary": "Management reported a customer made a threat towards an associate while being assisted at checkout. The customer left without further incident. Law enforcement assistance was not needed. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-12",
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "12/11/2025 06:38 PM CDT",
+      "summary": "Management reported a customer informed management and an on site officer of overhearing an unknown individual made a verbal threat towards harm to individuals inside the store for unknown reasons. Store reoperations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-24",
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Threat of Violence",
+      "severity": "High",
+      "confidence": "Medium",
+      "occurredAt": "12/13/2025 10:08 PM CDT",
+      "summary": "Management reported that on 12-03-2025, a customer made verbal threats towards an associate due to personal reasons offsite. Law enforcement was not notified, no injuries were reported, and no impact to business operations. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 6,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-2",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/03/2025 03:20 PM CDT",
+      "summary": "Management reported that an associate was physically assaulted by two known individuals due to personal matters near infants. Law enforcement responded, and no injuries were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-26",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "03/24/2026 07:33 PM CDT",
+      "summary": "Management reported that a customer physically assaulted their partner in the parking lot due to unknown reasons. Law enforcement was notified and apprehended the aggressor. No major injuries were reported, and store operations were not impacted. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-3",
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "External Coordination",
+      "signalType": "Vandalism / Criminal Mischief",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "09/22/2025 11:20 PM CDT",
+      "summary": "Management reported that an associate was yelling that they were going to have a breakdown, and began throwing merchandise to the ground. Management was given Lyra resources. Law enforcement was not notified, and no injuries or impacts to business operations were reported. Call Lyra at 800-825-3555 or email care@lyrahealth.com. Learn more at walmart.lyrahealth.com Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-15",
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "External Coordination",
+      "signalType": "Burglary",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "01/01/2026 04:48 AM CDT",
+      "summary": "Management reported an individual forced entry into a closed facility and left the facility with unpaid merchandise. Law enforcement was notified. No impact to store operations.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-27",
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "External Coordination",
+      "signalType": "Burglary",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "03/08/2026 04:07 AM CDT",
+      "summary": "Management reported that an unknown amount of individuals forcefully entered the battery cage and stole merchandise. Law enforcement was not notified and no impact to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-39",
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "city": "Dallas",
+      "state": "TX",
+      "category": "External Coordination",
+      "signalType": "Burglary",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "12/17/2025 03:00 AM CDT",
+      "summary": "Update (12/17/25 5:46 AM CST): The individuals did flee with multiple batteries. Management reported two masked individuals broke the lock on the exterior battery cage but were interrupted by security. The individuals fled without any merchandise. Law enforcement assistance was not needed.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-16",
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "03/18/2026 11:33 AM CDT",
+      "summary": "Management reported two customers engaged in a physical altercation while outside the facility. Law enforcement was notified, arrived, and took a report. No injuries or impact to store operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-28",
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "06/15/2025 11:00 AM CST",
+      "summary": "Management reported that two customers engaged in a verbal altercation where one customer physically assaulted the other due to an unknown reason. Law enforcement was notified, and both parties left the facility without further incident. No injuries were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-40",
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "04/07/2026 07:30 PM CDT",
+      "summary": "Management reported that an individual physically assaulted a customer near the meat wall due to unknown reasons. No injuries or impacts to operations were reported, and law enforcement was not notified as both parties left the facility without further incident. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-5",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/28/2025 05:02 PM CDT",
+      "summary": "Management reported approximately ten minors physically assaulted an associate when asked to stop playing with a mart cart. The minors fled from the property. Law enforcement and EMS responded. EMS is checking on the associate at this time. The associate is in stable condition. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-17",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "04/13/2026 07:00 AM CDT",
+      "summary": "Management reported that a customer pushed a vendor at the back of the store due to the vendors cart blocking the aisle, and left the premises. Law enforcement was notified to file a report. No injuries were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-29",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "06/20/2025 08:35 PM CST",
+      "summary": "Management reported two customers engaged in a physical altercation due to personal issues. No injuries were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-41",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/21/2025 06:18 PM CDT",
+      "summary": "Management reported an unknown individual physically assaulted a customer twice in the parking lot. The individual accused the customer of going into their vehicle. No injuries were reported. Law enforcement made contact with all parties.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-6",
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "External Coordination",
+      "signalType": "Aggravated Assault",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/11/2025 06:00 PM CDT",
+      "summary": "Management reported that a customer brandished a firearm towards a third-party driver during a delivery due to an unknown reason. Law enforcement was not notified and no injuries or shots were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-42",
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "12/13/2025 10:30 PM CDT",
+      "summary": "Management reported that on 12/13/25 a customer stated that they were allegedly physically assaulted in the parking lot by unknown subject (s) the customer walked off-site and called 911 to report the incident. Law enforcement requested to review CCTV on 12/16/25 No associates were involved, and the extent of the customers\u2019 injuries is unknown.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-7",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "11/05/2025 05:30 AM CDT",
+      "summary": "Management reported that four minors were in a physical altercation in the parking lot due to unknown reasons. Law enforcement was notified and no injuries or impact to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-19",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "category": "External Coordination",
+      "signalType": "Aggravated Assault",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "06/11/2025 02:50 PM CST",
+      "summary": "Management reported that an associate was throwing pallets at other associates due to unknown reasons. No injuries were reported, management deescalated the incident, and escorted the associate out of the facility. Management will call back with any updates.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-44",
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "city": "Atlanta",
+      "state": "GA",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "09/03/2025 07:20 AM CDT",
+      "summary": "Management reported an associate's relative physically assaulted the associate due to a personal issue. Management responded to the area, but the subject fled the area prior to their arrival. Law enforcement was notified for assistance. No injuries were reported. Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-22",
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/16/2025 04:58 PM CDT",
+      "summary": "Management reported that two customers were in a physical altercation due to a verbal dispute. Law enforcement was notified and no impact to business operations were reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-34",
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "category": "External Coordination",
+      "signalType": "Person with a Gun",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "10/22/2025 09:44 AM CDT",
+      "summary": "Management reported that an unknown individual entered the facility with a shotgun and left the facility shortly afterward. No threats were made, no injuries were reported, and the store did not evacuate. Law enforcement was notified and stated that they had been attempting to make contact with the individual throughout the morning.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-46",
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "category": "External Coordination",
+      "signalType": "Suicide / Attempt",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "03/31/2026 01:48 PM CDT",
+      "summary": "Management reported that an unknown individual was found in the parking garage with a self-inflicted gunshot wound. EMS and law enforcement responded, and the individual was pronounced deceased at the scene. No impacts to store operations were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-36",
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "External Coordination",
+      "signalType": "Lost/Missing Person",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "07/10/2025 08:16 PM CST",
+      "summary": "Management reported a child stayed under the Deli table while their parent continued shopping. No injuries or damage to the facility were reported. Management notified law enforcement. The parent retrieved the child before law enforcement's arrival. No impacts to business operations were reported.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    },
+    {
+      "id": "THR-INC-48",
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "city": "Chicago",
+      "state": "IL",
+      "category": "Violence",
+      "signalType": "Battery",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "occurredAt": "12/28/2025 11:29 AM CDT",
+      "summary": "Management reported that an associate witnessed an individual physically assaulted another individual in their vehicle due to unknown reasons. The associate intervened and notified law enforcement. However, another individual inside the vehicle exited, and made threats, prompting the vehicle to flee the parking lot prior to law enforcement arriving. No further incident was reported. Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+      "riskContribution": 3,
+      "sourceIds": [
+        "incident-csv"
+      ],
+      "recommendedAction": "Review incident details, preserve available evidence, and validate law enforcement coordination path.",
+      "bestPracticeRefs": [
+        "fbi-workplace-violence",
+        "dhs-soft-targets"
+      ]
+    }
+  ],
+  "incidentTypeCounts": [
+    [
+      "Threat of Violence",
+      25
+    ],
+    [
+      "Battery",
+      14
+    ],
+    [
+      "Burglary",
+      3
+    ],
+    [
+      "Aggravated Assault",
+      2
+    ],
+    [
+      "Vandalism / Criminal Mischief",
+      1
+    ],
+    [
+      "Person with a Gun",
+      1
+    ],
+    [
+      "Suicide / Attempt",
+      1
+    ],
+    [
+      "Lost/Missing Person",
+      1
+    ]
+  ],
+  "marketRiskCounts": [
+    [
+      "Dallas",
+      1
+    ]
+  ],
+  "scoringModel": [
+    {
+      "factor": "Recent incident volume",
+      "weight": 25,
+      "description": "Counts security/threat signals associated with the facility."
+    },
+    {
+      "factor": "Incident severity",
+      "weight": 20,
+      "description": "Elevates violence, weapon, threat, and high-impact incident patterns."
+    },
+    {
+      "factor": "Open critical/high tasks",
+      "weight": 20,
+      "description": "Adds urgency for unresolved work that affects protection posture."
+    },
+    {
+      "factor": "Technical-control weakness",
+      "weight": 15,
+      "description": "Considers camera/NVR, access-control, network, and evidence-path gaps."
+    },
+    {
+      "factor": "Fire/life-safety assurance",
+      "weight": 10,
+      "description": "Includes active fire trouble, deficiencies, and assurance exceptions."
+    },
+    {
+      "factor": "Base facility posture",
+      "weight": 10,
+      "description": "Uses canonical facility risk profile as the stabilizing baseline."
+    }
+  ],
+  "bestPractices": [
+    {
+      "id": "fbi-workplace-violence",
+      "issuingBody": "FBI",
+      "title": "Workplace violence / threat assessment reference",
+      "appliesTo": [
+        "Violence",
+        "Threat of Violence",
+        "Battery"
+      ],
+      "guidanceSummary": "Use structured threat assessment, preserve evidence, document facts, and coordinate with security/law enforcement channels as appropriate.",
+      "recommendedActions": [
+        "Preserve CCTV/evidence path",
+        "Escalate to corporate security/AP",
+        "Document witnesses and timeline",
+        "Validate local law enforcement contact path"
+      ],
+      "evidenceNeeded": [
+        "Incident narrative",
+        "CCTV availability",
+        "Witness notes",
+        "Escalation owner"
+      ]
+    },
+    {
+      "id": "dhs-soft-targets",
+      "issuingBody": "DHS/CISA",
+      "title": "Soft target and crowded places protective measures",
+      "appliesTo": [
+        "High-risk facility",
+        "Executive visit",
+        "Repeat incidents"
+      ],
+      "guidanceSummary": "Review protective measures for public-facing facilities, including access, monitoring, emergency communications, and coordination planning.",
+      "recommendedActions": [
+        "Review entrances/exits",
+        "Validate camera coverage",
+        "Confirm emergency communication path",
+        "Review event/visit posture"
+      ],
+      "evidenceNeeded": [
+        "Facility profile",
+        "Camera health",
+        "Emergency contacts",
+        "Open remediation tasks"
+      ]
+    },
+    {
+      "id": "dhs-protective-measures",
+      "issuingBody": "DHS/CISA",
+      "title": "Protective security planning",
+      "appliesTo": [
+        "Technology Gap",
+        "Access Control",
+        "External Coordination"
+      ],
+      "guidanceSummary": "Align protective measures with current threat environment and control posture.",
+      "recommendedActions": [
+        "Prioritize high-impact gaps",
+        "Coordinate vendor response",
+        "Validate compensating controls"
+      ],
+      "evidenceNeeded": [
+        "Work order",
+        "Vendor ETA",
+        "Compensating control note"
+      ]
+    },
+    {
+      "id": "osha-workplace-safety",
+      "issuingBody": "OSHA",
+      "title": "Workplace violence prevention reference",
+      "appliesTo": [
+        "Associate safety",
+        "Threat of Violence",
+        "Battery"
+      ],
+      "guidanceSummary": "Use hazard recognition, reporting, prevention controls, and worker communication for workplace violence risk contexts.",
+      "recommendedActions": [
+        "Review associate safety response",
+        "Confirm reporting path",
+        "Document prevention actions"
+      ],
+      "evidenceNeeded": [
+        "Safety review",
+        "Leadership sign-off",
+        "Corrective action"
+      ]
+    },
+    {
+      "id": "nfpa-fire-assurance",
+      "issuingBody": "NFPA",
+      "title": "Fire/life-safety inspection and retest posture",
+      "appliesTo": [
+        "Fire/Life Safety"
+      ],
+      "guidanceSummary": "Fire-system deficiencies should be corrected, retested, and documented with appropriate evidence and AHJ awareness where required.",
+      "recommendedActions": [
+        "Dispatch qualified technician",
+        "Retest affected devices",
+        "Attach inspection evidence"
+      ],
+      "evidenceNeeded": [
+        "Inspection report",
+        "Retest result",
+        "Technician notes"
+      ]
+    },
+    {
+      "id": "internal-fpi-evidence-loop",
+      "issuingBody": "Internal FPI",
+      "title": "Identify \u2192 Act \u2192 Verify evidence loop",
+      "appliesTo": [
+        "All risk signals"
+      ],
+      "guidanceSummary": "Every material risk signal should result in an accountable action, owner, SLA, and evidence-backed closure state.",
+      "recommendedActions": [
+        "Assign owner",
+        "Set SLA",
+        "Capture evidence",
+        "Verify closure"
+      ],
+      "evidenceNeeded": [
+        "Task ID",
+        "Owner",
+        "Evidence URL",
+        "Verification timestamp"
+      ]
+    }
+  ]
+}

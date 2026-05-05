@@ -1,7 +1,7 @@
 import { LockedScopeSummary } from '../LockedScopeSummary';
 import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
-import type { StoreScopeState } from '../../data/storeScope';
+import { getScopedStoreIds, type StoreScopeState } from '../../data/storeScope';
 
 export type PlaceholderServiceViewProps = {
   title: string;
@@ -15,10 +15,12 @@ export type PlaceholderServiceViewProps = {
 export function PlaceholderServiceView({
   title,
   description,
+  facilities,
   fireSites,
   storeScope,
   onChangeScopeRequest,
 }: PlaceholderServiceViewProps) {
+  const scopedStoreCount = getScopedStoreIds(fireSites, storeScope).length;
   return (
     <>
       <header className="dashboard-header service-view-header">
@@ -38,9 +40,14 @@ export function PlaceholderServiceView({
           </div>
         </div>
         <p>
-          The locked store/region scope is preserved from Executive Protection Readiness, and this page is ready for service-specific KPIs, exception lists,
+          The locked store/region scope is preserved from Settings, and this page is ready for service-specific KPIs, exception lists,
           work queues, partner intelligence, and operational evidence in a later build.
         </p>
+        <div className="service-meta-grid service-live-metrics">
+          <div><span>Scoped FPI facilities</span><strong>{facilities.length}</strong><small>Projected from the current Settings selection.</small></div>
+          <div><span>Scoped fire-system stores</span><strong>{scopedStoreCount}</strong><small>Directly selected by store or region.</small></div>
+          <div><span>Scope mode</span><strong>{storeScope.mode}</strong><small>All, region-locked, or store-locked.</small></div>
+        </div>
       </section>
     </>
   );

@@ -55,10 +55,10 @@ export function StoreScopeSelector({ sites, scope, onScopeChange }: StoreScopeSe
     <section className="panel facility-scope-panel store-scope-panel" aria-labelledby="store-scope-title">
       <div className="facility-scope-heading">
         <div>
-          <p className="eyebrow">Executive Protection Readiness Scope</p>
+          <p className="eyebrow">Global Store Scope</p>
           <h2 id="store-scope-title">{summary}</h2>
           <p>
-            Select the fire-system store population once here. This store or region lock follows the user across every
+            Select the canonical FPI facility population once here. This store or region lock follows the user across every
             service tab, including Fire-System Monitoring & Assurance.
           </p>
         </div>
@@ -73,8 +73,8 @@ export function StoreScopeSelector({ sites, scope, onScopeChange }: StoreScopeSe
         <ScopeMetric label="Current lock" value={scope.mode === 'all' ? 'All fire stores' : scope.mode === 'regions' ? 'Region selection' : 'Store selection'} />
         <ScopeMetric label="Stores included" value={includedSites} />
         <ScopeMetric label="Regions available" value={regions.length} />
-        <ScopeMetric label="MD / VA stores" value={`${sites.filter((site) => site.state === 'MD').length} / ${sites.filter((site) => site.state === 'VA').length}`} />
-        <ScopeMetric label="Dataset" value="Fire alarm" />
+        <ScopeMetric label="TX / GA stores" value={`${sites.filter((site) => site.state === 'TX').length} / ${sites.filter((site) => site.state === 'GA').length}`} />
+        <ScopeMetric label="Dataset" value="Canonical FPI" />
       </div>
 
       <SelectedScopeTray sites={sites} scope={scope} onRemoveRegion={removeSelectedRegion} onRemoveStore={removeSelectedStore} />
@@ -94,7 +94,7 @@ export function StoreScopeSelector({ sites, scope, onScopeChange }: StoreScopeSe
         ))}
       </div>
 
-      <label className="facility-search-label" htmlFor="store-scope-search">Search fire-system stores</label>
+      <label className="facility-search-label" htmlFor="store-scope-search">Search canonical FPI stores</label>
       <input
         id="store-scope-search"
         className="facility-search-input"
@@ -104,7 +104,7 @@ export function StoreScopeSelector({ sites, scope, onScopeChange }: StoreScopeSe
         placeholder="Search by store ID, name, city, state, region, format, panel type, contractor, or AHJ"
       />
 
-      <div className="facility-checkbox-list" aria-label="Fire-system stores">
+      <div className="facility-checkbox-list" aria-label="Canonical FPI stores">
         {filteredSites.length > 0 ? filteredSites.map((site) => {
           const checked = scope.mode === 'all' || (scope.mode === 'regions' && selectedRegions.has(site.region)) || selectedStoreIds.has(site.id);
           return (
@@ -138,7 +138,7 @@ function SelectedScopeTray({
   if (scope.mode === 'all') {
     return (
       <div className="selected-scope-tray" aria-label="Current selected scope">
-        <span className="scope-chip selected">All 75 fire-system stores</span>
+        <span className="scope-chip selected">All canonical FPI stores</span>
       </div>
     );
   }

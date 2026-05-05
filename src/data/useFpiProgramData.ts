@@ -4,7 +4,7 @@ import { calculateFpiDashboardMetrics } from './fpiMetrics';
 import type { RawFpiMaster } from './fpiRawTypes';
 import type { FpiProgramDashboard } from './fpiTypes';
 
-const MASTER_DATA_URL = '/data/synthetic_single_region_master.json';
+const MASTER_DATA_URL = '/data/fpi-canonical-master.json';
 const FALLBACK_ERROR =
   'Dashboard data is unavailable. Confirm that the local master JSON file exists and matches the expected structure.';
 

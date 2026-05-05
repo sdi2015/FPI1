@@ -92,7 +92,7 @@ function ScopeToggle({ sites, activeSiteIds, onToggleSite, onShowOnlySite, onSho
   const activeSet = new Set(activeSiteIds);
   return (
     <section className="fire-ops-card fire-ops-selection-card">
-      <div><p className="fire-ops-eyebrow">Current Fire-System Data Toggle</p><h2>Viewing {activeSiteIds.length} of {sites.length} locked stores</h2><p>Toggle stores on/off inside the locked scope, or use Solo to drill into one selected store without changing the global Executive Readiness lock.</p></div>
+      <div><p className="fire-ops-eyebrow">Current Fire-System Data Toggle</p><h2>Viewing {activeSiteIds.length} of {sites.length} locked stores</h2><p>Toggle stores on/off inside the locked scope, or use Solo to drill into one selected store without changing the global Settings scope.</p></div>
       <div className="fire-ops-scope-actions"><button type="button" onClick={onShowAll}>Show all locked stores</button></div>
       <div className="fire-ops-site-toggle-list">
         {sites.map((site) => (

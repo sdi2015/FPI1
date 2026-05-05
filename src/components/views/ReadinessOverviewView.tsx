@@ -1,12 +1,18 @@
+import { LockedScopeSummary } from '../LockedScopeSummary';
+import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import { capabilities, pillars, type Capability, type Pillar } from '../../data/program';
 import type { FpiDashboardMetrics, FpiFacility, FpiKpi, FpiTopRiskFacility, StatusTone } from '../../data/fpiTypes';
 import type { FpiServiceMetricsModel } from '../../data/fpiServiceMetrics';
+import type { StoreScopeState } from '../../data/storeScope';
 
 export type ReadinessOverviewViewProps = {
   facilities: FpiFacility[];
   dashboardMetrics: FpiDashboardMetrics;
   activeCapability: Capability;
   serviceMetrics: FpiServiceMetricsModel | null;
+  fireSites: FireAlarmSite[];
+  storeScope: StoreScopeState;
+  onChangeScopeRequest: () => void;
   onFacilitySelect: (facilityId: string) => void;
   onCapabilitySelect: (capabilityId: string) => void;
 };
@@ -16,12 +22,16 @@ export function ReadinessOverviewView({
   dashboardMetrics,
   activeCapability,
   serviceMetrics,
+  fireSites,
+  storeScope,
+  onChangeScopeRequest,
   onFacilitySelect,
   onCapabilitySelect,
 }: ReadinessOverviewViewProps) {
   return (
     <>
       <HeroSummary metrics={dashboardMetrics} />
+      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       <ExecutiveStatusStrip metrics={dashboardMetrics} />
 
       <section className="progress-grid" aria-label="FPI program progress indicators">
@@ -51,8 +61,8 @@ function HeroSummary({ metrics }: { metrics: FpiDashboardMetrics }) {
   return (
     <header className="dashboard-header">
       <div>
-        <p className="eyebrow">FPI data-backed dashboard</p>
-        <h1>Facility protection posture overview</h1>
+        <p className="eyebrow">Command Center dashboard</p>
+        <h1>Facility protection command center</h1>
         <p>
           {metrics.headline.split(metrics.overallStatus)[0]}
           <strong>{metrics.overallStatus}</strong>

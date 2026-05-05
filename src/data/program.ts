@@ -9,6 +9,7 @@ export type Pillar = {
 export type Capability = {
   id: string;
   title: string;
+  navLabel?: string;
   eyebrow: string;
   description: string;
   status: 'Ready' | 'Watching' | 'Buildout';
@@ -55,10 +56,19 @@ export const capabilities: Capability[] = [
     id: 'executive-readiness',
     title: 'Executive Protection Readiness',
     eyebrow: 'Readiness',
-    description: 'Leader-ready visibility into facility protection readiness and priority exceptions.',
-    status: 'Ready',
-    metric: '94% prepared',
+    description: 'Executive protection readiness workspace reserved for the dedicated EPR data package.',
+    status: 'Buildout',
+    metric: 'Data pending',
     owner: 'FPI Leadership',
+  },
+  {
+    id: 'command-center',
+    title: 'Command Center',
+    eyebrow: 'Operations',
+    description: 'Data-backed operating dashboard for facility protection posture, active risk, exceptions, and work queues.',
+    status: 'Ready',
+    metric: 'Live dashboard',
+    owner: 'FPI Operations',
   },
   {
     id: 'fire-system-monitoring',
@@ -73,18 +83,18 @@ export const capabilities: Capability[] = [
     id: 'camera-technical-control',
     title: 'Camera & Technical Control Monitoring',
     eyebrow: 'Technical controls',
-    description: 'Monitors camera coverage, technical-control health, outage posture, and service impact.',
-    status: 'Watching',
-    metric: '97.2% online',
+    description: 'Monitors camera coverage, technical-control health, outage posture, AP-14 evidence readiness, and simulated service impact.',
+    status: 'Ready',
+    metric: '96.3% online',
     owner: 'Technical Controls',
   },
   {
     id: 'network-device-posture',
     title: 'Network & Security Device Posture',
     eyebrow: 'Device posture',
-    description: 'Summarizes security-device hygiene, network dependencies, lifecycle risk, and control gaps.',
-    status: 'Buildout',
-    metric: '42 gaps',
+    description: 'Summarizes security-device hygiene, adapter freshness, network dependencies, lifecycle risk, and control gaps.',
+    status: 'Ready',
+    metric: '4 normalized issues',
     owner: 'Security Engineering',
   },
   {
@@ -109,18 +119,18 @@ export const capabilities: Capability[] = [
     id: 'vendor-intelligence',
     title: 'Vendor Intelligence & Recommendations',
     eyebrow: 'Vendor insights',
-    description: 'Compares vendor performance, service coverage, recommendation confidence, and response quality.',
-    status: 'Buildout',
-    metric: '7 recs',
+    description: 'SENTRY-sponsored vendor intelligence for provider reporting, assessment requests, and issue-to-vendor recommendations.',
+    status: 'Ready',
+    metric: 'SENTRY',
     owner: 'Vendor Mgmt',
   },
   {
     id: 'external-coordination',
     title: 'Law Enforcement / Security Vendor Analysis / External Coordination',
     eyebrow: 'Coordination',
-    description: 'Provides coordination planning views, partner readiness context, and escalation governance.',
-    status: 'Watching',
-    metric: '12 partners',
+    description: 'Store-level law enforcement, DA/prosecutor, security vendor, and external coordination readiness for selected facilities.',
+    status: 'Ready',
+    metric: 'LE / DA',
     owner: 'External Affairs',
   },
 ];

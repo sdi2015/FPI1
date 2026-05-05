@@ -1,0 +1,1144 @@
+{
+  "metadata": {
+    "generatedAt": "2026-05-05T21:53:06+00:00",
+    "dataMode": "public-reference seed + live lookup adapter ready",
+    "lookupStatus": "No approved live lookup endpoint was found in the accessible FPI project files during generation.",
+    "scopeKey": "facility_id",
+    "governanceNote": "Law enforcement, sheriff, and prosecutor contact details must be verified against approved live sources before operational use. This shell is view-only for store users.",
+    "desiredLiveAdapter": "Code Puppy/internal approved geospatial public-safety lookup service"
+  },
+  "summary": {
+    "facilities": 12,
+    "agencyContacts": 36,
+    "prosecutorContacts": 12,
+    "securityVendorPartners": 3,
+    "escalatedFacilities": 1,
+    "reviewFacilities": 11
+  },
+  "facilities": [
+    {
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "city": "Dallas",
+      "state": "TX",
+      "region": "South Central",
+      "county": "Dallas County",
+      "riskTier": "Critical",
+      "riskScore": 100,
+      "coordinationReadiness": "Escalated",
+      "escalationReason": "Critical facility risk: 10 recent threat/security incidents",
+      "recommendedNextStep": "Validate law enforcement contact path, preserve evidence, brief AP/FPI leadership, and confirm prosecutor/evidence handoff expectations.",
+      "agencies": [
+        {
+          "name": "Dallas Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+          "phone": "214-671-3001",
+          "website": "https://dallaspolice.net"
+        },
+        {
+          "name": "Dallas County Sheriff's Department",
+          "type": "County Sheriff",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-749-8641",
+          "website": "https://www.dallascounty.org/departments/sheriff/"
+        },
+        {
+          "name": "Dallas County District Attorney",
+          "type": "District Attorney",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-653-3600",
+          "website": "https://www.dallascounty.org/government/district-attorney/"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Dallas Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+        "phone": "214-671-3001",
+        "website": "https://dallaspolice.net"
+      },
+      "sheriffAgency": {
+        "name": "Dallas County Sheriff's Department",
+        "type": "County Sheriff",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-749-8641",
+        "website": "https://www.dallascounty.org/departments/sheriff/"
+      },
+      "prosecutor": {
+        "name": "Dallas County District Attorney",
+        "type": "District Attorney",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-653-3600",
+        "website": "https://www.dallascounty.org/government/district-attorney/"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "city": "Dallas",
+      "state": "TX",
+      "region": "South Central",
+      "county": "Dallas County",
+      "riskTier": "Low",
+      "riskScore": 42.0,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Dallas Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+          "phone": "214-671-3001",
+          "website": "https://dallaspolice.net"
+        },
+        {
+          "name": "Dallas County Sheriff's Department",
+          "type": "County Sheriff",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-749-8641",
+          "website": "https://www.dallascounty.org/departments/sheriff/"
+        },
+        {
+          "name": "Dallas County District Attorney",
+          "type": "District Attorney",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-653-3600",
+          "website": "https://www.dallascounty.org/government/district-attorney/"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Dallas Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+        "phone": "214-671-3001",
+        "website": "https://dallaspolice.net"
+      },
+      "sheriffAgency": {
+        "name": "Dallas County Sheriff's Department",
+        "type": "County Sheriff",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-749-8641",
+        "website": "https://www.dallascounty.org/departments/sheriff/"
+      },
+      "prosecutor": {
+        "name": "Dallas County District Attorney",
+        "type": "District Attorney",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-653-3600",
+        "website": "https://www.dallascounty.org/government/district-attorney/"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "city": "Dallas",
+      "state": "TX",
+      "region": "South Central",
+      "county": "Dallas County",
+      "riskTier": "Low",
+      "riskScore": 41.5,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Dallas Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+          "phone": "214-671-3001",
+          "website": "https://dallaspolice.net"
+        },
+        {
+          "name": "Dallas County Sheriff's Department",
+          "type": "County Sheriff",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-749-8641",
+          "website": "https://www.dallascounty.org/departments/sheriff/"
+        },
+        {
+          "name": "Dallas County District Attorney",
+          "type": "District Attorney",
+          "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+          "phone": "214-653-3600",
+          "website": "https://www.dallascounty.org/government/district-attorney/"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Dallas Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "1400 Botham Jean Blvd, Dallas, TX 75215",
+        "phone": "214-671-3001",
+        "website": "https://dallaspolice.net"
+      },
+      "sheriffAgency": {
+        "name": "Dallas County Sheriff's Department",
+        "type": "County Sheriff",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-749-8641",
+        "website": "https://www.dallascounty.org/departments/sheriff/"
+      },
+      "prosecutor": {
+        "name": "Dallas County District Attorney",
+        "type": "District Attorney",
+        "address": "133 N Riverfront Blvd, Dallas, TX 75207",
+        "phone": "214-653-3600",
+        "website": "https://www.dallascounty.org/government/district-attorney/"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "city": "Houston",
+      "state": "TX",
+      "region": "South Central",
+      "county": "Harris County",
+      "riskTier": "Medium",
+      "riskScore": 55.7,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Houston Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "1200 Travis St, Houston, TX 77002",
+          "phone": "713-884-3131",
+          "website": "https://www.houstontx.gov/police/"
+        },
+        {
+          "name": "Harris County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "1200 Baker St, Houston, TX 77002",
+          "phone": "713-221-6000",
+          "website": "https://www.harriscountyso.org"
+        },
+        {
+          "name": "Harris County District Attorney's Office",
+          "type": "District Attorney",
+          "address": "1201 Franklin St, Houston, TX 77002",
+          "phone": "713-274-5800",
+          "website": "https://app.dao.hctx.net"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Houston Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "1200 Travis St, Houston, TX 77002",
+        "phone": "713-884-3131",
+        "website": "https://www.houstontx.gov/police/"
+      },
+      "sheriffAgency": {
+        "name": "Harris County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "1200 Baker St, Houston, TX 77002",
+        "phone": "713-221-6000",
+        "website": "https://www.harriscountyso.org"
+      },
+      "prosecutor": {
+        "name": "Harris County District Attorney's Office",
+        "type": "District Attorney",
+        "address": "1201 Franklin St, Houston, TX 77002",
+        "phone": "713-274-5800",
+        "website": "https://app.dao.hctx.net"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "city": "Houston",
+      "state": "TX",
+      "region": "South Central",
+      "county": "Harris County",
+      "riskTier": "Medium",
+      "riskScore": 63.0,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Houston Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "1200 Travis St, Houston, TX 77002",
+          "phone": "713-884-3131",
+          "website": "https://www.houstontx.gov/police/"
+        },
+        {
+          "name": "Harris County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "1200 Baker St, Houston, TX 77002",
+          "phone": "713-221-6000",
+          "website": "https://www.harriscountyso.org"
+        },
+        {
+          "name": "Harris County District Attorney's Office",
+          "type": "District Attorney",
+          "address": "1201 Franklin St, Houston, TX 77002",
+          "phone": "713-274-5800",
+          "website": "https://app.dao.hctx.net"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Houston Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "1200 Travis St, Houston, TX 77002",
+        "phone": "713-884-3131",
+        "website": "https://www.houstontx.gov/police/"
+      },
+      "sheriffAgency": {
+        "name": "Harris County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "1200 Baker St, Houston, TX 77002",
+        "phone": "713-221-6000",
+        "website": "https://www.harriscountyso.org"
+      },
+      "prosecutor": {
+        "name": "Harris County District Attorney's Office",
+        "type": "District Attorney",
+        "address": "1201 Franklin St, Houston, TX 77002",
+        "phone": "713-274-5800",
+        "website": "https://app.dao.hctx.net"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "city": "Phoenix",
+      "state": "AZ",
+      "region": "West",
+      "county": "Maricopa County",
+      "riskTier": "Low",
+      "riskScore": 44.2,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Phoenix Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "620 W Washington St, Phoenix, AZ 85003",
+          "phone": "602-262-6151",
+          "website": "https://www.phoenix.gov/police"
+        },
+        {
+          "name": "Maricopa County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "550 W Jackson St, Phoenix, AZ 85003",
+          "phone": "602-876-1000",
+          "website": "https://www.mcso.org"
+        },
+        {
+          "name": "Maricopa County Attorney's Office",
+          "type": "County Attorney",
+          "address": "225 W Madison St, Phoenix, AZ 85003",
+          "phone": "602-506-3411",
+          "website": "https://www.maricopacountyattorney.org"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Phoenix Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "620 W Washington St, Phoenix, AZ 85003",
+        "phone": "602-262-6151",
+        "website": "https://www.phoenix.gov/police"
+      },
+      "sheriffAgency": {
+        "name": "Maricopa County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "550 W Jackson St, Phoenix, AZ 85003",
+        "phone": "602-876-1000",
+        "website": "https://www.mcso.org"
+      },
+      "prosecutor": {
+        "name": "Maricopa County Attorney's Office",
+        "type": "County Attorney",
+        "address": "225 W Madison St, Phoenix, AZ 85003",
+        "phone": "602-506-3411",
+        "website": "https://www.maricopacountyattorney.org"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "city": "Phoenix",
+      "state": "AZ",
+      "region": "West",
+      "county": "Maricopa County",
+      "riskTier": "Medium",
+      "riskScore": 64.9,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Phoenix Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "620 W Washington St, Phoenix, AZ 85003",
+          "phone": "602-262-6151",
+          "website": "https://www.phoenix.gov/police"
+        },
+        {
+          "name": "Maricopa County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "550 W Jackson St, Phoenix, AZ 85003",
+          "phone": "602-876-1000",
+          "website": "https://www.mcso.org"
+        },
+        {
+          "name": "Maricopa County Attorney's Office",
+          "type": "County Attorney",
+          "address": "225 W Madison St, Phoenix, AZ 85003",
+          "phone": "602-506-3411",
+          "website": "https://www.maricopacountyattorney.org"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Phoenix Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "620 W Washington St, Phoenix, AZ 85003",
+        "phone": "602-262-6151",
+        "website": "https://www.phoenix.gov/police"
+      },
+      "sheriffAgency": {
+        "name": "Maricopa County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "550 W Jackson St, Phoenix, AZ 85003",
+        "phone": "602-876-1000",
+        "website": "https://www.mcso.org"
+      },
+      "prosecutor": {
+        "name": "Maricopa County Attorney's Office",
+        "type": "County Attorney",
+        "address": "225 W Madison St, Phoenix, AZ 85003",
+        "phone": "602-506-3411",
+        "website": "https://www.maricopacountyattorney.org"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "city": "Atlanta",
+      "state": "GA",
+      "region": "Southeast",
+      "county": "Fulton County",
+      "riskTier": "Low",
+      "riskScore": 37.7,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Atlanta Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "226 Peachtree St SW, Atlanta, GA 30303",
+          "phone": "404-614-6544",
+          "website": "https://www.atlantapd.org"
+        },
+        {
+          "name": "Fulton County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "185 Central Ave SW, Atlanta, GA 30303",
+          "phone": "404-612-5100",
+          "website": "https://fultonsheriff.org"
+        },
+        {
+          "name": "Fulton County District Attorney's Office",
+          "type": "District Attorney",
+          "address": "136 Pryor St SW, Atlanta, GA 30303",
+          "phone": "404-612-4981",
+          "website": "https://www.fultoncountyga.gov/inside-fulton-county/fulton-county-departments/district-attorney"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Atlanta Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "226 Peachtree St SW, Atlanta, GA 30303",
+        "phone": "404-614-6544",
+        "website": "https://www.atlantapd.org"
+      },
+      "sheriffAgency": {
+        "name": "Fulton County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "185 Central Ave SW, Atlanta, GA 30303",
+        "phone": "404-612-5100",
+        "website": "https://fultonsheriff.org"
+      },
+      "prosecutor": {
+        "name": "Fulton County District Attorney's Office",
+        "type": "District Attorney",
+        "address": "136 Pryor St SW, Atlanta, GA 30303",
+        "phone": "404-612-4981",
+        "website": "https://www.fultoncountyga.gov/inside-fulton-county/fulton-county-departments/district-attorney"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "3891",
+      "facilityName": "Store #3891",
+      "city": "Atlanta",
+      "state": "GA",
+      "region": "Southeast",
+      "county": "Fulton County",
+      "riskTier": "Low",
+      "riskScore": 26.7,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Atlanta Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "226 Peachtree St SW, Atlanta, GA 30303",
+          "phone": "404-614-6544",
+          "website": "https://www.atlantapd.org"
+        },
+        {
+          "name": "Fulton County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "185 Central Ave SW, Atlanta, GA 30303",
+          "phone": "404-612-5100",
+          "website": "https://fultonsheriff.org"
+        },
+        {
+          "name": "Fulton County District Attorney's Office",
+          "type": "District Attorney",
+          "address": "136 Pryor St SW, Atlanta, GA 30303",
+          "phone": "404-612-4981",
+          "website": "https://www.fultoncountyga.gov/inside-fulton-county/fulton-county-departments/district-attorney"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Atlanta Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "226 Peachtree St SW, Atlanta, GA 30303",
+        "phone": "404-614-6544",
+        "website": "https://www.atlantapd.org"
+      },
+      "sheriffAgency": {
+        "name": "Fulton County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "185 Central Ave SW, Atlanta, GA 30303",
+        "phone": "404-612-5100",
+        "website": "https://fultonsheriff.org"
+      },
+      "prosecutor": {
+        "name": "Fulton County District Attorney's Office",
+        "type": "District Attorney",
+        "address": "136 Pryor St SW, Atlanta, GA 30303",
+        "phone": "404-612-4981",
+        "website": "https://www.fultoncountyga.gov/inside-fulton-county/fulton-county-departments/district-attorney"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "4123",
+      "facilityName": "Store #4123",
+      "city": "Denver",
+      "state": "CO",
+      "region": "Mountain",
+      "county": "City and County of Denver",
+      "riskTier": "Medium",
+      "riskScore": 56.5,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Denver Police Department Administration Building",
+          "type": "Municipal Police",
+          "address": "1331 Cherokee St, Denver, CO 80204",
+          "phone": "720-913-2000",
+          "website": "https://www.denvergov.org/police"
+        },
+        {
+          "name": "Denver Sheriff Department",
+          "type": "County Sheriff",
+          "address": "490 W Colfax Ave, Denver, CO 80204",
+          "phone": "720-913-3600",
+          "website": "https://www.denvergov.org/sheriff"
+        },
+        {
+          "name": "Denver District Attorney's Office",
+          "type": "District Attorney",
+          "address": "201 W Colfax Ave, Denver, CO 80202",
+          "phone": "720-913-9000",
+          "website": "https://www.denverda.org"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Denver Police Department Administration Building",
+        "type": "Municipal Police",
+        "address": "1331 Cherokee St, Denver, CO 80204",
+        "phone": "720-913-2000",
+        "website": "https://www.denvergov.org/police"
+      },
+      "sheriffAgency": {
+        "name": "Denver Sheriff Department",
+        "type": "County Sheriff",
+        "address": "490 W Colfax Ave, Denver, CO 80204",
+        "phone": "720-913-3600",
+        "website": "https://www.denvergov.org/sheriff"
+      },
+      "prosecutor": {
+        "name": "Denver District Attorney's Office",
+        "type": "District Attorney",
+        "address": "201 W Colfax Ave, Denver, CO 80202",
+        "phone": "720-913-9000",
+        "website": "https://www.denverda.org"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "2567",
+      "facilityName": "Store #2567",
+      "city": "Chicago",
+      "state": "IL",
+      "region": "Midwest",
+      "county": "Cook County",
+      "riskTier": "Low",
+      "riskScore": 40.4,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Routine coordination readiness profile for store-level reference.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Chicago Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "3510 S Michigan Ave, Chicago, IL 60653",
+          "phone": "312-746-6000",
+          "website": "https://home.chicagopolice.org"
+        },
+        {
+          "name": "Cook County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "50 W Washington St, Chicago, IL 60602",
+          "phone": "312-603-6444",
+          "website": "https://www.cookcountysheriffil.gov"
+        },
+        {
+          "name": "Cook County State's Attorney's Office",
+          "type": "State's Attorney",
+          "address": "69 W Washington St, Suite 3200, Chicago, IL 60602",
+          "phone": "312-603-1880",
+          "website": "https://www.cookcountystatesattorney.org"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Chicago Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "3510 S Michigan Ave, Chicago, IL 60653",
+        "phone": "312-746-6000",
+        "website": "https://home.chicagopolice.org"
+      },
+      "sheriffAgency": {
+        "name": "Cook County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "50 W Washington St, Chicago, IL 60602",
+        "phone": "312-603-6444",
+        "website": "https://www.cookcountysheriffil.gov"
+      },
+      "prosecutor": {
+        "name": "Cook County State's Attorney's Office",
+        "type": "State's Attorney",
+        "address": "69 W Washington St, Suite 3200, Chicago, IL 60602",
+        "phone": "312-603-1880",
+        "website": "https://www.cookcountystatesattorney.org"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    },
+    {
+      "facilityId": "3789",
+      "facilityName": "Store #3789",
+      "city": "Chicago",
+      "state": "IL",
+      "region": "Midwest",
+      "county": "Cook County",
+      "riskTier": "Medium",
+      "riskScore": 53.3,
+      "coordinationReadiness": "Review",
+      "escalationReason": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "recommendedNextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues.",
+      "agencies": [
+        {
+          "name": "Chicago Police Department Headquarters",
+          "type": "Municipal Police",
+          "address": "3510 S Michigan Ave, Chicago, IL 60653",
+          "phone": "312-746-6000",
+          "website": "https://home.chicagopolice.org"
+        },
+        {
+          "name": "Cook County Sheriff's Office",
+          "type": "County Sheriff",
+          "address": "50 W Washington St, Chicago, IL 60602",
+          "phone": "312-603-6444",
+          "website": "https://www.cookcountysheriffil.gov"
+        },
+        {
+          "name": "Cook County State's Attorney's Office",
+          "type": "State's Attorney",
+          "address": "69 W Washington St, Suite 3200, Chicago, IL 60602",
+          "phone": "312-603-1880",
+          "website": "https://www.cookcountystatesattorney.org"
+        }
+      ],
+      "primaryAgency": {
+        "name": "Chicago Police Department Headquarters",
+        "type": "Municipal Police",
+        "address": "3510 S Michigan Ave, Chicago, IL 60653",
+        "phone": "312-746-6000",
+        "website": "https://home.chicagopolice.org"
+      },
+      "sheriffAgency": {
+        "name": "Cook County Sheriff's Office",
+        "type": "County Sheriff",
+        "address": "50 W Washington St, Chicago, IL 60602",
+        "phone": "312-603-6444",
+        "website": "https://www.cookcountysheriffil.gov"
+      },
+      "prosecutor": {
+        "name": "Cook County State's Attorney's Office",
+        "type": "State's Attorney",
+        "address": "69 W Washington St, Suite 3200, Chicago, IL 60602",
+        "phone": "312-603-1880",
+        "website": "https://www.cookcountystatesattorney.org"
+      },
+      "securityVendorPartners": [
+        {
+          "partnerId": "SEC-001",
+          "name": "Current Guarding Provider",
+          "type": "Security Vendor",
+          "coverage": "Guarding / patrol escalation",
+          "coordinationUse": "Temporary guard coverage, patrol surge, executive visit support",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-002",
+          "name": "Technical Service Provider",
+          "type": "Security Vendor",
+          "coverage": "Camera, alarm, access-control service",
+          "coordinationUse": "Evidence-path restoration and technical-control remediation",
+          "status": "Current Provider / Verify locally"
+        },
+        {
+          "partnerId": "SEC-003",
+          "name": "SENTRY Assessment Path",
+          "type": "Vendor Intelligence",
+          "coverage": "Prospective vendor review",
+          "coordinationUse": "Request assessment for alternative providers or emerging capabilities",
+          "status": "SENTRY Sponsored"
+        }
+      ]
+    }
+  ],
+  "coordinationRequests": [
+    {
+      "requestId": "EC-0001",
+      "facilityId": "2638",
+      "facilityName": "Store #2638",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "High",
+      "summary": "Critical facility risk: 10 recent threat/security incidents",
+      "nextStep": "Validate law enforcement contact path, preserve evidence, brief AP/FPI leadership, and confirm prosecutor/evidence handoff expectations."
+    },
+    {
+      "requestId": "EC-0002",
+      "facilityId": "2941",
+      "facilityName": "Store #2941",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Routine coordination readiness profile for store-level reference.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0003",
+      "facilityId": "3156",
+      "facilityName": "Store #3156",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Routine coordination readiness profile for store-level reference.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0004",
+      "facilityId": "1823",
+      "facilityName": "Store #1823",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0005",
+      "facilityId": "4567",
+      "facilityName": "Store #4567",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0006",
+      "facilityId": "3421",
+      "facilityName": "Store #3421",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Routine coordination readiness profile for store-level reference.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0007",
+      "facilityId": "2789",
+      "facilityName": "Store #2789",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Fire/life-safety or technical assurance exception may require partner coordination.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    },
+    {
+      "requestId": "EC-0008",
+      "facilityId": "1245",
+      "facilityName": "Store #1245",
+      "type": "Law Enforcement / DA Readiness Review",
+      "status": "View Only - Contact Verification Needed",
+      "priority": "Medium",
+      "summary": "Routine coordination readiness profile for store-level reference.",
+      "nextStep": "Review incident package, confirm local agency contact, and prepare escalation summary if repeat pattern continues."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "threat-violence",
+      "title": "Threat of Violence / Assault",
+      "recommendedPath": "Local police contact \u2192 AP/FPI leadership \u2192 DA/prosecutor evidence package if charges or repeat pattern emerge.",
+      "evidenceNeeded": [
+        "Incident narrative",
+        "CCTV availability",
+        "Witness notes",
+        "Case/report number if available"
+      ]
+    },
+    {
+      "id": "repeat-incidents",
+      "title": "Repeat Incident Pattern",
+      "recommendedPath": "Police/sheriff liaison review \u2192 Market AP review \u2192 SENTRY/vendor support if controls or guarding need assessment.",
+      "evidenceNeeded": [
+        "Incident trend",
+        "Store risk drivers",
+        "Open remediation tasks",
+        "Partner contact log"
+      ]
+    },
+    {
+      "id": "executive-visit",
+      "title": "Executive Visit / Elevated Profile",
+      "recommendedPath": "Confirm jurisdiction contacts, local agency non-emergency path, nearby hospital/safe route context, and security vendor readiness.",
+      "evidenceNeeded": [
+        "Visit itinerary",
+        "Facility profile",
+        "Hotel/route notes",
+        "Emergency contact card"
+      ]
+    },
+    {
+      "id": "technical-evidence-gap",
+      "title": "Evidence or Technical-Control Gap",
+      "recommendedPath": "Technical vendor restoration \u2192 AP/FPI evidence review \u2192 agency/DA handoff only after evidence availability is confirmed.",
+      "evidenceNeeded": [
+        "Camera health",
+        "Retention status",
+        "Work order",
+        "Remediation ETA"
+      ]
+    }
+  ]
+}

@@ -36,14 +36,14 @@ export function getScopedStoreIds(sites: FireAlarmSite[], scope: StoreScopeState
 }
 
 export function getStoreScopeSummary(scope: StoreScopeState, sites: FireAlarmSite[]): string {
-  if (scope.mode === 'all') return `All ${formatNumber(sites.length)} fire-system stores included`;
+  if (scope.mode === 'all') return `All ${formatNumber(sites.length)} canonical FPI stores included`;
   if (scope.mode === 'regions') {
     if (scope.selectedRegionNames.length === 0) return 'No regions selected';
     const count = sites.filter((site) => scope.selectedRegionNames.includes(site.region)).length;
     return `${scope.selectedRegionNames.join(', ')} • ${formatNumber(count)} stores included`;
   }
   if (scope.selectedStoreIds.length === 0) return 'No stores selected';
-  return `${formatNumber(scope.selectedStoreIds.length)} of ${formatNumber(sites.length)} fire-system stores selected`;
+  return `${formatNumber(scope.selectedStoreIds.length)} of ${formatNumber(sites.length)} canonical FPI stores selected`;
 }
 
 export function getStoreScopeModeLabel(scope: StoreScopeState): string {

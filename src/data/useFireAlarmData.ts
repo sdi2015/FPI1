@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { adaptFireAlarmExport, buildFireAlarmDashboardModel } from './fireAlarmAdapter';
 import type { FireAlarmDashboardModel, FireAlarmProgramData, FireAlarmRawExport } from './fireAlarmTypes';
 
-const FIRE_ALARM_DATA_URL = '/data/fire-alarm-complete-data-2026-05-05.json';
+const FIRE_ALARM_DATA_URL = '/data/fpi-canonical-fire-alarm.json';
 const FALLBACK_ERROR = 'Fire-system monitoring data is unavailable. Confirm the fire alarm handoff JSON exists and matches the expected structure.';
 
 export type FireAlarmDataState = {
