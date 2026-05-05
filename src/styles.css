@@ -254,6 +254,13 @@ h1, h2, h3, p { margin-top: 0; }
 .activity-panel { grid-column: span 4; }
 .spatial-preview, .top-risk-panel { grid-column: span 3; }
 .module-map-panel { grid-column: span 5; }
+.fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel { grid-column: span 6; }
+.fire-breakdown { display: grid; gap: 8px; margin: 14px 0; }
+.fire-breakdown h3 { margin: 0; font-size: 0.9rem; }
+.fire-breakdown div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: rgba(255,255,255,0.035); }
+.fire-breakdown span { color: var(--text-secondary); font-size: 0.82rem; }
+.fire-breakdown strong { color: var(--sky-blue); }
+.fire-record-list { margin-top: 12px; }
 .service-heading h2 { max-width: 760px; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.08; }
 .service-meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
 .service-meta-grid div { padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); }
@@ -290,6 +297,27 @@ h1, h2, h3, p { margin-top: 0; }
 .spatial-button { width: 100%; }
 .dashboard-state-panel { margin-bottom: 14px; }
 .dashboard-state-panel h1 { margin-bottom: 0; font-size: clamp(1.75rem, 3vw, 2.7rem); }
+.facility-scope-panel { margin-bottom: 14px; }
+.facility-scope-heading { display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.facility-scope-heading h2 { margin-bottom: 7px; font-size: clamp(1.25rem, 2.2vw, 1.9rem); letter-spacing: -0.04em; }
+.facility-scope-heading p { margin: 0; }
+.facility-scope-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+.facility-scope-actions button { min-height: 38px; padding: 8px 13px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(255,255,255,0.055); font-weight: 850; }
+.facility-scope-actions button:hover { border-color: var(--border-strong); background: rgba(255,255,255,0.09); }
+.scope-summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.scope-summary-grid div { padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); }
+.scope-summary-grid span, .facility-search-label { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.scope-summary-grid strong { display: block; margin-top: 6px; font-size: 1.15rem; letter-spacing: -0.03em; }
+.facility-search-label { margin-bottom: 7px; }
+.facility-search-input { width: 100%; min-height: 42px; margin-bottom: 12px; padding: 0 13px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.06); outline: none; }
+.facility-search-input::placeholder { color: var(--text-muted); }
+.facility-search-input:focus { border-color: rgba(255,194,32,0.54); box-shadow: 0 0 0 3px rgba(255,194,32,0.12); }
+.facility-checkbox-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 260px; overflow: auto; padding-right: 3px; }
+.facility-checkbox-row { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.facility-checkbox-row input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--yellow); }
+.facility-checkbox-row strong { display: block; line-height: 1.2; }
+.facility-checkbox-row small, .facility-scope-empty { color: var(--text-muted); font-size: 0.78rem; line-height: 1.35; }
+.facility-scope-empty { grid-column: 1 / -1; margin: 0; padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
 .top-risk-list { display: grid; gap: 10px; }
 .top-risk-item { display: grid; gap: 7px; width: 100%; padding: 12px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.04); text-align: left; transition: transform var(--motion-normal), box-shadow var(--motion-normal), border-color var(--motion-normal), background var(--motion-normal); }
 .top-risk-item > div { display: grid; gap: 3px; }
@@ -324,7 +352,7 @@ h1, h2, h3, p { margin-top: 0; }
   .dashboard-shell { grid-template-columns: 248px minmax(0, 1fr); }
   .executive-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi-grid, .progress-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel { grid-column: span 6; }
+  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel { grid-column: span 6; }
 }
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -335,9 +363,9 @@ h1, h2, h3, p { margin-top: 0; }
   .dashboard-header { flex-direction: column; padding: 18px; }
   .mode-pill { text-align: left; }
   .executive-strip, .progress-grid, .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel { grid-column: 1 / -1; }
-  .service-meta-grid, .service-live-metrics, .module-map, .facility-summary-grid, .facility-detail-grid { grid-template-columns: 1fr; }
-  .facility-detail-header { flex-direction: column; }
+  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel { grid-column: 1 / -1; }
+  .service-meta-grid, .service-live-metrics, .module-map, .facility-summary-grid, .facility-detail-grid, .scope-summary-grid, .facility-checkbox-list { grid-template-columns: 1fr; }
+  .facility-detail-header, .facility-scope-heading { flex-direction: column; }
 }
 @media (max-width: 620px) {
   .landing-shell, .dashboard-content { padding: 12px; }

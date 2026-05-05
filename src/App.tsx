@@ -1,30 +1,36 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
+import { FireSystemServiceView } from './components/views/FireSystemServiceView';
+import { PlaceholderServiceView } from './components/views/PlaceholderServiceView';
+import { ReadinessOverviewView } from './components/views/ReadinessOverviewView';
 import { getFacilityDetailModel } from './data/fpiSelectors';
+import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
+import { applyFacilityScope, createAllFacilitiesScope, hasEmptySelectedScope, isFacilityInScope, type FacilityScopeState } from './data/fpiScope';
 import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
 import { capabilities, pillars, type Capability, type Pillar } from './data/program';
+import { capabilityIdForService, serviceIdForCapability, SERVICE_IDS, type ServiceId } from './data/serviceIds';
 import type { FpiDashboardMetrics, FpiKpi, FpiTopRiskFacility, StatusTone } from './data/fpiTypes';
 import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
 
 type Screen = 'landing' | 'dashboard';
 
-const defaultCapabilityId = 'external-coordination';
+const defaultServiceId = SERVICE_IDS.READINESS;
 
 function App() {
   const [screen, setScreen] = useState<Screen>('landing');
-  const [activeCapabilityId, setActiveCapabilityId] = useState(defaultCapabilityId);
+  const [selectedService, setSelectedService] = useState<ServiceId>(defaultServiceId);
   const fpiState = useFpiProgramData();
 
   const activeCapability = useMemo(
-    () => capabilities.find((capability) => capability.id === activeCapabilityId) ?? capabilities[0],
-    [activeCapabilityId],
+    () => capabilities.find((capability) => capability.id === capabilityIdForService(selectedService)) ?? capabilities[0],
+    [selectedService],
   );
 
   if (screen === 'dashboard') {
     return (
       <DashboardShell
-        activeCapabilityId={activeCapabilityId}
-        onSelectCapability={setActiveCapabilityId}
+        selectedService={selectedService}
+        onSelectService={setSelectedService}
         onBackToLanding={() => setScreen('landing')}
         activeCapability={activeCapability}
         fpiState={fpiState}
@@ -161,37 +167,54 @@ function Landing({ onEnter }: { onEnter: () => void }) {
 }
 
 function DashboardShell({
-  activeCapabilityId,
+  selectedService,
   activeCapability,
-  onSelectCapability,
+  onSelectService,
   onBackToLanding,
   fpiState,
 }: {
-  activeCapabilityId: string;
+  selectedService: ServiceId;
   activeCapability: Capability;
-  onSelectCapability: (id: string) => void;
+  onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
   fpiState: FpiProgramDataState;
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
-  const metrics = fpiState.data?.dashboardMetrics;
+  const [facilityScope, setFacilityScope] = useState<FacilityScopeState>(createAllFacilitiesScope());
+  const globalMetrics = fpiState.data?.dashboardMetrics;
   const programData = fpiState.data?.programData;
+  const scopedProgramData = useMemo(
+    () => (programData ? applyFacilityScope(programData, facilityScope) : null),
+    [programData, facilityScope],
+  );
+  const metrics = useMemo(
+    () => (scopedProgramData ? calculateFpiDashboardMetrics(scopedProgramData) : globalMetrics),
+    [scopedProgramData, globalMetrics],
+  );
+  const isEmptyScope = hasEmptySelectedScope(facilityScope);
   const selectedFacility = useMemo(
-    () => (programData && selectedFacilityId ? getFacilityDetailModel(programData, selectedFacilityId) : null),
-    [programData, selectedFacilityId],
+    () => (scopedProgramData && selectedFacilityId ? getFacilityDetailModel(scopedProgramData, selectedFacilityId) : null),
+    [scopedProgramData, selectedFacilityId],
   );
   const serviceMetrics = useMemo(
-    () => (programData ? getServiceMetrics(programData, activeCapability.id, activeCapability.title) : null),
-    [programData, activeCapability.id, activeCapability.title],
+    () => (scopedProgramData ? getServiceMetrics(scopedProgramData, activeCapability.id, activeCapability.title) : null),
+    [scopedProgramData, activeCapability.id, activeCapability.title],
   );
+
+  useEffect(() => {
+    if (!selectedFacilityId) return;
+    if (!isFacilityInScope(selectedFacilityId, facilityScope)) {
+      setSelectedFacilityId(null);
+    }
+  }, [facilityScope, selectedFacilityId]);
+
+  function handleCapabilitySelect(capabilityId: string) {
+    onSelectService(serviceIdForCapability(capabilityId));
+  }
 
   return (
     <div className="dashboard-shell">
-      <SidebarNav
-        activeCapabilityId={activeCapabilityId}
-        onSelectCapability={onSelectCapability}
-        onBackToLanding={onBackToLanding}
-      />
+      <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
         {fpiState.loading ? <DashboardStatePanel title="Loading FPI master data" message="Preparing the local master JSON dataset and calculating dashboard metrics." /> : null}
@@ -200,30 +223,54 @@ function DashboardShell({
           <DashboardStatePanel title="No dashboard data" message="The master dataset loaded but did not produce a dashboard model." tone="watch" />
         ) : null}
 
-        {metrics ? (
+        {metrics && programData && scopedProgramData ? (
           <>
-            <HeroSummary metrics={metrics} />
-            <ExecutiveStatusStrip metrics={metrics} />
-
-            <section className="progress-grid" aria-label="FPI program progress indicators">
-              {pillars.map((pillar) => (
-                <ProgressCard pillar={pillar} key={pillar.id} />
-              ))}
-            </section>
-
-            <section className="kpi-grid" aria-label="Key FPI indicators">
-              {metrics.kpis.map((kpi) => (
-                <KpiCard kpi={kpi} key={kpi.label} />
-              ))}
-            </section>
-
-            <section className="dashboard-grid" aria-label="Dashboard operational detail">
-              <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
-              <ReadinessDistribution metrics={metrics} />
-              <ProgramSignals metrics={metrics} />
-              <TopRiskFacilities facilities={metrics.topRiskFacilities} onSelectFacility={setSelectedFacilityId} />
-              <ServiceAreaBuildout activeCapabilityId={activeCapabilityId} onSelectCapability={onSelectCapability} />
-            </section>
+            {isEmptyScope ? (
+              <>
+                <PlaceholderServiceView
+                  title={activeCapability.title}
+                  description={activeCapability.description}
+                  facilities={programData.facilities}
+                  facilityScope={facilityScope}
+                  dashboardMetrics={metrics}
+                  onScopeChange={setFacilityScope}
+                />
+                <DashboardStatePanel
+                  title="No facilities selected"
+                  message="Select one or more stores to view dashboard metrics, service posture, and operational records."
+                  tone="watch"
+                />
+              </>
+            ) : selectedService === SERVICE_IDS.READINESS ? (
+              <ReadinessOverviewView
+                facilities={programData.facilities}
+                facilityScope={facilityScope}
+                dashboardMetrics={metrics}
+                activeCapability={activeCapability}
+                serviceMetrics={serviceMetrics}
+                onScopeChange={setFacilityScope}
+                onFacilitySelect={setSelectedFacilityId}
+                onCapabilitySelect={handleCapabilitySelect}
+              />
+            ) : selectedService === SERVICE_IDS.FIRE_SYSTEM ? (
+              <FireSystemServiceView
+                programData={scopedProgramData}
+                facilities={programData.facilities}
+                dashboardMetrics={metrics}
+                facilityScope={facilityScope}
+                onScopeChange={setFacilityScope}
+                onFacilitySelect={setSelectedFacilityId}
+              />
+            ) : (
+              <PlaceholderServiceView
+                title={activeCapability.title}
+                description={activeCapability.description}
+                facilities={programData.facilities}
+                facilityScope={facilityScope}
+                dashboardMetrics={metrics}
+                onScopeChange={setFacilityScope}
+              />
+            )}
             <FacilityDetailPanel facility={selectedFacility} onClose={() => setSelectedFacilityId(null)} />
           </>
         ) : null}
@@ -233,12 +280,12 @@ function DashboardShell({
 }
 
 function SidebarNav({
-  activeCapabilityId,
-  onSelectCapability,
+  selectedService,
+  onSelectService,
   onBackToLanding,
 }: {
-  activeCapabilityId: string;
-  onSelectCapability: (id: string) => void;
+  selectedService: ServiceId;
+  onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
 }) {
   return (
@@ -253,18 +300,21 @@ function SidebarNav({
 
       <nav aria-label="Program service navigation">
         <p className="nav-label">Program services</p>
-        {capabilities.map((capability) => (
-          <button
-            className={capability.id === activeCapabilityId ? 'nav-item active' : 'nav-item'}
-            key={capability.id}
-            type="button"
-            aria-current={capability.id === activeCapabilityId ? 'page' : undefined}
-            onClick={() => onSelectCapability(capability.id)}
-          >
-            <span>{capability.eyebrow}</span>
-            {capability.title}
-          </button>
-        ))}
+        {capabilities.map((capability) => {
+          const serviceId = serviceIdForCapability(capability.id);
+          return (
+            <button
+              className={serviceId === selectedService ? 'nav-item active' : 'nav-item'}
+              key={capability.id}
+              type="button"
+              aria-current={serviceId === selectedService ? 'page' : undefined}
+              onClick={() => onSelectService(serviceId)}
+            >
+              <span>{capability.eyebrow}</span>
+              {capability.title}
+            </button>
+          );
+        })}
       </nav>
     </aside>
   );
