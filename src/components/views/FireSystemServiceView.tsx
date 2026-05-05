@@ -1,260 +1,200 @@
-import { useMemo, useState } from 'react';
-import { FacilityScopeSelector } from '../FacilityScopeSelector';
-import type { FacilityScopeState } from '../../data/fpiScope';
-import type { FpiDashboardMetrics, FpiProgramData, StatusTone } from '../../data/fpiTypes';
-import type { FireAlarmDashboardModel, FireAlarmKpi, FireAlarmSiteSummary } from '../../data/fireAlarmTypes';
-import { useFireAlarmData } from '../../data/useFireAlarmData';
+import { useEffect, useMemo, useState } from 'react';
+import { FireAlarmSiteDetailPanel } from '../FireAlarmSiteDetailPanel';
+import { LockedScopeSummary } from '../LockedScopeSummary';
+import { DonutChart } from '../charts/DonutChart';
+import { HorizontalBarChart } from '../charts/HorizontalBarChart';
+import { LineTrendChart } from '../charts/LineTrendChart';
+import type { FpiProgramData } from '../../data/fpiTypes';
+import type { FireAlarmProgramData } from '../../data/fireAlarmTypes';
+import { applyFireAlarmScope } from '../../data/fireAlarmScope';
+import {
+  getFireAlarmDashboardModel,
+  riskColor,
+  type FireAlarmDashboardModel,
+  type FireAlarmKpi,
+  type FireAlarmRiskLevel,
+  type FireAlarmSiteDirectoryRow,
+} from '../../data/fireAlarmMetrics';
+import { hasEmptyStoreScope, type StoreScopeState } from '../../data/storeScope';
 
 export type FireSystemServiceViewProps = {
   programData: FpiProgramData;
   facilities: FpiProgramData['facilities'];
-  dashboardMetrics: FpiDashboardMetrics;
-  facilityScope: FacilityScopeState;
-  onScopeChange: (nextScope: FacilityScopeState) => void;
+  fireAlarmData: FireAlarmProgramData | null;
+  fireAlarmLoading: boolean;
+  fireAlarmError: string | null;
+  storeScope: StoreScopeState;
+  onChangeScopeRequest: () => void;
   onFacilitySelect: (facilityId: string) => void;
 };
 
-export function FireSystemServiceView({ facilities, dashboardMetrics, facilityScope, onScopeChange }: FireSystemServiceViewProps) {
-  const fireAlarmState = useFireAlarmData();
+type RiskFilter = 'all' | 'low' | 'medium' | 'high' | 'critical';
+type SortKey = 'riskScore' | 'falseAlarms90Days' | 'openDeficiencies' | 'activeTroubles' | 'nextInspectionDue';
+
+export function FireSystemServiceView({ fireAlarmData, fireAlarmLoading, fireAlarmError, storeScope, onChangeScopeRequest }: FireSystemServiceViewProps) {
   const [siteSearch, setSiteSearch] = useState('');
-  const filteredPrioritySites = useMemo(
-    () => filterSites(fireAlarmState.model?.prioritySites ?? [], siteSearch),
-    [fireAlarmState.model?.prioritySites, siteSearch],
+  const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortKey, setSortKey] = useState<SortKey>('riskScore');
+  const [activeSiteIds, setActiveSiteIds] = useState<string[]>([]);
+  const [selectedSiteId, setSelectedSiteId] = useState<string | null>(null);
+
+  const lockedData = useMemo(() => (fireAlarmData ? applyFireAlarmScope(fireAlarmData, storeScope) : null), [fireAlarmData, storeScope]);
+  const lockedSiteIds = useMemo(() => lockedData?.sites.map((site) => site.id) ?? [], [lockedData]);
+
+  useEffect(() => {
+    setActiveSiteIds(lockedSiteIds);
+    setSelectedSiteId(null);
+  }, [lockedSiteIds.join('|')]);
+
+  const selectedIdsForModel = activeSiteIds.length > 0 ? activeSiteIds : lockedSiteIds;
+  const model = useMemo(
+    () => (lockedData && selectedIdsForModel.length > 0 ? getFireAlarmDashboardModel(lockedData, selectedIdsForModel) : null),
+    [lockedData, selectedIdsForModel.join('|')],
   );
+  const filteredRows = useMemo(() => filterAndSortRows(model?.siteDirectoryRows ?? [], siteSearch, riskFilter, statusFilter, sortKey), [model, siteSearch, riskFilter, statusFilter, sortKey]);
+  const selectedDetail = selectedSiteId && model ? model.siteDetailsById[selectedSiteId] ?? null : null;
+
+  function toggleActiveSite(siteId: string) {
+    setActiveSiteIds((previous) => {
+      const next = previous.includes(siteId) ? previous.filter((id) => id !== siteId) : [...previous, siteId];
+      return next.length > 0 ? next : lockedSiteIds;
+    });
+  }
+
+  function showOnlySite(siteId: string) {
+    setActiveSiteIds([siteId]);
+  }
 
   return (
-    <>
-      <header className="dashboard-header service-view-header">
+    <section className="fire-ops-page" aria-label="Fire Alarm Operations Intelligence dashboard">
+      <header className="fire-ops-header">
         <div>
-          <p className="eyebrow">Service dashboard • Fire alarm handoff dataset</p>
+          <p className="fire-ops-eyebrow">Fire Alarm Operations Intelligence</p>
           <h1>Fire-System Monitoring & Assurance</h1>
-          <p>
-            Assurance view for fire panels, sprinkler supervisory panels, fire/life-safety events, inspection cadence,
-            deficiencies, contractor follow-up, AHJ coordination, and fire-system recommendations.
-          </p>
+          <p>Portfolio health, false-alarm trends, fire panel risk, inspections, deficiencies, service root causes, and PM recommendations from the fire alarm handoff dataset.</p>
         </div>
-        <StatusPill label={fireAlarmState.model?.status ?? 'LOADING'} tone={statusToneForFireStatus(fireAlarmState.model?.status)} />
+        <div className="fire-ops-mode"><span>MODE</span>MOCK DEMO DATA</div>
       </header>
 
-      <FacilityScopeSelector facilities={facilities} scope={facilityScope} metrics={dashboardMetrics} onScopeChange={onScopeChange} />
+      {fireAlarmData ? <LockedScopeSummary sites={fireAlarmData.sites} scope={storeScope} onChangeScope={onChangeScopeRequest} /> : null}
+      {fireAlarmLoading ? <StatePanel title="Loading fire alarm dataset" message="Preparing Fire Alarm Operations Intelligence." /> : null}
+      {fireAlarmError ? <StatePanel title="Fire alarm dataset unavailable" message={fireAlarmError} danger /> : null}
+      {fireAlarmData && hasEmptyStoreScope(storeScope) ? <StatePanel title="No fire-system stores selected" message="Change the locked scope in Executive Protection Readiness to include stores or regions." /> : null}
 
-      {fireAlarmState.loading ? <StatePanel title="Loading fire-system handoff data" message="Preparing the fire alarm operations intelligence export." /> : null}
-      {fireAlarmState.error ? <StatePanel title="Fire-system data is unavailable" message={fireAlarmState.error} tone="critical" /> : null}
-
-      {fireAlarmState.data && fireAlarmState.model ? (
+      {lockedData && model ? (
         <>
-          <section className="fire-dataset-banner panel" aria-label="Fire-system dataset details">
-            <div>
-              <p className="eyebrow">Dataset source</p>
-              <h2>{fireAlarmState.data.description}</h2>
-              <p>
-                Exported {formatDate(fireAlarmState.data.exportDate)} • version {fireAlarmState.data.version}. This view uses the dedicated
-                fire alarm operations JSON while preserving the FPI facility scope selector for the broader command-center context.
-              </p>
-            </div>
-            <div className="mode-pill"><span>SITES</span>{fireAlarmState.data.summary.totalSites}</div>
-          </section>
-
-          <section className="kpi-grid fire-kpi-grid" aria-label="Fire-system monitoring indicators">
-            {fireAlarmState.model.kpis.map((kpi) => <FireKpiCard kpi={kpi} key={kpi.label} />)}
-          </section>
-
-          <section className="dashboard-grid fire-service-grid" aria-label="Fire-system operational detail">
-            <PanelAndMonitoringSection model={fireAlarmState.model} />
-            <RiskAndComplianceSection model={fireAlarmState.model} />
-            <PrioritySitesSection sites={filteredPrioritySites} search={siteSearch} onSearchChange={setSiteSearch} />
-            <DeficienciesSection model={fireAlarmState.model} />
-            <EventsAndAhjSection model={fireAlarmState.model} />
-            <RecommendationsSection model={fireAlarmState.model} />
-          </section>
+          <ScopeToggle sites={lockedData.sites} activeSiteIds={activeSiteIds} onToggleSite={toggleActiveSite} onShowOnlySite={showOnlySite} onShowAll={() => setActiveSiteIds(lockedSiteIds)} />
+          <KpiGrid kpis={model.kpis} />
+          <ChartGrid model={model} />
+          <OperationalTables model={model} onSelectSite={setSelectedSiteId} />
+          <SiteDirectory
+            rows={filteredRows}
+            search={siteSearch}
+            riskFilter={riskFilter}
+            statusFilter={statusFilter}
+            sortKey={sortKey}
+            onSearchChange={setSiteSearch}
+            onRiskFilterChange={setRiskFilter}
+            onStatusFilterChange={setStatusFilter}
+            onSortChange={setSortKey}
+            onSelectSite={setSelectedSiteId}
+          />
+          <FireAlarmSiteDetailPanel detail={selectedDetail} onClose={() => setSelectedSiteId(null)} />
         </>
       ) : null}
-    </>
-  );
-}
-
-function FireKpiCard({ kpi }: { kpi: FireAlarmKpi }) {
-  const isPriority = kpi.tone === 'critical' || kpi.label === 'Open Deficiencies' || kpi.label === 'Active Trouble Sites';
-
-  return (
-    <article className={isPriority ? 'kpi-card priority-kpi' : 'kpi-card'}>
-      <div className="kpi-topline">
-        <span>{kpi.label}</span>
-        <StatusPill label={kpi.status} tone={kpi.tone} />
-      </div>
-      <strong>{kpi.value}</strong>
-      <small>Fire alarm operations export</small>
-      <p>{kpi.caption}</p>
-    </article>
-  );
-}
-
-function PanelAndMonitoringSection({ model }: { model: FireAlarmDashboardModel }) {
-  return (
-    <section className="panel fire-panel-health-panel" aria-labelledby="panel-monitoring-title">
-      <div className="card-heading"><div><p className="eyebrow">Panel / Fire / Device Health</p><h2 id="panel-monitoring-title">Panel and monitoring profile</h2></div></div>
-      <div className="service-meta-grid">
-        <div><span>High-risk sites</span><strong>{model.highRiskSites}</strong></div>
-        <div><span>Active trouble sites</span><strong>{model.activeTroubleSites}</strong></div>
-        <div><span>Overdue inspections</span><strong>{model.overdueInspections}</strong></div>
-      </div>
-      <BreakdownList title="Panel type distribution" items={model.panelTypeBreakdown} />
-      <BreakdownList title="Monitoring type distribution" items={model.monitoringTypeBreakdown} />
     </section>
   );
 }
 
-function RiskAndComplianceSection({ model }: { model: FireAlarmDashboardModel }) {
+function ScopeToggle({ sites, activeSiteIds, onToggleSite, onShowOnlySite, onShowAll }: { sites: FireAlarmProgramData['sites']; activeSiteIds: string[]; onToggleSite: (siteId: string) => void; onShowOnlySite: (siteId: string) => void; onShowAll: () => void }) {
+  const activeSet = new Set(activeSiteIds);
   return (
-    <section className="panel fire-signals-panel" aria-labelledby="risk-compliance-title">
-      <div className="card-heading"><div><p className="eyebrow">Risk & Compliance</p><h2 id="risk-compliance-title">Compliance posture</h2></div><StatusPill label={model.status} tone={statusToneForFireStatus(model.status)} /></div>
-      <div className="service-meta-grid">
-        <div><span>Open deficiencies</span><strong>{model.openDeficiencies}</strong></div>
-        <div><span>False alarms 90 days</span><strong>{model.falseAlarms90Days}</strong></div>
-        <div><span>AHJ follow-up sites</span><strong>{model.ahjCoordination.length}</strong></div>
-      </div>
-      <BreakdownList title="Compliance status" items={model.complianceBreakdown} />
-      <BreakdownList title="Contractor assignment" items={model.contractorBreakdown} />
-    </section>
-  );
-}
-
-function PrioritySitesSection({ sites, search, onSearchChange }: { sites: FireAlarmSiteSummary[]; search: string; onSearchChange: (value: string) => void }) {
-  return (
-    <section className="panel fire-facilities-panel" aria-labelledby="priority-fire-sites-title">
-      <div className="card-heading"><div><p className="eyebrow">Fire-System Site Table</p><h2 id="priority-fire-sites-title">Priority sites requiring assurance review</h2></div></div>
-      <label className="facility-search-label" htmlFor="fire-site-search">Search fire-system sites</label>
-      <input
-        id="fire-site-search"
-        className="facility-search-input"
-        type="search"
-        value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
-        placeholder="Search by site, ID, city, state, contractor, AHJ, or panel type"
-      />
-      <div className="top-risk-list fire-site-list">
-        {sites.length > 0 ? sites.map((site) => (
-          <article className="top-risk-item fire-site-card" key={site.id}>
-            <div>
-              <strong>{site.name}</strong>
-              <span>{site.id} • {site.city}, {site.state} • {site.region}</span>
-            </div>
-            <StatusPill label={site.complianceStatus.toUpperCase()} tone={toneForCompliance(site.complianceStatus)} />
-            <p>{site.panelType} · {site.monitoringType} · risk score {site.riskScore}</p>
-            <small>{site.openDeficiencies} deficiencies · {site.activeTroubles} troubles · {site.falseAlarms90Days} false alarms · {site.primaryConcern}</small>
-            <small>Contractor: {site.contractor} • AHJ: {site.ahj}</small>
-          </article>
-        )) : <p className="empty-records">No fire-system sites match the current search.</p>}
-      </div>
-    </section>
-  );
-}
-
-function DeficienciesSection({ model }: { model: FireAlarmDashboardModel }) {
-  return (
-    <section className="panel fire-exceptions-panel" aria-labelledby="deficiencies-title">
-      <div className="card-heading"><div><p className="eyebrow">Fire-System Critical Exceptions</p><h2 id="deficiencies-title">Open deficiencies</h2></div></div>
-      <RecordList emptyText="No open deficiencies in the fire alarm export.">
-        {model.openDeficiencyRecords.map((deficiency) => (
-          <article className="facility-record" key={deficiency.id}>
-            <strong>{deficiency.finding ?? deficiency.category ?? 'Fire-system deficiency'}</strong>
-            <span>{deficiency.siteId} • {deficiency.category ?? 'Category N/A'} • {deficiency.status ?? 'Status N/A'}</span>
-            <small>{deficiency.severity ?? 'Unknown'} severity • due {formatDate(deficiency.dueDate)}</small>
-          </article>
+    <section className="fire-ops-card fire-ops-selection-card">
+      <div><p className="fire-ops-eyebrow">Current Fire-System Data Toggle</p><h2>Viewing {activeSiteIds.length} of {sites.length} locked stores</h2><p>Toggle stores on/off inside the locked scope, or use Solo to drill into one selected store without changing the global Executive Readiness lock.</p></div>
+      <div className="fire-ops-scope-actions"><button type="button" onClick={onShowAll}>Show all locked stores</button></div>
+      <div className="fire-ops-site-toggle-list">
+        {sites.map((site) => (
+          <div className={activeSet.has(site.id) ? 'fire-ops-site-toggle active' : 'fire-ops-site-toggle'} key={site.id}>
+            <button type="button" onClick={() => onToggleSite(site.id)}>{site.id} · {site.name}<span>{site.city}, {site.state} • Risk {site.riskScore}</span></button>
+            <button type="button" onClick={() => onShowOnlySite(site.id)}>Solo</button>
+          </div>
         ))}
-      </RecordList>
+      </div>
     </section>
   );
 }
 
-function EventsAndAhjSection({ model }: { model: FireAlarmDashboardModel }) {
+function KpiGrid({ kpis }: { kpis: FireAlarmKpi[] }) {
+  return <section className="fire-ops-kpi-grid" aria-label="Fire alarm KPI cards">{kpis.map((kpi) => <article className={`fire-ops-kpi tone-${kpi.tone}`} key={kpi.label}><span>{kpi.label}</span><strong>{kpi.value}</strong>{kpi.actionLabel ? <small>{kpi.actionLabel}</small> : null}</article>)}</section>;
+}
+
+function ChartGrid({ model }: { model: FireAlarmDashboardModel }) {
   return (
-    <section className="panel fire-workqueue-panel" aria-labelledby="events-ahj-title">
-      <div className="card-heading"><div><p className="eyebrow">Fire & Life-Safety Events / AHJ Coordination</p><h2 id="events-ahj-title">Recent events and coordination needs</h2></div></div>
-      <RecordList emptyText="No recent fire-system events in the export.">
-        {model.recentEvents.slice(0, 5).map((event) => (
-          <article className="facility-record" key={event.id}>
-            <strong>{event.type ?? 'Fire-system event'}</strong>
-            <span>{event.siteId} • {event.area ?? 'Area N/A'} • {event.rootCause ?? 'Root cause N/A'}</span>
-            <small>{formatDate(event.date)} • acknowledge {event.timeToAcknowledge ?? 'N/A'} min • restore {event.timeToRestore ?? 'N/A'} min</small>
-          </article>
-        ))}
-      </RecordList>
-      <BreakdownList title="AHJ follow-up candidates" items={model.ahjCoordination.slice(0, 5).map((site) => ({ label: `${site.name} / ${site.ahj}`, count: site.riskScore }))} />
+    <section className="fire-ops-chart-grid" aria-label="Fire alarm analytics charts">
+      <ChartCard title="False Alarms by Month" subtitle="False/Nuisance events trend"><LineTrendChart data={model.falseAlarmsByMonth} color="#dc2626" /></ChartCard>
+      <ChartCard title="Top 10 Sites by False Alarms" subtitle="Trailing 90 days"><HorizontalBarChart data={model.topSitesByFalseAlarms} /></ChartCard>
+      <ChartCard title="Sites by Risk Level" subtitle="R/Y/G portfolio posture"><DonutChart data={model.sitesByRiskLevel} /></ChartCard>
+      <ChartCard title="Service Tickets by Root Cause" subtitle="Service record analytics"><HorizontalBarChart data={model.serviceTicketsByRootCause} /></ChartCard>
+      <ChartCard title="Open Deficiencies by Severity" subtitle="Remediation pressure"><HorizontalBarChart data={model.deficienciesBySeverity} /></ChartCard>
+      <ChartCard title="Inspection Compliance Trend" subtitle="Inspection/report volume"><LineTrendChart data={model.inspectionCompliance} color="#2563eb" /></ChartCard>
     </section>
   );
 }
 
-function RecommendationsSection({ model }: { model: FireAlarmDashboardModel }) {
+function ChartCard({ title, subtitle, children }: { title: string; subtitle: string; children: any }) {
+  return <section className="fire-ops-card fire-ops-chart-card"><div className="fire-ops-card-heading"><div><p className="fire-ops-eyebrow">{subtitle}</p><h2>{title}</h2></div></div>{children}</section>;
+}
+
+function OperationalTables({ model, onSelectSite }: { model: FireAlarmDashboardModel; onSelectSite: (siteId: string) => void }) {
   return (
-    <section className="panel fire-remediation-panel" aria-labelledby="recommendations-title">
-      <div className="card-heading"><div><p className="eyebrow">Remediation Status</p><h2 id="recommendations-title">Recommendations and follow-up actions</h2></div></div>
-      <RecordList emptyText="No recommendations in the fire alarm export.">
-        {model.recommendations.map((recommendation) => (
-          <article className="facility-record" key={recommendation.id}>
-            <strong>{recommendation.title ?? recommendation.category ?? 'Fire-system recommendation'}</strong>
-            <span>{recommendation.siteId} • {recommendation.category ?? 'Category N/A'} • confidence {recommendation.confidence ?? 'N/A'}</span>
-            <small>{recommendation.severity ?? 'Unknown'} severity • due {formatDate(recommendation.suggestedDue)}</small>
-          </article>
-        ))}
-      </RecordList>
+    <section className="fire-ops-table-grid" aria-label="Operational fire alarm tables">
+      <SummaryList title="High Risk Sites" rows={model.topRiskSites} metric="riskScore" onSelectSite={onSelectSite} />
+      <SummaryList title="Active Trouble Sites" rows={model.troubledSites} metric="activeTroubles" onSelectSite={onSelectSite} />
+      <SummaryList title="Open Deficiencies" rows={model.openDeficiencySites} metric="openDeficiencies" onSelectSite={onSelectSite} />
+      <SummaryList title="PM Recommendations" rows={model.pmRecommendationSites} metric="falseAlarms90Days" onSelectSite={onSelectSite} />
     </section>
   );
 }
 
-function BreakdownList({ title, items }: { title: string; items: Array<{ label: string; count: number }> }) {
+function SummaryList({ title, rows, metric, onSelectSite }: { title: string; rows: Array<{ siteId: string; siteName: string; city: string; state: string; riskLevel: FireAlarmRiskLevel; riskScore: number; activeTroubles: number; openDeficiencies: number; falseAlarms90Days: number }>; metric: 'riskScore' | 'activeTroubles' | 'openDeficiencies' | 'falseAlarms90Days'; onSelectSite: (siteId: string) => void }) {
   return (
-    <div className="fire-breakdown">
-      <h3>{title}</h3>
-      {items.length > 0 ? items.map((item) => (
-        <div key={item.label}><span>{item.label}</span><strong>{item.count}</strong></div>
-      )) : <p className="empty-records">No breakdown records available.</p>}
-    </div>
-  );
-}
-
-function RecordList({ emptyText, children }: { emptyText: string; children: any }) {
-  const records = Array.isArray(children) ? children.filter(Boolean) : children ? [children] : [];
-  return records.length > 0 ? <div className="facility-record-list fire-record-list">{children}</div> : <p className="empty-records">{emptyText}</p>;
-}
-
-function StatePanel({ title, message, tone = 'stable' }: { title: string; message: string; tone?: StatusTone }) {
-  return (
-    <section className="panel dashboard-state-panel" role={tone === 'critical' ? 'alert' : 'status'}>
-      <div className="card-heading"><div><p className="eyebrow">Fire-system data</p><h2>{title}</h2></div><StatusPill label={tone === 'critical' ? 'ERROR' : 'STATUS'} tone={tone} /></div>
-      <p>{message}</p>
+    <section className="fire-ops-card fire-ops-list-card"><div className="fire-ops-card-heading"><h2>{title}</h2></div>
+      <div className="fire-ops-summary-list">{rows.slice(0, 8).map((row) => <button type="button" key={row.siteId} onClick={() => onSelectSite(row.siteId)}><span className="risk-dot" style={{ background: riskColor(row.riskLevel) }} /><div><strong>{row.siteName}</strong><small>{row.siteId} • {row.city}, {row.state}</small></div><em>{row[metric]}</em></button>)}{rows.length === 0 ? <p className="fire-ops-empty">No records in this selection.</p> : null}</div>
     </section>
   );
 }
 
-function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
-  return <span className={`status-pill status-${tone}`}>{label}</span>;
+function SiteDirectory({ rows, search, riskFilter, statusFilter, sortKey, onSearchChange, onRiskFilterChange, onStatusFilterChange, onSortChange, onSelectSite }: { rows: FireAlarmSiteDirectoryRow[]; search: string; riskFilter: RiskFilter; statusFilter: string; sortKey: SortKey; onSearchChange: (value: string) => void; onRiskFilterChange: (value: RiskFilter) => void; onStatusFilterChange: (value: string) => void; onSortChange: (value: SortKey) => void; onSelectSite: (siteId: string) => void }) {
+  return (
+    <section className="fire-ops-card fire-ops-directory-card">
+      <div className="fire-ops-directory-header"><div><p className="fire-ops-eyebrow">Searchable Site Directory</p><h2>Fire Alarm Portfolio</h2></div><strong>{rows.length} sites</strong></div>
+      <div className="fire-ops-filters">
+        <input type="search" value={search} onChange={(event) => onSearchChange(event.target.value)} placeholder="Search by site, ID, city, state, region, panel, contractor, or AHJ" />
+        <select value={riskFilter} onChange={(event) => onRiskFilterChange(event.target.value as RiskFilter)}><option value="all">All risk levels</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option></select>
+        <select value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)}><option value="all">All statuses</option><option value="normal">Normal</option><option value="operational">Operational</option><option value="remodel">Remodel</option></select>
+        <select value={sortKey} onChange={(event) => onSortChange(event.target.value as SortKey)}><option value="riskScore">Sort by risk</option><option value="falseAlarms90Days">Sort by false alarms</option><option value="openDeficiencies">Sort by deficiencies</option><option value="activeTroubles">Sort by troubles</option><option value="nextInspectionDue">Sort by inspection due</option></select>
+      </div>
+      <div className="fire-ops-table-wrap"><table className="fire-ops-table"><thead><tr><th>Site ID</th><th>Site Name</th><th>Location</th><th>Panel / Monitoring</th><th>Risk</th><th>Troubles</th><th>Deficiencies</th><th>False Alarms</th><th>Next Inspection</th><th>Status</th></tr></thead><tbody>{rows.map((row) => <tr key={row.siteId} className={`risk-${row.riskLevel.toLowerCase()}`} onClick={() => onSelectSite(row.siteId)}><td>{row.siteId}</td><td><strong>{row.siteName}</strong><small>{row.contractor}</small></td><td>{row.city}, {row.state}<small>{row.region}</small></td><td>{row.panelType}<small>{row.monitoringType}</small></td><td><RiskBadge level={row.riskLevel} score={row.riskScore} /></td><td>{row.activeTroubles}</td><td>{row.openDeficiencies}</td><td>{row.falseAlarms90Days}</td><td>{formatDate(row.nextInspectionDue)}</td><td>{row.status}</td></tr>)}</tbody></table>{rows.length === 0 ? <p className="fire-ops-empty">No sites match the current filters.</p> : null}</div>
+    </section>
+  );
 }
 
-function statusToneForFireStatus(status?: string): StatusTone {
-  if (status === 'ESCALATED') return 'critical';
-  if (status === 'WATCH') return 'watch';
-  if (status === 'READY') return 'ready';
-  return 'stable';
+function RiskBadge({ level, score }: { level: FireAlarmRiskLevel; score: number }) {
+  return <span className="fire-risk-badge" style={{ color: riskColor(level), borderColor: riskColor(level), background: `${riskColor(level)}18` }}>{level} · {score}</span>;
 }
 
-function toneForCompliance(status: string): StatusTone {
-  const normalized = status.toLowerCase();
-  if (normalized.includes('normal') || normalized.includes('compliant')) return 'ready';
-  if (normalized.includes('critical') || normalized.includes('overdue')) return 'critical';
-  return 'watch';
+function StatePanel({ title, message, danger = false }: { title: string; message: string; danger?: boolean }) {
+  return <section className="fire-ops-card fire-ops-state"><h2>{title}</h2><p className={danger ? 'danger' : ''}>{message}</p></section>;
 }
 
-function filterSites(sites: FireAlarmSiteSummary[], search: string): FireAlarmSiteSummary[] {
+function filterAndSortRows(rows: FireAlarmSiteDirectoryRow[], search: string, riskFilter: RiskFilter, statusFilter: string, sortKey: SortKey): FireAlarmSiteDirectoryRow[] {
   const normalized = search.trim().toLowerCase();
-  if (!normalized) return sites;
-
-  return sites.filter((site) =>
-    [site.id, site.name, site.city, site.state, site.region, site.panelType, site.monitoringType, site.contractor, site.ahj, site.complianceStatus]
-      .join(' ')
-      .toLowerCase()
-      .includes(normalized),
-  );
+  return rows
+    .filter((row) => riskFilter === 'all' || row.riskLevel.toLowerCase() === riskFilter)
+    .filter((row) => statusFilter === 'all' || `${row.status} ${row.complianceStatus}`.toLowerCase().includes(statusFilter))
+    .filter((row) => !normalized || [row.siteId, row.siteName, row.city, row.state, row.region, row.panelType, row.monitoringType, row.contractor, row.ahj].join(' ').toLowerCase().includes(normalized))
+    .sort((a, b) => sortKey === 'nextInspectionDue' ? Date.parse(a.nextInspectionDue) - Date.parse(b.nextInspectionDue) : Number(b[sortKey]) - Number(a[sortKey]));
 }
 
 function formatDate(value?: string): string {

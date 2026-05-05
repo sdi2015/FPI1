@@ -153,6 +153,26 @@ export type FireAlarmSite = Required<Pick<FireAlarmRawSite, 'id' | 'name' | 'cit
   riskScore: number;
 };
 
+export type FireAlarmData = {
+  sites: FireAlarmSite[];
+  devices: FireAlarmRawDevice[];
+  events: FireAlarmRawEvent[];
+  inspections: FireAlarmRawInspection[];
+  serviceRecords: FireAlarmRawServiceRecord[];
+  deficiencies: FireAlarmRawDeficiency[];
+  complianceReports: FireAlarmRawComplianceReport[];
+  recommendations?: FireAlarmRawRecommendation[];
+};
+
+export type FireAlarmSummary = Required<FireAlarmRawSummary>;
+export type FireAlarmExport = FireAlarmRawExport;
+export type FireAlarmDevice = FireAlarmRawDevice;
+export type FireAlarmEvent = FireAlarmRawEvent;
+export type FireAlarmInspection = FireAlarmRawInspection;
+export type FireAlarmServiceRecord = FireAlarmRawServiceRecord;
+export type FireAlarmDeficiency = FireAlarmRawDeficiency;
+export type FireAlarmComplianceReport = FireAlarmRawComplianceReport;
+
 export type FireAlarmProgramData = {
   exportDate: string;
   version: string;

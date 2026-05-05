@@ -6,11 +6,13 @@ import { ReadinessOverviewView } from './components/views/ReadinessOverviewView'
 import { getFacilityDetailModel } from './data/fpiSelectors';
 import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
 import { applyFacilityScope, createAllFacilitiesScope, hasEmptySelectedScope, isFacilityInScope, type FacilityScopeState } from './data/fpiScope';
+import { createAllStoresScope, type StoreScopeState } from './data/storeScope';
 import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
 import { capabilities, pillars, type Capability, type Pillar } from './data/program';
 import { capabilityIdForService, serviceIdForCapability, SERVICE_IDS, type ServiceId } from './data/serviceIds';
 import type { FpiDashboardMetrics, FpiKpi, FpiTopRiskFacility, StatusTone } from './data/fpiTypes';
 import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
+import { useFireAlarmData } from './data/useFireAlarmData';
 
 type Screen = 'landing' | 'dashboard';
 
@@ -181,6 +183,8 @@ function DashboardShell({
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [facilityScope, setFacilityScope] = useState<FacilityScopeState>(createAllFacilitiesScope());
+  const [storeScope, setStoreScope] = useState<StoreScopeState>(createAllStoresScope());
+  const fireAlarmState = useFireAlarmData();
   const globalMetrics = fpiState.data?.dashboardMetrics;
   const programData = fpiState.data?.programData;
   const scopedProgramData = useMemo(
@@ -212,6 +216,10 @@ function DashboardShell({
     onSelectService(serviceIdForCapability(capabilityId));
   }
 
+  function handleChangeStoreScopeRequest() {
+    onSelectService(SERVICE_IDS.READINESS);
+  }
+
   return (
     <div className="dashboard-shell">
       <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} />
@@ -231,9 +239,9 @@ function DashboardShell({
                   title={activeCapability.title}
                   description={activeCapability.description}
                   facilities={programData.facilities}
-                  facilityScope={facilityScope}
-                  dashboardMetrics={metrics}
-                  onScopeChange={setFacilityScope}
+                  fireSites={fireAlarmState.data?.sites ?? []}
+                  storeScope={storeScope}
+                  onChangeScopeRequest={handleChangeStoreScopeRequest}
                 />
                 <DashboardStatePanel
                   title="No facilities selected"
@@ -244,21 +252,24 @@ function DashboardShell({
             ) : selectedService === SERVICE_IDS.READINESS ? (
               <ReadinessOverviewView
                 facilities={programData.facilities}
-                facilityScope={facilityScope}
+                fireSites={fireAlarmState.data?.sites ?? []}
+                storeScope={storeScope}
                 dashboardMetrics={metrics}
                 activeCapability={activeCapability}
                 serviceMetrics={serviceMetrics}
-                onScopeChange={setFacilityScope}
+                onStoreScopeChange={setStoreScope}
                 onFacilitySelect={setSelectedFacilityId}
                 onCapabilitySelect={handleCapabilitySelect}
               />
             ) : selectedService === SERVICE_IDS.FIRE_SYSTEM ? (
               <FireSystemServiceView
                 programData={scopedProgramData}
-                facilities={programData.facilities}
-                dashboardMetrics={metrics}
-                facilityScope={facilityScope}
-                onScopeChange={setFacilityScope}
+                      facilities={programData.facilities}
+                fireAlarmData={fireAlarmState.data}
+                fireAlarmLoading={fireAlarmState.loading}
+                fireAlarmError={fireAlarmState.error}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
                 onFacilitySelect={setSelectedFacilityId}
               />
             ) : (
@@ -266,9 +277,9 @@ function DashboardShell({
                 title={activeCapability.title}
                 description={activeCapability.description}
                 facilities={programData.facilities}
-                facilityScope={facilityScope}
-                dashboardMetrics={metrics}
-                onScopeChange={setFacilityScope}
+                fireSites={fireAlarmState.data?.sites ?? []}
+                storeScope={storeScope}
+                onChangeScopeRequest={handleChangeStoreScopeRequest}
               />
             )}
             <FacilityDetailPanel facility={selectedFacility} onClose={() => setSelectedFacilityId(null)} />

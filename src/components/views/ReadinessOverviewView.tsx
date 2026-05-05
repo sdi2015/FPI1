@@ -1,34 +1,37 @@
-import { FacilityScopeSelector } from '../FacilityScopeSelector';
+import { StoreScopeSelector } from '../StoreScopeSelector';
 import { capabilities, pillars, type Capability, type Pillar } from '../../data/program';
-import type { FacilityScopeState } from '../../data/fpiScope';
 import type { FpiDashboardMetrics, FpiFacility, FpiKpi, FpiTopRiskFacility, StatusTone } from '../../data/fpiTypes';
 import type { FpiServiceMetricsModel } from '../../data/fpiServiceMetrics';
+import type { FireAlarmSite } from '../../data/fireAlarmTypes';
+import type { StoreScopeState } from '../../data/storeScope';
 
 export type ReadinessOverviewViewProps = {
   facilities: FpiFacility[];
-  facilityScope: FacilityScopeState;
+  fireSites: FireAlarmSite[];
+  storeScope: StoreScopeState;
   dashboardMetrics: FpiDashboardMetrics;
   activeCapability: Capability;
   serviceMetrics: FpiServiceMetricsModel | null;
-  onScopeChange: (nextScope: FacilityScopeState) => void;
+  onStoreScopeChange: (nextScope: StoreScopeState) => void;
   onFacilitySelect: (facilityId: string) => void;
   onCapabilitySelect: (capabilityId: string) => void;
 };
 
 export function ReadinessOverviewView({
   facilities,
-  facilityScope,
+  fireSites,
+  storeScope,
   dashboardMetrics,
   activeCapability,
   serviceMetrics,
-  onScopeChange,
+  onStoreScopeChange,
   onFacilitySelect,
   onCapabilitySelect,
 }: ReadinessOverviewViewProps) {
   return (
     <>
       <HeroSummary metrics={dashboardMetrics} />
-      <FacilityScopeSelector facilities={facilities} scope={facilityScope} metrics={dashboardMetrics} onScopeChange={onScopeChange} />
+      <StoreScopeSelector sites={fireSites} scope={storeScope} onScopeChange={onStoreScopeChange} />
       <ExecutiveStatusStrip metrics={dashboardMetrics} />
 
       <section className="progress-grid" aria-label="FPI program progress indicators">

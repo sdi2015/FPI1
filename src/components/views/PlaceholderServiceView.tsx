@@ -1,23 +1,23 @@
-import { FacilityScopeSelector } from '../FacilityScopeSelector';
-import type { FacilityScopeState } from '../../data/fpiScope';
-import type { FpiDashboardMetrics, FpiFacility, StatusTone } from '../../data/fpiTypes';
+import { LockedScopeSummary } from '../LockedScopeSummary';
+import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
+import type { FireAlarmSite } from '../../data/fireAlarmTypes';
+import type { StoreScopeState } from '../../data/storeScope';
 
 export type PlaceholderServiceViewProps = {
   title: string;
   description: string;
   facilities: FpiFacility[];
-  facilityScope: FacilityScopeState;
-  dashboardMetrics: FpiDashboardMetrics;
-  onScopeChange: (nextScope: FacilityScopeState) => void;
+  fireSites: FireAlarmSite[];
+  storeScope: StoreScopeState;
+  onChangeScopeRequest: () => void;
 };
 
 export function PlaceholderServiceView({
   title,
   description,
-  facilities,
-  facilityScope,
-  dashboardMetrics,
-  onScopeChange,
+  fireSites,
+  storeScope,
+  onChangeScopeRequest,
 }: PlaceholderServiceViewProps) {
   return (
     <>
@@ -29,7 +29,7 @@ export function PlaceholderServiceView({
         </div>
         <StatusPill label="BUILDOUT" tone="buildout" />
       </header>
-      <FacilityScopeSelector facilities={facilities} scope={facilityScope} metrics={dashboardMetrics} onScopeChange={onScopeChange} />
+      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       <section className="panel placeholder-service-panel" aria-labelledby="placeholder-service-title">
         <div className="card-heading">
           <div>
@@ -38,7 +38,7 @@ export function PlaceholderServiceView({
           </div>
         </div>
         <p>
-          The current facility scope is preserved, and this page is ready for service-specific KPIs, exception lists,
+          The locked store/region scope is preserved from Executive Protection Readiness, and this page is ready for service-specific KPIs, exception lists,
           work queues, partner intelligence, and operational evidence in a later build.
         </p>
       </section>

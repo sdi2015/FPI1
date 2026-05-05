@@ -92,8 +92,7 @@ export function buildFireAlarmDashboardModel(data: FireAlarmProgramData): FireAl
           b.criticalDeficiencies - a.criticalDeficiencies ||
           b.falseAlarms90Days - a.falseAlarms90Days ||
           b.riskScore - a.riskScore,
-      )
-      .slice(0, 10),
+      ),
     recentEvents: [...data.events].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 8),
     openDeficiencyRecords: data.deficiencies.filter((deficiency) => isOpenStatus(deficiency.status)).slice(0, 8),
     recommendations: [...data.recommendations]

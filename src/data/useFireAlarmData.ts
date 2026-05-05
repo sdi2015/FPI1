@@ -9,11 +9,12 @@ export type FireAlarmDataState = {
   loading: boolean;
   error: string | null;
   data: FireAlarmProgramData | null;
+  fireAlarmData: FireAlarmProgramData | null;
   model: FireAlarmDashboardModel | null;
 };
 
 export function useFireAlarmData(): FireAlarmDataState {
-  const [state, setState] = useState<FireAlarmDataState>({ loading: true, error: null, data: null, model: null });
+  const [state, setState] = useState<FireAlarmDataState>({ loading: true, error: null, data: null, fireAlarmData: null, model: null });
 
   useEffect(() => {
     let ignore = false;
@@ -30,12 +31,12 @@ export function useFireAlarmData(): FireAlarmDataState {
         const model = buildFireAlarmDashboardModel(data);
 
         if (!ignore) {
-          setState({ loading: false, error: null, data, model });
+          setState({ loading: false, error: null, data, fireAlarmData: data, model });
         }
       } catch (error) {
         const message = error instanceof Error ? `${FALLBACK_ERROR} ${error.message}` : FALLBACK_ERROR;
         if (!ignore) {
-          setState({ loading: false, error: message, data: null, model: null });
+          setState({ loading: false, error: message, data: null, fireAlarmData: null, model: null });
         }
       }
     }
