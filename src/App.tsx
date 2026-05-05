@@ -1,18 +1,36 @@
 import { useMemo, useState } from 'react';
-import { activity, capabilities, kpis, pillars } from './data/program';
+import { activity, capabilities, kpis, pillars, type Capability, type Kpi, type Pillar } from './data/program';
 
 type Screen = 'landing' | 'dashboard';
+type StatusTone = 'ready' | 'watch' | 'buildout' | 'critical' | 'stable' | 'track' | 'expanding';
 
 const readinessBands = [
-  { label: 'Verified', value: 44, color: '#4DBDF5' },
-  { label: 'In review', value: 28, color: '#A9DDF7' },
-  { label: 'Needs action', value: 18, color: '#FFC220' },
-  { label: 'Escalated', value: 10, color: '#FFFFFF' },
+  { label: 'Verified', value: 44, color: '#4DBDF5', tone: 'ready', note: '+6% this cycle' },
+  { label: 'In review', value: 28, color: '#A9DDF7', tone: 'stable', note: 'verification queue' },
+  { label: 'Needs action', value: 18, color: '#FFC220', tone: 'watch', note: 'owner review' },
+  { label: 'Escalated', value: 10, color: '#FFFFFF', tone: 'critical', note: 'governance track' },
 ];
+
+const executiveStatus = [
+  { label: 'Overall Status', value: 'WATCH', tone: 'watch' as const, trend: 'program posture' },
+  { label: 'Facilities Profiled', value: '1,284', tone: 'expanding' as const, trend: '+128 this cycle' },
+  { label: 'Critical Exceptions', value: '37', tone: 'watch' as const, trend: '-11 WoW' },
+  { label: 'Monitoring Uptime', value: '98.6%', tone: 'stable' as const, trend: '+0.8 pts' },
+  { label: 'Remediation SLA', value: '91%', tone: 'track' as const, trend: 'on track' },
+];
+
+const kpiStatusByLabel: Record<string, { status: string; tone: StatusTone; caption: string }> = {
+  'Facilities profiled': { status: 'EXPANDING', tone: 'expanding', caption: 'Coverage increasing across profiled facilities' },
+  'Critical exceptions': { status: 'WATCH', tone: 'watch', caption: 'Priority exceptions remain under active governance' },
+  'Monitoring uptime': { status: 'STABLE', tone: 'stable', caption: 'Monitoring availability is within expected range' },
+  'Remediation SLAs': { status: 'ON TRACK', tone: 'track', caption: 'Remediation performance is meeting target' },
+};
+
+const defaultCapabilityId = 'external-coordination';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('landing');
-  const [activeCapabilityId, setActiveCapabilityId] = useState(capabilities[0].id);
+  const [activeCapabilityId, setActiveCapabilityId] = useState(defaultCapabilityId);
 
   const activeCapability = useMemo(
     () => capabilities.find((capability) => capability.id === activeCapabilityId) ?? capabilities[0],
@@ -21,7 +39,7 @@ function App() {
 
   if (screen === 'dashboard') {
     return (
-      <Dashboard
+      <DashboardShell
         activeCapabilityId={activeCapabilityId}
         onSelectCapability={setActiveCapabilityId}
         onBackToLanding={() => setScreen('landing')}
@@ -124,7 +142,14 @@ function Landing({ onEnter }: { onEnter: () => void }) {
                 <h3>{pillar.title}</h3>
                 <p>{pillar.description}</p>
               </div>
-              <div className="progress-track" aria-label={`${pillar.title} ${pillar.progress}%`}>
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-valuenow={pillar.progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${pillar.title} ${pillar.progress}%`}
+              >
                 <span style={{ width: `${pillar.progress}%` }} />
               </div>
             </article>
@@ -151,168 +176,324 @@ function Landing({ onEnter }: { onEnter: () => void }) {
   );
 }
 
-function Dashboard({
+function DashboardShell({
   activeCapabilityId,
   activeCapability,
   onSelectCapability,
   onBackToLanding,
 }: {
   activeCapabilityId: string;
-  activeCapability: (typeof capabilities)[number];
+  activeCapability: Capability;
   onSelectCapability: (id: string) => void;
   onBackToLanding: () => void;
 }) {
   return (
-    <main className="dashboard-shell">
-      <aside className="sidebar" aria-label="FPI dashboard navigation">
-        <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
-          <span className="spark-mark">✦</span>
-          <span>
-            FPI
-            <small>Command Center</small>
-          </span>
-        </button>
+    <div className="dashboard-shell">
+      <SidebarNav
+        activeCapabilityId={activeCapabilityId}
+        onSelectCapability={onSelectCapability}
+        onBackToLanding={onBackToLanding}
+      />
 
-        <nav>
-          <p className="nav-label">Program services</p>
-          {capabilities.map((capability) => (
-            <button
-              className={capability.id === activeCapabilityId ? 'nav-item active' : 'nav-item'}
-              key={capability.id}
-              type="button"
-              onClick={() => onSelectCapability(capability.id)}
-            >
-              <span>{capability.eyebrow}</span>
-              {capability.title}
-            </button>
-          ))}
-        </nav>
-      </aside>
+      <main className="dashboard-content" aria-label="FPI facility protection dashboard">
+        <HeroSummary />
+        <ExecutiveStatusStrip />
 
-      <section className="dashboard-content">
-        <header className="dashboard-header">
-          <div>
-            <p className="eyebrow">FPI dashboard shell</p>
-            <h1>Facility protection posture overview</h1>
-            <p>
-              Mock-only operating view for readiness, monitoring assurance, posture, threat scoring, remediation, and
-              coordination governance.
-            </p>
-          </div>
-          <div className="header-badge">
-            <span>Mode</span>
-            Synthetic data
-          </div>
-        </header>
-
-        <section className="command-ribbon" aria-label="FPI operating layers">
+        <section className="progress-grid" aria-label="FPI program progress indicators">
           {pillars.map((pillar) => (
-            <article key={pillar.id}>
-              <span>{pillar.signal}</span>
-              <strong>{pillar.title}</strong>
-              <div className="micro-track"><i style={{ width: `${pillar.progress}%` }} /></div>
-            </article>
+            <ProgressCard pillar={pillar} key={pillar.id} />
           ))}
         </section>
 
         <section className="kpi-grid" aria-label="Key FPI indicators">
           {kpis.map((kpi) => (
-            <article className={`kpi-card tone-${kpi.tone}`} key={kpi.label}>
-              <span>{kpi.label}</span>
-              <strong>{kpi.value}</strong>
-              <small>{kpi.trend}</small>
-            </article>
+            <KpiCard kpi={kpi} key={kpi.label} />
           ))}
         </section>
 
-        <section className="dashboard-grid">
-          <article className="panel active-service-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Selected service</p>
-                <h2>{activeCapability.title}</h2>
-              </div>
-              <span className={`status-pill status-${activeCapability.status.toLowerCase()}`}>{activeCapability.status}</span>
-            </div>
-            <p>{activeCapability.description}</p>
-            <div className="service-meta-grid">
-              <div>
-                <span>Primary metric</span>
-                <strong>{activeCapability.metric}</strong>
-              </div>
-              <div>
-                <span>Accountable owner</span>
-                <strong>{activeCapability.owner}</strong>
-              </div>
-              <div>
-                <span>Next build</span>
-                <strong>Detail workflow</strong>
-              </div>
-            </div>
-          </article>
-
-          <article className="panel readiness-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Verification health</p>
-                <h2>Readiness distribution</h2>
-              </div>
-            </div>
-            <div className="bar-stack" aria-label="Readiness distribution by status">
-              {readinessBands.map((band) => (
-                <span key={band.label} style={{ width: `${band.value}%`, background: band.color }} title={band.label} />
-              ))}
-            </div>
-            <div className="band-list">
-              {readinessBands.map((band) => (
-                <div key={band.label}>
-                  <span style={{ background: band.color }} />
-                  <p>{band.label}</p>
-                  <strong>{band.value}%</strong>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="panel activity-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Operating cadence</p>
-                <h2>Latest program signals</h2>
-              </div>
-            </div>
-            <ol className="activity-list">
-              {activity.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
-          </article>
-
-          <article className="panel module-map-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Capability map</p>
-                <h2>Service area buildout</h2>
-              </div>
-            </div>
-            <div className="module-map">
-              {capabilities.map((capability) => (
-                <button
-                  type="button"
-                  key={capability.id}
-                  className={capability.id === activeCapabilityId ? 'module-chip active' : 'module-chip'}
-                  onClick={() => onSelectCapability(capability.id)}
-                >
-                  <span>{capability.status}</span>
-                  {capability.title}
-                </button>
-              ))}
-            </div>
-          </article>
+        <section className="dashboard-grid" aria-label="Dashboard operational detail">
+          <SelectedServiceCard activeCapability={activeCapability} />
+          <ReadinessDistribution />
+          <ProgramSignals />
+          <FacilitySpatialPreview />
+          <ServiceAreaBuildout activeCapabilityId={activeCapabilityId} onSelectCapability={onSelectCapability} />
         </section>
-      </section>
-    </main>
+      </main>
+    </div>
   );
+}
+
+function SidebarNav({
+  activeCapabilityId,
+  onSelectCapability,
+  onBackToLanding,
+}: {
+  activeCapabilityId: string;
+  onSelectCapability: (id: string) => void;
+  onBackToLanding: () => void;
+}) {
+  return (
+    <aside className="sidebar" aria-label="FPI dashboard navigation">
+      <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
+        <span className="spark-mark">✦</span>
+        <span>
+          FPI
+          <small>Command Center</small>
+        </span>
+      </button>
+
+      <nav aria-label="Program service navigation">
+        <p className="nav-label">Program services</p>
+        {capabilities.map((capability) => (
+          <button
+            className={capability.id === activeCapabilityId ? 'nav-item active' : 'nav-item'}
+            key={capability.id}
+            type="button"
+            aria-current={capability.id === activeCapabilityId ? 'page' : undefined}
+            onClick={() => onSelectCapability(capability.id)}
+          >
+            <span>{capability.eyebrow}</span>
+            {capability.title}
+          </button>
+        ))}
+      </nav>
+    </aside>
+  );
+}
+
+function HeroSummary() {
+  return (
+    <header className="dashboard-header">
+      <div>
+        <p className="eyebrow">FPI dashboard shell</p>
+        <h1>Facility protection posture overview</h1>
+        <p>
+          Overall posture is <strong>WATCH</strong> across 1,284 profiled facilities, with 37 critical exceptions and 91%
+          remediation SLA performance.
+        </p>
+      </div>
+      <div className="mode-pill" aria-label="Mode Synthetic data">
+        <span>MODE</span>
+        Synthetic data
+      </div>
+    </header>
+  );
+}
+
+function ExecutiveStatusStrip() {
+  return (
+    <section className="executive-strip" aria-label="Executive status summary">
+      {executiveStatus.map((item) => (
+        <article className="executive-item" key={item.label}>
+          <span>{item.label}</span>
+          <strong>{item.value}</strong>
+          <StatusPill label={item.trend} tone={item.tone} />
+        </article>
+      ))}
+    </section>
+  );
+}
+
+function ProgressCard({ pillar }: { pillar: Pillar }) {
+  return (
+    <article className="progress-card">
+      <div className="card-heading compact-heading">
+        <div>
+          <p className="eyebrow">{pillar.signal}</p>
+          <h2>{pillar.title}</h2>
+        </div>
+        <strong>{pillar.progress}%</strong>
+      </div>
+      <p>{pillar.description}</p>
+      <div
+        className="progress-track"
+        role="progressbar"
+        aria-valuenow={pillar.progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${pillar.signal}: ${pillar.progress}% complete`}
+      >
+        <span style={{ width: `${pillar.progress}%` }} />
+      </div>
+    </article>
+  );
+}
+
+function KpiCard({ kpi }: { kpi: Kpi }) {
+  const meta = kpiStatusByLabel[kpi.label];
+  const isPriority = kpi.label === 'Critical exceptions';
+
+  return (
+    <article className={isPriority ? 'kpi-card priority-kpi' : 'kpi-card'}>
+      <div className="kpi-topline">
+        <span>{kpi.label}</span>
+        <StatusPill label={meta.status} tone={meta.tone} />
+      </div>
+      <strong>{kpi.value}</strong>
+      <small>{kpi.trend}</small>
+      <p>{meta.caption}</p>
+    </article>
+  );
+}
+
+function SelectedServiceCard({ activeCapability }: { activeCapability: Capability }) {
+  return (
+    <section className="panel selected-service-panel" aria-labelledby="selected-service-title">
+      <div className="card-heading service-heading">
+        <div>
+          <p className="eyebrow">Selected service</p>
+          <h2 id="selected-service-title">{activeCapability.title}</h2>
+        </div>
+        <StatusPill label={activeCapability.status.toUpperCase()} tone="watch" />
+      </div>
+      <p>{activeCapability.description}</p>
+      <div className="service-meta-grid">
+        <div>
+          <span>Primary metric</span>
+          <strong>{activeCapability.metric}</strong>
+        </div>
+        <div>
+          <span>Accountable owner</span>
+          <strong>{activeCapability.owner}</strong>
+        </div>
+        <div>
+          <span>Next build</span>
+          <strong>Detail workflow</strong>
+        </div>
+      </div>
+      <div className="action-row" aria-label="Selected service actions">
+        <button type="button">View workflow</button>
+        <button type="button">Review partners</button>
+        <button type="button">Open exceptions</button>
+      </div>
+    </section>
+  );
+}
+
+function ReadinessDistribution() {
+  return (
+    <section className="panel readiness-panel" aria-labelledby="readiness-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Verification health</p>
+          <h2 id="readiness-title">Readiness distribution</h2>
+        </div>
+        <span className="trend-note">Verified +6% this cycle</span>
+      </div>
+      <p>44% verified / 28% in review / 28% require action or escalation.</p>
+      <div
+        className="bar-stack"
+        role="img"
+        aria-label="Readiness distribution: Verified 44%, In review 28%, Needs action 18%, Escalated 10%"
+      >
+        {readinessBands.map((band) => (
+          <span
+            key={band.label}
+            style={{ width: `${band.value}%`, background: band.color }}
+            aria-label={`${band.label} ${band.value}%`}
+          >
+            {band.value >= 18 ? `${band.value}%` : ''}
+          </span>
+        ))}
+      </div>
+      <div className="band-list">
+        {readinessBands.map((band) => (
+          <div key={band.label}>
+            <span style={{ background: band.color }} aria-hidden="true" />
+            <p>{band.label}</p>
+            <strong>{band.value}%</strong>
+            <small>{band.note}</small>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProgramSignals() {
+  return (
+    <section className="panel activity-panel" aria-labelledby="signals-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Operating cadence</p>
+          <h2 id="signals-title">Latest program signals</h2>
+        </div>
+      </div>
+      <ol className="activity-list">
+        {activity.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function ServiceAreaBuildout({
+  activeCapabilityId,
+  onSelectCapability,
+}: {
+  activeCapabilityId: string;
+  onSelectCapability: (id: string) => void;
+}) {
+  return (
+    <section className="panel module-map-panel" aria-labelledby="service-buildout-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Capability map</p>
+          <h2 id="service-buildout-title">Service area buildout</h2>
+        </div>
+      </div>
+      <div className="module-map">
+        {capabilities.map((capability) => (
+          <button
+            type="button"
+            key={capability.id}
+            className={capability.id === activeCapabilityId ? 'module-chip active' : 'module-chip'}
+            aria-pressed={capability.id === activeCapabilityId}
+            onClick={() => onSelectCapability(capability.id)}
+          >
+            <StatusPill label={capability.status.toUpperCase()} tone={statusToneForCapability(capability.status)} />
+            <strong>{capability.title}</strong>
+            <small>{capability.metric} • {capability.owner}</small>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FacilitySpatialPreview() {
+  return (
+    <section className="panel spatial-preview" aria-labelledby="spatial-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Spatial intelligence</p>
+          <h2 id="spatial-title">Facility posture preview</h2>
+        </div>
+        <StatusPill label="STATIC" tone="stable" />
+      </div>
+      <div className="isometric-map" aria-hidden="true">
+        <span className="site-node verified">Verified</span>
+        <span className="site-node review">In review</span>
+        <span className="site-node action">Needs action</span>
+        <span className="site-node escalated">Escalated</span>
+      </div>
+      <p>
+        Lightweight non-WebGL preview: verified sites remain the largest cohort, while 28% require action or escalation.
+      </p>
+      <button type="button" className="spatial-button">Open spatial view</button>
+    </section>
+  );
+}
+
+function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
+  return <span className={`status-pill status-${tone}`}>{label}</span>;
+}
+
+function statusToneForCapability(status: Capability['status']): StatusTone {
+  if (status === 'Ready') return 'ready';
+  if (status === 'Buildout') return 'buildout';
+  return 'watch';
 }
 
 export default App;
