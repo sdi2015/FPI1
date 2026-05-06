@@ -377,6 +377,20 @@ function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacil
       .sort((a, b) => b.cost - a.cost);
   }, [data.security_mitigation.incidents, selectedStore]);
   const storeIncidentTotal = storeIncidents.reduce((sum, row) => sum + row.cost, 0);
+  // Aggregate distinct incident types at this store, mapped to event counts — fuels both suggestion and vendor-fallback logic.
+  const storeIncidentTypes = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const { incident } of storeIncidents) counts.set(incident.incident_type, (counts.get(incident.incident_type) ?? 0) + 1);
+    return counts;
+  }, [storeIncidents]);
+  const suggestions = useMemo(() => getStoreSuggestions(storeIncidentTypes, solutions), [solutions, storeIncidentTypes]);
+  // KPI math for the picker panel: recommended solution cost + projected ROI vs the incident-impact bleed.
+  // Effectiveness is averaged across recommended solutions and applied to total incident cost as the "loss prevented" estimate.
+  const recommendedSolutions = useMemo(() => solutions.filter((solution) => suggestions.recommendedSolutionIds.has(solution.id)), [solutions, suggestions.recommendedSolutionIds]);
+  const recommendedSolutionCost = recommendedSolutions.reduce((sum, solution) => sum + solutionFiveYearCost(solution), 0);
+  const avgRecommendedEffectiveness = recommendedSolutions.length > 0 ? recommendedSolutions.reduce((sum, solution) => sum + solution.effectiveness_rating, 0) / recommendedSolutions.length : 0;
+  const projectedLossPrevented = Math.round(storeIncidentTotal * (avgRecommendedEffectiveness / 100));
+  const estimatedNetImpact = projectedLossPrevented - recommendedSolutionCost;
   const selectedDraft = selectedSolution ? createMitigationDraft(selectedSolution, selectedStore?.facility_name) : null;
 
   return (
@@ -385,12 +399,70 @@ function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacil
         <div className="card-heading"><div><p className="eyebrow">Security Mitigation Manager</p><h2>Recommended controls and projected-prevention ROI</h2></div><StatusPill label="RULES MAPPED" tone="ready" /></div>
         <p>Security mitigation recommendations are staged here for potential execution in store.</p>
       </section>
-      <section className="panel fire-remediation-panel">
-        <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={`${solutions.length} SOLUTIONS`} tone="stable" /></div>
+      <section className="panel epr-store-picker-panel">
+        <div className="card-heading"><div><p className="eyebrow">Pick a store</p><h2>Score solutions for a specific facility</h2></div>{selectedStore ? <StatusPill label={`SCOPED — ${selectedStore.facility_name}`} tone="ready" /> : null}</div>
         <div className="epr-controls epr-mitigation-controls">
           <label className="epr-store-picker"><span>Select your store</span><select value={storeFilter} onChange={(event) => setStoreFilter(event.target.value)} aria-label="Select your store"><option value="all">— Choose a store —</option>{stores.map((store) => <option value={String(store.facility_id)} key={store.facility_id}>{store.facility_name} — {store.market}</option>)}</select></label>
         </div>
-        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} />)}</div>
+      </section>
+      {selectedStore ? (
+        <section className="panel epr-store-incidents-panel">
+          <div className="card-heading">
+            <div><p className="eyebrow">Store impact</p><h2>Recent incidents at {selectedStore.facility_name}</h2></div>
+            <StatusPill label={`${storeIncidents.length} EVENTS · ${formatCurrency(storeIncidentTotal)} EST IMPACT`} tone={storeIncidentTotal > 200000 ? 'critical' : storeIncidentTotal > 75000 ? 'watch' : 'stable'} />
+          </div>
+          <p>Estimated cost-per-event reflects direct loss + law-enforcement response + investigation time + EAP / legal exposure, scaled by reported severity. Use the totals to size the case for the controls below.</p>
+          {storeIncidents.length === 0 ? <p className="epr-empty-state">No mitigation incidents on file for {selectedStore.facility_name}. 🎉</p> : (
+            <div className="epr-store-incidents-table">
+              <table>
+                <thead><tr><th>Date</th><th>Incident type</th><th>Severity</th><th style={{ textAlign: 'right' }}>Est. cost to Walmart</th></tr></thead>
+                <tbody>
+                  {storeIncidents.map(({ incident, cost }) => (
+                    <tr key={incident.id}>
+                      <td>{incident.incident_date ?? '—'}<small>{incident.incident_time ?? ''}</small></td>
+                      <td><strong>{incident.incident_type}</strong>{incident.description ? <small>{incident.description.length > 140 ? `${incident.description.slice(0, 140)}…` : incident.description}</small> : null}</td>
+                      <td><StatusPill label={severityLabel(incident.severity)} tone={severityTone(incident.severity)} /></td>
+                      <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}>{formatCurrency(cost)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr><td colSpan={3} style={{ textAlign: 'right', fontWeight: 800 }}>Total estimated impact</td><td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 800 }}>{formatCurrency(storeIncidentTotal)}</td></tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
+          {(suggestions.recommendedSolutionIds.size > 0 || suggestions.vendorFallbacks.length > 0) ? (
+            <div className="epr-suggestions-block">
+              {suggestions.recommendedSolutionIds.size > 0 ? (
+                <div className="epr-suggestions-internal">
+                  <h3>✨ Suggested controls from the catalog</h3>
+                  <ul>
+                    {[...suggestions.recommendedSolutionIds].map((id) => {
+                      const solution = solutions.find((entry) => entry.id === id);
+                      return solution ? <li key={id}><strong>{solution.name}</strong> — {solution.effectiveness_rating}% effective · 5-yr base {formatCurrency(solutionFiveYearCost(solution))}</li> : null;
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+              {suggestions.vendorFallbacks.length > 0 ? (
+                <div className="epr-suggestions-vendor">
+                  <h3>🔎 No internal control mapped — explore Vendor Intelligence</h3>
+                  <ul>
+                    {suggestions.vendorFallbacks.map((entry) => (
+                      <li key={entry.incidentType}><strong>{entry.incidentType}</strong> ({entry.eventCount} event{entry.eventCount === 1 ? '' : 's'}): {entry.hint}</li>
+                    ))}
+                  </ul>
+                  <p className="epr-vendor-pointer">Open the <b>Vendor Intelligence</b> module from the main nav to search the 1,663-vendor SENTRY tracker for these capabilities.</p>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+      <section className="panel fire-remediation-panel">
+        <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={selectedStore && suggestions.recommendedSolutionIds.size > 0 ? `${suggestions.recommendedSolutionIds.size} RECOMMENDED · ${solutions.length} TOTAL` : `${solutions.length} SOLUTIONS`} tone={selectedStore && suggestions.recommendedSolutionIds.size > 0 ? 'ready' : 'stable'} /></div>
+        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} recommended={suggestions.recommendedSolutionIds.has(solution.id)} />)}</div>
       </section>
       <section className="panel epr-mitigation-draft-panel epr-resizable-panel" data-resizable-panel="mitigation-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Mitigation comparison and governance draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
@@ -578,8 +650,11 @@ function incidentRecommendedAction(incident: EprIncident): string {
   return 'Track for awareness, confirm no active executive movement impact, and document any required store-facing follow-up.';
 }
 
-function SolutionCard({ solution, onShortlist, selected = false }: { solution: EprSecuritySolution; onShortlist?: (solution: EprSecuritySolution) => void; selected?: boolean }) {
-  return <article className={selected ? 'facility-record epr-solution-card selected' : 'facility-record epr-solution-card'}><strong>{solution.name}</strong><span>{formatLabel(solution.solution_type)} · {solution.effectiveness_rating}% effective</span><small>{solution.coverage_area}</small><small>5-year base cost: {formatCurrency(solutionFiveYearCost(solution))}</small>{onShortlist ? <button className="epr-action-button epr-card-action" type="button" onClick={() => onShortlist(solution)}>{selected ? 'Shortlisted' : 'Shortlist Control'}</button> : null}</article>;
+function SolutionCard({ solution, onShortlist, selected = false, recommended = false }: { solution: EprSecuritySolution; onShortlist?: (solution: EprSecuritySolution) => void; selected?: boolean; recommended?: boolean }) {
+  const classes = ['facility-record', 'epr-solution-card'];
+  if (selected) classes.push('selected');
+  if (recommended) classes.push('recommended');
+  return <article className={classes.join(' ')}>{recommended ? <span className="epr-recommended-badge" title="Suggested for the selected store based on its incident history">✨ Recommended</span> : null}<strong>{solution.name}</strong><span>{formatLabel(solution.solution_type)} · {solution.effectiveness_rating}% effective</span><small>{solution.coverage_area}</small><small>5-year base cost: {formatCurrency(solutionFiveYearCost(solution))}</small>{onShortlist ? <button className="epr-action-button epr-card-action" type="button" onClick={() => onShortlist(solution)}>{selected ? 'Shortlisted' : 'Shortlist Control'}</button> : null}</article>;
 }
 
 function MitigationDraftPanel({ draft, onClear }: { draft: EprMitigationDraft | null; onClear: () => void }) {
@@ -636,6 +711,49 @@ function severityLabel(severity: number | string): string {
 function severityTone(severity: number | string): StatusTone {
   const value = String(severity);
   return value === '3' ? 'critical' : value === '2' ? 'watch' : 'stable';
+}
+
+// Map each incident type to the catalog solution names that meaningfully reduce that risk.
+// Names must match the canonical solution `name` field exactly so lookup is O(1).
+const INCIDENT_TO_SOLUTION_NAMES: Readonly<Record<string, readonly string[]>> = {
+  'Aggravated Assault': ['Targeted Off-Duty Officer Detail', 'Associate Body-Worn Cameras', 'Access Control / Panic Button Refresh'],
+  'Battery': ['Targeted Off-Duty Officer Detail', 'Associate Body-Worn Cameras'],
+  'Burglary': ['Access Control / Panic Button Refresh', 'License Plate Recognition (LPR)', 'PoleCop Pole-Mounted Camera Array'],
+  'Person with a Gun': ['Targeted Off-Duty Officer Detail', 'Access Control / Panic Button Refresh'],
+  'Threat of Violence': ['Targeted Off-Duty Officer Detail', 'Associate Body-Worn Cameras', 'Store Leadership Threat Brief'],
+  'Vandalism / Criminal Mischief': ['LotCop Mobile Surveillance Trailer', 'PoleCop Pole-Mounted Camera Array'],
+};
+
+// When the catalog has no internal solution for an incident type, point the user at the Vendor Intelligence module
+// with a one-line capability hint so they know what to search for there.
+const INCIDENT_VENDOR_FALLBACK: Readonly<Record<string, string>> = {
+  'Person with a Gun': 'Weapons detection systems (concealed-weapon scanners, AI gunshot detection) — e.g. Evolv Express, Athena Security, ZeroEyes.',
+  'Lost/Missing Person': 'Real-time location + AI video search vendors for store-wide person tracking and missing-person workflows.',
+  'Suicide / Attempt': 'Behavioral threat detection + crisis intervention vendors (Lyra-style EAP integrations, threat assessment platforms).',
+};
+
+type StoreSuggestions = {
+  recommendedSolutionIds: ReadonlySet<number>;
+  vendorFallbacks: Array<{ incidentType: string; hint: string; eventCount: number }>;
+};
+
+function getStoreSuggestions(storeIncidentTypes: ReadonlyMap<string, number>, solutions: readonly EprSecuritySolution[]): StoreSuggestions {
+  const solutionByName = new Map(solutions.map((solution) => [solution.name, solution] as const));
+  const recommendedSolutionIds = new Set<number>();
+  const vendorFallbacks: StoreSuggestions['vendorFallbacks'] = [];
+  for (const [incidentType, eventCount] of storeIncidentTypes) {
+    const internalMatches = (INCIDENT_TO_SOLUTION_NAMES[incidentType] ?? []).filter((name) => solutionByName.has(name));
+    if (internalMatches.length > 0) {
+      for (const name of internalMatches) {
+        const solution = solutionByName.get(name);
+        if (solution) recommendedSolutionIds.add(solution.id);
+      }
+    } else {
+      const hint = INCIDENT_VENDOR_FALLBACK[incidentType] ?? 'No internal control or vendor profile mapped yet — explore the Vendor Intelligence module for closest-fit options.';
+      vendorFallbacks.push({ incidentType, hint, eventCount });
+    }
+  }
+  return { recommendedSolutionIds, vendorFallbacks };
 }
 
 function TaskRow({ task, onCreateDraft }: { task: EprTask; onCreateDraft?: (task: EprTask) => void }) {

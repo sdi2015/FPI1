@@ -936,3 +936,17 @@ canvas {
 [data-theme='dark'] .ret-table .ret-th:hover { background: rgba(255,255,255,0.06); }
 [data-theme='dark'] .ret-table .ret-th.active { color: #60a5fa; }
 /* ── End retention dark overrides ── */
+
+/* ── Dark mode: work queue view ── */
+[data-theme='dark'] .wq-title { color: #e2e8f0; }
+[data-theme='dark'] .wq-subtext,
+[data-theme='dark'] .wq-finding + small,
+[data-theme='dark'] .wq-step-detail { color: #64748b; }
+[data-theme='dark'] .wq-finding { color: #e2e8f0; }
+[data-theme='dark'] .wq-detail-grid { background: #1e293b; border-color: #334155; }
+[data-theme='dark'] .wq-detail-grid > div span { color: #64748b; }
+[data-theme='dark'] .wq-detail-grid > div strong { color: #e2e8f0; }
+[data-theme='dark'] .wq-step-label { color: #cbd5e1; }
+[data-theme='dark'] .wq-steps-title { color: #94a3b8; }
+[data-theme='dark'] .wq-close-btn { background: #334155; }
+/* ── End work queue dark overrides ── */

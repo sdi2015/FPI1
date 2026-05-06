@@ -7,6 +7,7 @@ import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
 import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, storeHasOffline, storeOfflineTotal, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
 import { RetentionView } from './RetentionView';
+import { WorkQueueView } from './WorkQueueView';
 import type { NetworkPlacementFlagEntry, ProfileWarningEntry, StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
@@ -305,10 +306,6 @@ function forecastTone(f: string) {
 }
 function PredictiveView({ data }: { data: TechnologyHealthData }) {
   return <section className="tech-card"><CardHeading eyebrow="Predictive CCTV Agent" title="Stores trending toward service-impacting camera risk" pill="SIMULATED" tone="watch" /><p className="tech-predictive-scope">{data.predictiveSummary.scope}</p><div className="tech-predictive-grid">{data.predictiveSummary.candidates.map((c) => { const t = forecastTone(c.forecast); return <article className="tech-predictive-card" key={c.siteAlias} style={{ borderLeft: `4px solid ${t.border}`, background: `${t.border}0d` }}><div className="tech-pc-head"><strong>{c.siteAlias}</strong><span className="tech-pc-badge" style={{ background: t.bg, color: t.fg }}>{t.label}</span></div><div className="tech-pc-score-row"><em style={{ color: t.score }}>{c.riskScore}</em><div className="tech-pc-score-meta"><b>Model confidence score</b><small>0 = low signal · 100 = near-certain service impact</small></div></div><ul>{c.drivers.map((d) => <li key={d}>{d}</li>)}</ul><p>↳ {c.recommendedAction}</p></article>; })}</div></section>;
-}
-
-function WorkQueueView({ data }: { data: TechnologyHealthData }) {
-  return <section className="tech-card"><CardHeading eyebrow="Ticket simulation" title="Grouped CCTV service work queue" pill="NO WRITEBACK" tone="critical" /><div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Site</th><th>Finding</th><th>Severity</th><th>Channel</th><th>Assignment</th><th>SLA</th></tr></thead><tbody>{data.workQueue.map((item) => <tr key={item.id}><td>{item.siteAlias}</td><td><strong>{item.title}</strong><small>{item.status} · Evidence required: {item.evidenceRequired ? 'Yes' : 'No'}</small></td><td><StatusPill label={item.severity} tone={item.severity === 'Critical' ? 'critical' : item.severity === 'High' ? 'watch' : 'stable'} /></td><td>{item.channel}</td><td>{item.assignmentGroup}</td><td>{item.sla}</td></tr>)}</tbody></table></div></section>;
 }
 
 function DetailModal({ open, eyebrow, title, children, onClose }: { open: boolean; eyebrow: string; title: string; children: ReactNode; onClose: () => void }) {
