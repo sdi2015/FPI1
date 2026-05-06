@@ -9,7 +9,7 @@
 .remediation-page .locked-scope-panel { color: #0f172a; border-color: #dbeafe; background: #ffffff; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08); }
 .remediation-page .locked-scope-panel p, .remediation-page .locked-scope-actions span, .remediation-page .scope-chip { color: #475569; }
 .remediation-page .scope-chip.selected { color: #0f172a; border-color: #bfdbfe; background: #eff6ff; }
-.remediation-tab-bar { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; padding: 10px; border: 1px solid #dbeafe; border-radius: 22px; background: rgba(255, 255, 255, 0.84); box-shadow: 0 12px 34px rgba(15, 23, 42, 0.07); backdrop-filter: blur(14px); }
+.remediation-tab-bar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; padding: 10px; border: 1px solid #dbeafe; border-radius: 22px; background: rgba(255, 255, 255, 0.84); box-shadow: 0 12px 34px rgba(15, 23, 42, 0.07); backdrop-filter: blur(14px); }
 .remediation-tab { min-height: 58px; padding: 10px 12px; color: #334155; border: 1px solid #e2e8f0; border-radius: 15px; background: #ffffff; font-weight: 900; text-align: left; transition: transform 160ms ease, border-color 160ms ease, background 160ms ease; }
 .remediation-tab span { display: block; margin-bottom: 4px; color: #0053e2; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; }
 .remediation-tab.active, .remediation-tab:hover { transform: translateY(-2px); border-color: #ffc220; background: linear-gradient(135deg, #fff7d6, #eff6ff); }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
@@ -15,13 +15,61 @@ export type RemediationOrchestrationViewProps = {
   onChangeScopeRequest: () => void;
 };
 
-type RemediationTab = 'queue' | 'triage' | 'sla' | 'routing' | 'evidence' | 'automation';
+type RemediationTab = 'workbench' | 'queue' | 'triage' | 'sla' | 'routing' | 'evidence' | 'automation';
 type SeverityFilter = 'all' | RemediationSeverity;
 type SlaFocus = 'all' | 'overdue' | 'atRisk' | 'dueSoon' | 'blocked' | 'onTrack';
 type EvidenceFocus = 'all' | 'alerts' | 'overdue' | 'pending' | 'missing' | 'verified';
 type RemediationColorTier = 'red' | 'orange' | 'yellow' | 'green';
+type WorkbenchStatus = 'New' | 'Assigned' | 'Evidence Requested' | 'Evidence Received' | 'Ready for Verification' | 'Verified Closed';
+type RiskDowngradeEligibility = 'Not Eligible' | 'Evidence Incomplete' | 'Owner Needed' | 'Pending Verification' | 'Eligible for Downgrade' | 'Downgraded/Closed';
+type WorkbenchQuickFilter = 'all' | 'overdue' | 'missingEvidence' | 'ownerNeeded' | 'vendorFollowUp' | 'externalNeeded' | 'readyVerification' | 'verifiedClosed' | 'downgradeEligible';
+
+type EvidenceChecklistItem = {
+  id: string;
+  label: string;
+  received: boolean;
+};
+
+type EvidenceAction = {
+  id: string;
+  priority: string;
+  storeFacility: string;
+  market: string;
+  riskTier: string;
+  sourceModule: string;
+  issueType: string;
+  riskFinding: string;
+  actionSummary: string;
+  recommendedOwner: string;
+  assignedOwner: string;
+  vendorExternalParty: string;
+  dueDate: string;
+  status: WorkbenchStatus;
+  evidenceChecklist: EvidenceChecklistItem[];
+  closureConfidence: number;
+  nextStep: string;
+  notes: string;
+  vendorContacted: boolean;
+  escalated: boolean;
+};
+
+type WorkbenchFilters = {
+  search: string;
+  store: string;
+  market: string;
+  riskTier: string;
+  sourceModule: string;
+  issueType: string;
+  priority: string;
+  status: string;
+  owner: string;
+  vendor: string;
+  dueDate: string;
+  quickFilter: WorkbenchQuickFilter;
+};
 
 const tabs: Array<{ id: RemediationTab; label: string; eyebrow: string }> = [
+  { id: 'workbench', label: 'Evidence-to-Action', eyebrow: 'Workbench' },
   { id: 'queue', label: 'Command Queue', eyebrow: 'Actions' },
   { id: 'triage', label: 'Triage Board', eyebrow: 'Kanban' },
   { id: 'sla', label: 'SLA & Aging', eyebrow: 'Risk' },
@@ -31,7 +79,7 @@ const tabs: Array<{ id: RemediationTab; label: string; eyebrow: string }> = [
 ];
 
 export function RemediationOrchestrationView({ fireSites, storeScope, onChangeScopeRequest }: RemediationOrchestrationViewProps) {
-  const [activeTab, setActiveTab] = useState<RemediationTab>('queue');
+  const [activeTab, setActiveTab] = useState<RemediationTab>('workbench');
   const techState = useTechnologyHealthData();
   const scopedTechnologyData = useMemo(() => (techState.data ? applyTechnologyHealthScope(techState.data, fireSites, storeScope) : null), [techState.data, fireSites, storeScope]);
   const items = useMemo(() => (scopedTechnologyData ? buildRemediationItems(scopedTechnologyData) : []), [scopedTechnologyData]);
@@ -56,6 +104,7 @@ export function RemediationOrchestrationView({ fireSites, storeScope, onChangeSc
           <nav className="remediation-tab-bar" aria-label="Remediation Orchestration sub tabs">
             {tabs.map((tab) => <button className={activeTab === tab.id ? 'remediation-tab active' : 'remediation-tab'} type="button" key={tab.id} onClick={() => setActiveTab(tab.id)} aria-pressed={activeTab === tab.id}><span>{tab.eyebrow}</span>{tab.label}</button>)}
           </nav>
+          {activeTab === 'workbench' ? <EvidenceToActionWorkbench items={items} /> : null}
           {activeTab === 'queue' ? <CommandQueue items={items} /> : null}
           {activeTab === 'triage' ? <TriageBoard items={items} /> : null}
           {activeTab === 'sla' ? <SlaAging items={items} /> : null}
@@ -64,6 +113,99 @@ export function RemediationOrchestrationView({ fireSites, storeScope, onChangeSc
           {activeTab === 'automation' ? <AutomationReadiness /> : null}
         </>
       ) : null}
+    </section>
+  );
+}
+
+function EvidenceToActionWorkbench({ items }: { items: RemediationItem[] }) {
+  const [actions, setActions] = useState<EvidenceAction[]>(buildEvidenceActions(items));
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filters, setFilters] = useState<WorkbenchFilters>({
+    search: '',
+    store: 'all',
+    market: 'all',
+    riskTier: 'all',
+    sourceModule: 'all',
+    issueType: 'all',
+    priority: 'all',
+    status: 'all',
+    owner: 'all',
+    vendor: 'all',
+    dueDate: '',
+    quickFilter: 'all',
+  });
+
+  useEffect(() => {
+    setActions(buildEvidenceActions(items));
+    setSelectedId(null);
+  }, [items]);
+
+  const selectedAction = actions.find((action) => action.id === selectedId) ?? null;
+  const filteredActions = useMemo(() => filterEvidenceActions(actions, filters), [actions, filters]);
+  const options = useMemo(() => ({
+    stores: uniqueStrings(actions.map((action) => action.storeFacility)),
+    markets: uniqueStrings(actions.map((action) => action.market)),
+    riskTiers: uniqueStrings(actions.map((action) => action.riskTier)),
+    sourceModules: uniqueStrings(actions.map((action) => action.sourceModule)),
+    issueTypes: uniqueStrings(actions.map((action) => action.issueType)),
+    priorities: uniqueStrings(actions.map((action) => action.priority)),
+    statuses: uniqueStrings(actions.map((action) => action.status)),
+    owners: uniqueStrings(actions.flatMap((action) => [action.assignedOwner, action.recommendedOwner]).filter(Boolean)),
+    vendors: uniqueStrings(actions.map((action) => action.vendorExternalParty)),
+  }), [actions]);
+
+  const summary = getWorkbenchSummary(actions);
+  const pipeline = getClosurePipeline(actions);
+
+  function updateAction(id: string, patch: Partial<EvidenceAction>) {
+    setActions((current) => current.map((action) => action.id === id ? normalizeEvidenceAction({ ...action, ...patch }) : action));
+  }
+
+  function toggleEvidence(id: string, evidenceId: string) {
+    setActions((current) => current.map((action) => {
+      if (action.id !== id) return action;
+      const evidenceChecklist = action.evidenceChecklist.map((check) => check.id === evidenceId ? { ...check, received: !check.received } : check);
+      const nextStatus = evidenceChecklist.length && evidenceChecklist.every((check) => check.received) && action.status === 'Evidence Requested' ? 'Evidence Received' : action.status;
+      return normalizeEvidenceAction({ ...action, evidenceChecklist, status: nextStatus });
+    }));
+  }
+
+  return (
+    <section className="evidence-workbench" aria-label="Evidence-to-Action Workbench">
+      <section className="remediation-card wide workbench-hero-card">
+        <CardHeading eyebrow="Evidence-to-Action Workbench" title="Turn FPI findings into accountable, evidence-backed remediation" pill="NO TICKET WRITEBACK" tone="watch" />
+        <p>Risk Intelligence and source modules can draft actions, owners, and evidence needs. This workbench closes the operational gap by tracking accountable action, evidence readiness, vendor follow-up, verification, and risk-downgrade eligibility without creating tickets or sending messages.</p>
+      </section>
+
+      <section className="workbench-summary-grid" aria-label="Evidence-to-Action summary cards">
+        <WorkbenchSummaryCard label="Open Actions" value={summary.openActions} detail="Not verified closed" active={filters.quickFilter === 'all'} onClick={() => setFilters({ ...filters, quickFilter: 'all' })} tone="blue" />
+        <WorkbenchSummaryCard label="Overdue" value={summary.overdue} detail="Past due date" active={filters.quickFilter === 'overdue'} onClick={() => setFilters({ ...filters, quickFilter: 'overdue' })} tone="critical" />
+        <WorkbenchSummaryCard label="Missing Evidence" value={summary.missingEvidence} detail="Checklist incomplete" active={filters.quickFilter === 'missingEvidence'} onClick={() => setFilters({ ...filters, quickFilter: 'missingEvidence' })} tone="yellow" />
+        <WorkbenchSummaryCard label="Owner Needed" value={summary.ownerNeeded} detail="No assigned owner" active={filters.quickFilter === 'ownerNeeded'} onClick={() => setFilters({ ...filters, quickFilter: 'ownerNeeded' })} tone="critical" />
+        <WorkbenchSummaryCard label="Vendor Follow-Ups" value={summary.vendorFollowUps} detail="Vendor/external party active" active={filters.quickFilter === 'vendorFollowUp'} onClick={() => setFilters({ ...filters, quickFilter: 'vendorFollowUp' })} tone="sky" />
+        <WorkbenchSummaryCard label="External Coordination Needed" value={summary.externalNeeded} detail="Manual or agency path" active={filters.quickFilter === 'externalNeeded'} onClick={() => setFilters({ ...filters, quickFilter: 'externalNeeded' })} tone="yellow" />
+        <WorkbenchSummaryCard label="Ready for Verification" value={summary.readyForVerification} detail="Evidence ready" active={filters.quickFilter === 'readyVerification'} onClick={() => setFilters({ ...filters, quickFilter: 'readyVerification' })} tone="sky" />
+        <WorkbenchSummaryCard label="Verified Closed" value={summary.verifiedClosed} detail="Closure accepted" active={filters.quickFilter === 'verifiedClosed'} onClick={() => setFilters({ ...filters, quickFilter: 'verifiedClosed' })} tone="blue" />
+        <WorkbenchSummaryCard label="Risk Downgrade Eligible" value={summary.downgradeEligible} detail="Ready to lower risk" active={filters.quickFilter === 'downgradeEligible'} onClick={() => setFilters({ ...filters, quickFilter: 'downgradeEligible' })} tone="green" />
+      </section>
+
+      <section className="remediation-grid">
+        <section className="remediation-card wide workbench-table-card">
+          <div className="remediation-directory-header"><div><p className="remediation-eyebrow">Accountable action queue</p><h2>Main action table</h2></div><strong>{filteredActions.length} actions</strong></div>
+          <WorkbenchFiltersPanel filters={filters} options={options} onChange={setFilters} />
+          <WorkbenchActionTable actions={filteredActions} selectedId={selectedId} onSelect={setSelectedId} />
+        </section>
+        <section className="remediation-card workbench-readiness-card">
+          <CardHeading eyebrow="Closure readiness" title="Verification requirements" pill={`${summary.readyForVerification} READY`} tone={summary.readyForVerification ? 'ready' : 'watch'} />
+          <ClosureReadinessPanel actions={actions} />
+        </section>
+        <section className="remediation-card workbench-pipeline-card">
+          <CardHeading eyebrow="Risk closure pipeline" title="New → Verified Closed" />
+          <RiskClosurePipeline rows={pipeline} />
+        </section>
+      </section>
+
+      {selectedAction ? <WorkbenchDetailDrawer action={selectedAction} onClose={() => setSelectedId(null)} onUpdate={updateAction} onToggleEvidence={toggleEvidence} /> : null}
     </section>
   );
 }
@@ -263,6 +405,77 @@ function AutomationReadiness() {
   );
 }
 
+function WorkbenchSummaryCard({ label, value, detail, active, tone, onClick }: { label: string; value: number; detail: string; active: boolean; tone: 'blue' | 'yellow' | 'sky' | 'critical' | 'green'; onClick: () => void }) {
+  return <button className={active ? `workbench-summary-card tone-${tone} active` : `workbench-summary-card tone-${tone}`} type="button" onClick={onClick} aria-pressed={active}><span>{label}</span><strong>{formatNumber(value)}</strong><small>{detail}</small></button>;
+}
+
+function WorkbenchFiltersPanel({ filters, options, onChange }: { filters: WorkbenchFilters; options: { stores: string[]; markets: string[]; riskTiers: string[]; sourceModules: string[]; issueTypes: string[]; priorities: string[]; statuses: string[]; owners: string[]; vendors: string[] }; onChange: (filters: WorkbenchFilters) => void }) {
+  const update = (patch: Partial<WorkbenchFilters>) => onChange({ ...filters, ...patch });
+  return (
+    <div className="workbench-filter-panel" aria-label="Evidence-to-Action filters">
+      <input type="search" value={filters.search} onChange={(event) => update({ search: event.target.value })} placeholder="Search store, issue, action, owner, vendor, evidence, next step, notes..." />
+      <select value={filters.store} onChange={(event) => update({ store: event.target.value })}><option value="all">All stores</option>{options.stores.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.market} onChange={(event) => update({ market: event.target.value })}><option value="all">All markets</option>{options.markets.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.riskTier} onChange={(event) => update({ riskTier: event.target.value })}><option value="all">All risk tiers</option>{options.riskTiers.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.sourceModule} onChange={(event) => update({ sourceModule: event.target.value })}><option value="all">All source modules</option>{options.sourceModules.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.issueType} onChange={(event) => update({ issueType: event.target.value })}><option value="all">All issue types</option>{options.issueTypes.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.priority} onChange={(event) => update({ priority: event.target.value })}><option value="all">All priorities</option>{options.priorities.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.status} onChange={(event) => update({ status: event.target.value })}><option value="all">All statuses</option>{options.statuses.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.owner} onChange={(event) => update({ owner: event.target.value })}><option value="all">All owners</option>{options.owners.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <select value={filters.vendor} onChange={(event) => update({ vendor: event.target.value })}><option value="all">All vendors / external parties</option>{options.vendors.map((value) => <option key={value} value={value}>{value}</option>)}</select>
+      <input type="date" value={filters.dueDate} onChange={(event) => update({ dueDate: event.target.value })} aria-label="Filter by due date" />
+      <button type="button" onClick={() => onChange({ search: '', store: 'all', market: 'all', riskTier: 'all', sourceModule: 'all', issueType: 'all', priority: 'all', status: 'all', owner: 'all', vendor: 'all', dueDate: '', quickFilter: 'all' })}>Reset filters</button>
+    </div>
+  );
+}
+
+function WorkbenchActionTable({ actions, selectedId, onSelect }: { actions: EvidenceAction[]; selectedId: string | null; onSelect: (id: string) => void }) {
+  return <div className="remediation-table-wrap workbench-table-wrap"><table className="remediation-table workbench-table"><thead><tr><th>Priority</th><th>Store/Facility</th><th>Risk Tier</th><th>Source Module</th><th>Issue Type</th><th>Risk Finding</th><th>Action Summary</th><th>Recommended Owner</th><th>Assigned Owner</th><th>Vendor/External Party</th><th>Due Date</th><th>Status</th><th>Evidence Needed</th><th>Evidence Received</th><th>Closure Confidence</th><th>Risk Downgrade Eligibility</th><th>Next Step</th><th>Action</th></tr></thead><tbody>{actions.map((action) => { const eligibility = getRiskDowngradeEligibility(action); const evidencePercent = getEvidencePercent(action); return <tr key={action.id} className={`${isWorkbenchOverdue(action) ? 'is-overdue' : ''} ${selectedId === action.id ? 'is-selected' : ''}`}><td><span className={`remediation-priority priority-${action.priority.toLowerCase()}`}>{action.priority}</span></td><td><strong>{action.storeFacility}</strong><small>{action.market}</small></td><td><StatusPill label={action.riskTier} tone={riskTierTone(action.riskTier)} /></td><td>{action.sourceModule}</td><td>{action.issueType}</td><td><strong>{action.riskFinding}</strong></td><td>{action.actionSummary}</td><td>{action.recommendedOwner}</td><td>{action.assignedOwner || <span className="workbench-warning-text">Owner needed</span>}</td><td>{action.vendorExternalParty}<small>{action.vendorContacted ? 'Contacted' : 'Follow-up needed'}</small></td><td>{formatDate(action.dueDate)}<small>{isWorkbenchOverdue(action) ? 'Overdue' : 'Open target'}</small></td><td><StatusPill label={action.status} tone={workbenchStatusTone(action.status)} /></td><td>{action.evidenceChecklist.map((check) => check.label).join(', ')}</td><td><strong>{evidencePercent}%</strong><small>{action.evidenceChecklist.filter((check) => check.received).length} of {action.evidenceChecklist.length}</small></td><td>{action.closureConfidence}%</td><td><StatusPill label={eligibility} tone={downgradeTone(eligibility)} /></td><td>{action.nextStep}</td><td><button className="workbench-row-button" type="button" onClick={() => onSelect(action.id)}>Open detail</button></td></tr>; })}</tbody></table>{actions.length === 0 ? <p className="remediation-empty">No evidence-backed actions match the current filters.</p> : null}</div>;
+}
+
+function WorkbenchDetailDrawer({ action, onClose, onUpdate, onToggleEvidence }: { action: EvidenceAction; onClose: () => void; onUpdate: (id: string, patch: Partial<EvidenceAction>) => void; onToggleEvidence: (id: string, evidenceId: string) => void }) {
+  const eligibility = getRiskDowngradeEligibility(action);
+  const readiness = getClosureReadiness(action);
+  return (
+    <aside className="workbench-drawer" aria-label="Action detail drawer">
+      <div className="workbench-drawer-panel">
+        <div className="remediation-directory-header"><div><p className="remediation-eyebrow">Row detail</p><h2>{action.storeFacility} · {action.issueType}</h2></div><button type="button" onClick={onClose}>Close</button></div>
+        <div className="workbench-detail-grid">
+          <Metric label="Closure confidence" value={`${action.closureConfidence}%`} helper="Calculated from owner, due date, evidence, next step, and verification" />
+          <Metric label="Evidence completion" value={`${getEvidencePercent(action)}%`} helper={`${action.evidenceChecklist.filter((check) => check.received).length} of ${action.evidenceChecklist.length} evidence items received`} />
+          <Metric label="Downgrade eligibility" value={eligibility} helper="Risk downgrade gate" />
+        </div>
+        <label>Assigned Owner<select value={action.assignedOwner} onChange={(event) => onUpdate(action.id, { assignedOwner: event.target.value })}><option value="">Owner needed</option><option value={action.recommendedOwner}>{action.recommendedOwner}</option><option value="Technical Controls">Technical Controls</option><option value="Security Operations">Security Operations</option><option value="FPI Governance">FPI Governance</option><option value="Vendor Manager">Vendor Manager</option><option value="Store / Field Ops">Store / Field Ops</option></select></label>
+        <label>Status<select value={action.status} onChange={(event) => onUpdate(action.id, { status: event.target.value as WorkbenchStatus })}>{workbenchStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select></label>
+        <label>Due Date<input type="date" value={action.dueDate} onChange={(event) => onUpdate(action.id, { dueDate: event.target.value })} /></label>
+        <label>Next Step<textarea rows={3} value={action.nextStep} onChange={(event) => onUpdate(action.id, { nextStep: event.target.value })} /></label>
+        <label>Notes<textarea rows={4} value={action.notes} onChange={(event) => onUpdate(action.id, { notes: event.target.value })} placeholder="Add closure notes, vendor updates, verification details..." /></label>
+        <div className="workbench-evidence-checklist"><strong>Evidence checklist</strong>{action.evidenceChecklist.map((check) => <label key={check.id}><input type="checkbox" checked={check.received} onChange={() => onToggleEvidence(action.id, check.id)} /> {check.label}</label>)}</div>
+        <div className="workbench-readiness-gates">{readiness.gates.map((gate) => <span className={gate.ready ? 'ready' : 'blocked'} key={gate.label}>{gate.ready ? '✓' : '!'} {gate.label}</span>)}</div>
+        <div className="workbench-drawer-actions">
+          <button type="button" onClick={() => onUpdate(action.id, { vendorContacted: true, notes: appendNote(action.notes, 'Vendor/external party contacted from workbench.') })}>Mark vendor contacted</button>
+          <button type="button" onClick={() => onUpdate(action.id, { escalated: true, notes: appendNote(action.notes, 'Escalated for leadership review.') })}>Escalate</button>
+          <button type="button" onClick={() => onUpdate(action.id, { status: 'Ready for Verification' })}>Mark ready for verification</button>
+          <button type="button" onClick={() => onUpdate(action.id, { status: 'Verified Closed' })}>Mark verified closed</button>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function ClosureReadinessPanel({ actions }: { actions: EvidenceAction[] }) {
+  const average = actions.length ? Math.round(actions.reduce((sum, action) => sum + action.closureConfidence, 0) / actions.length) : 0;
+  const ownerReady = actions.filter((action) => Boolean(action.assignedOwner)).length;
+  const evidenceReady = actions.filter((action) => getEvidencePercent(action) === 100).length;
+  const verificationReady = actions.filter((action) => action.status === 'Ready for Verification' || action.status === 'Verified Closed').length;
+  return <div className="workbench-readiness-list"><Metric label="Average readiness" value={`${average}%`} helper="Across filtered action population" /><Metric label="Owner assigned" value={`${ownerReady}/${actions.length}`} helper="Assigned owner present" /><Metric label="Evidence complete" value={`${evidenceReady}/${actions.length}`} helper="All checklist items received" /><Metric label="Verification gate" value={`${verificationReady}/${actions.length}`} helper="Ready or verified closed" /><p>Closure readiness requires assigned owner, due date, completed evidence checklist, documented next step, and verification status before a finding can be considered for risk downgrade.</p></div>;
+}
+
+function RiskClosurePipeline({ rows }: { rows: Array<{ status: WorkbenchStatus; count: number }> }) {
+  const max = Math.max(1, ...rows.map((row) => row.count));
+  return <div className="workbench-pipeline">{rows.map((row) => <div key={row.status}><div><span>{row.status}</span><strong>{formatNumber(row.count)}</strong></div><i style={{ width: `${Math.max(5, (row.count / max) * 100)}%` }} /></div>)}</div>;
+}
+
 function Metric({ label, value, helper, tier }: { label: string; value: string; helper: string; tier?: RemediationColorTier }) {
   return <div className={tier ? `remediation-metric metric-${tier}` : 'remediation-metric'}><span>{label}</span><strong>{value}</strong><small>{helper}</small></div>;
 }
@@ -316,6 +529,178 @@ function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
 
 function StatePanel({ title, message, danger = false }: { title: string; message: string; danger?: boolean }) {
   return <section className="remediation-card remediation-state"><h2>{title}</h2><p className={danger ? 'danger' : ''}>{message}</p></section>;
+}
+
+const workbenchStatuses: WorkbenchStatus[] = ['New', 'Assigned', 'Evidence Requested', 'Evidence Received', 'Ready for Verification', 'Verified Closed'];
+
+function buildEvidenceActions(items: RemediationItem[]): EvidenceAction[] {
+  return items.slice(0, 36).map((item, index) => normalizeEvidenceAction({
+    id: `eta-${item.remediationId}`,
+    priority: item.priority,
+    storeFacility: item.facilityAlias,
+    market: item.region,
+    riskTier: riskTierFor(item),
+    sourceModule: sourceModuleFor(item),
+    issueType: item.category,
+    riskFinding: item.title,
+    actionSummary: item.recommendedAction,
+    recommendedOwner: item.ownerTeam,
+    assignedOwner: index % 7 === 0 ? '' : item.ownerTeam,
+    vendorExternalParty: vendorFor(item),
+    dueDate: item.dueAt.slice(0, 10),
+    status: workbenchStatusFor(item),
+    evidenceChecklist: item.evidenceChecklist.map((label, evidenceIndex) => ({ id: `${item.remediationId}-${evidenceIndex}`, label, received: item.evidenceStatus === 'Verified' || item.evidenceStatus === 'Received' || (item.evidenceStatus === 'Pending Verification' && evidenceIndex < Math.max(1, item.evidenceChecklist.length - 1)) })),
+    closureConfidence: 0,
+    nextStep: item.nextStep || item.recommendedAction,
+    notes: `Drafted from ${item.sourceService}. Source finding: ${item.sourceFindingId}. ${item.description}`,
+    vendorContacted: item.status === 'In Progress' || item.status === 'Pending Verification' || index % 4 === 0,
+    escalated: item.priority === 'P1' || item.status === 'Blocked',
+  }));
+}
+
+function normalizeEvidenceAction(action: EvidenceAction): EvidenceAction {
+  return { ...action, closureConfidence: getClosureReadiness(action).score };
+}
+
+function getWorkbenchSummary(actions: EvidenceAction[]) {
+  return {
+    openActions: actions.filter((action) => action.status !== 'Verified Closed').length,
+    overdue: actions.filter(isWorkbenchOverdue).length,
+    missingEvidence: actions.filter((action) => getEvidencePercent(action) < 100).length,
+    ownerNeeded: actions.filter((action) => !action.assignedOwner).length,
+    vendorFollowUps: actions.filter((action) => action.vendorExternalParty !== 'FPI Internal' && action.status !== 'Verified Closed').length,
+    externalNeeded: actions.filter((action) => isExternalCoordinationNeeded(action)).length,
+    readyForVerification: actions.filter((action) => action.status === 'Ready for Verification').length,
+    verifiedClosed: actions.filter((action) => action.status === 'Verified Closed').length,
+    downgradeEligible: actions.filter((action) => getRiskDowngradeEligibility(action) === 'Eligible for Downgrade').length,
+  };
+}
+
+function filterEvidenceActions(actions: EvidenceAction[], filters: WorkbenchFilters): EvidenceAction[] {
+  const term = filters.search.trim().toLowerCase();
+  return actions.filter((action) => {
+    const eligibility = getRiskDowngradeEligibility(action);
+    const searchable = [action.storeFacility, action.market, action.issueType, action.riskFinding, action.actionSummary, action.recommendedOwner, action.assignedOwner, action.vendorExternalParty, action.evidenceChecklist.map((check) => check.label).join(' '), action.nextStep, action.notes].join(' ').toLowerCase();
+    return (!term || searchable.includes(term))
+      && (filters.store === 'all' || action.storeFacility === filters.store)
+      && (filters.market === 'all' || action.market === filters.market)
+      && (filters.riskTier === 'all' || action.riskTier === filters.riskTier)
+      && (filters.sourceModule === 'all' || action.sourceModule === filters.sourceModule)
+      && (filters.issueType === 'all' || action.issueType === filters.issueType)
+      && (filters.priority === 'all' || action.priority === filters.priority)
+      && (filters.status === 'all' || action.status === filters.status)
+      && (filters.owner === 'all' || action.assignedOwner === filters.owner || action.recommendedOwner === filters.owner)
+      && (filters.vendor === 'all' || action.vendorExternalParty === filters.vendor)
+      && (!filters.dueDate || action.dueDate === filters.dueDate)
+      && quickFilterMatches(action, filters.quickFilter, eligibility);
+  }).sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || a.dueDate.localeCompare(b.dueDate));
+}
+
+function quickFilterMatches(action: EvidenceAction, quickFilter: WorkbenchQuickFilter, eligibility: RiskDowngradeEligibility): boolean {
+  if (quickFilter === 'overdue') return isWorkbenchOverdue(action);
+  if (quickFilter === 'missingEvidence') return getEvidencePercent(action) < 100;
+  if (quickFilter === 'ownerNeeded') return !action.assignedOwner;
+  if (quickFilter === 'vendorFollowUp') return action.vendorExternalParty !== 'FPI Internal' && action.status !== 'Verified Closed';
+  if (quickFilter === 'externalNeeded') return isExternalCoordinationNeeded(action);
+  if (quickFilter === 'readyVerification') return action.status === 'Ready for Verification';
+  if (quickFilter === 'verifiedClosed') return action.status === 'Verified Closed';
+  if (quickFilter === 'downgradeEligible') return eligibility === 'Eligible for Downgrade';
+  return true;
+}
+
+function getClosureReadiness(action: EvidenceAction) {
+  const gates = [
+    { label: 'Owner assigned', ready: Boolean(action.assignedOwner) },
+    { label: 'Due date set', ready: Boolean(action.dueDate) },
+    { label: 'Evidence complete', ready: getEvidencePercent(action) === 100 },
+    { label: 'Next step documented', ready: Boolean(action.nextStep.trim()) },
+    { label: 'Verification status', ready: action.status === 'Ready for Verification' || action.status === 'Verified Closed' },
+  ];
+  return { gates, score: Math.round((gates.filter((gate) => gate.ready).length / gates.length) * 100) };
+}
+
+function getRiskDowngradeEligibility(action: EvidenceAction): RiskDowngradeEligibility {
+  if (action.status === 'Verified Closed') return 'Downgraded/Closed';
+  if (!action.assignedOwner) return 'Owner Needed';
+  if (getEvidencePercent(action) < 100) return 'Evidence Incomplete';
+  if (!action.dueDate || !action.nextStep.trim()) return 'Not Eligible';
+  if (action.status !== 'Ready for Verification') return 'Pending Verification';
+  return 'Eligible for Downgrade';
+}
+
+function getClosurePipeline(actions: EvidenceAction[]): Array<{ status: WorkbenchStatus; count: number }> {
+  return workbenchStatuses.map((status) => ({ status, count: actions.filter((action) => action.status === status).length }));
+}
+
+function getEvidencePercent(action: EvidenceAction): number {
+  if (!action.evidenceChecklist.length) return 100;
+  return Math.round((action.evidenceChecklist.filter((check) => check.received).length / action.evidenceChecklist.length) * 100);
+}
+
+function isWorkbenchOverdue(action: EvidenceAction): boolean {
+  return action.status !== 'Verified Closed' && action.dueDate < '2026-05-05';
+}
+
+function sourceModuleFor(item: RemediationItem): string {
+  if (item.sourceService.includes('Camera')) return item.category.includes('Access') || item.category.includes('LPR') ? 'Camera / Technical Controls' : 'Camera / Technical Controls';
+  if (item.category === 'Network / Security Device') return 'Device Posture';
+  if (item.category === 'Source Freshness') return 'Controls Governance';
+  return 'Risk Intelligence';
+}
+
+function riskTierFor(item: RemediationItem): string {
+  if (item.severity === 'Critical') return 'Critical';
+  if (item.severity === 'High') return 'High';
+  if (item.severity === 'Medium') return 'Moderate';
+  return 'Low';
+}
+
+function vendorFor(item: RemediationItem): string {
+  if (item.channel === 'ServiceChannel') return 'CCTV service vendor';
+  if (item.channel === 'Security Engineering') return 'Security engineering / device vendor';
+  if (item.channel === 'Manual Coordination') return 'External Coordination';
+  if (item.channel === 'Me@Walmart') return 'Store / Field Ops';
+  return 'FPI Internal';
+}
+
+function workbenchStatusFor(item: RemediationItem): WorkbenchStatus {
+  if (item.status === 'Verified Complete') return 'Verified Closed';
+  if (item.status === 'Pending Verification') return 'Ready for Verification';
+  if (item.evidenceStatus === 'Received') return 'Evidence Received';
+  if (item.evidenceRequired && (item.status === 'Assigned' || item.status === 'In Progress')) return 'Evidence Requested';
+  if (item.status === 'Assigned' || item.status === 'In Progress' || item.status === 'Blocked') return 'Assigned';
+  return 'New';
+}
+
+function isExternalCoordinationNeeded(action: EvidenceAction): boolean {
+  return action.vendorExternalParty === 'External Coordination' || action.issueType.includes('Access') || action.issueType.includes('LPR') || action.escalated;
+}
+
+function appendNote(existing: string, note: string): string {
+  return `${existing}${existing ? '\n' : ''}${new Date().toISOString().slice(0, 10)}: ${note}`;
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
+}
+
+function riskTierTone(tier: string): StatusTone {
+  if (tier === 'Critical') return 'critical';
+  if (tier === 'High' || tier === 'Moderate') return 'watch';
+  return 'stable';
+}
+
+function workbenchStatusTone(status: WorkbenchStatus): StatusTone {
+  if (status === 'Verified Closed') return 'ready';
+  if (status === 'Ready for Verification' || status === 'Evidence Received') return 'watch';
+  if (status === 'New' || status === 'Evidence Requested') return 'stable';
+  return 'watch';
+}
+
+function downgradeTone(eligibility: RiskDowngradeEligibility): StatusTone {
+  if (eligibility === 'Downgraded/Closed' || eligibility === 'Eligible for Downgrade') return 'ready';
+  if (eligibility === 'Owner Needed' || eligibility === 'Evidence Incomplete') return 'critical';
+  return 'watch';
 }
 
 function hoursUntilDue(item: RemediationItem): number {
