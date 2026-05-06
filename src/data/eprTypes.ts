@@ -29,6 +29,7 @@ export type EprFacility = {
   critical_task_count: number;
   avg_remediation_hours: number;
   risk_score: number;
+  risk_tier?: string;
   latitude?: number;
   longitude?: number;
   city?: string;
@@ -47,6 +48,9 @@ export type EprHotel = {
   walmart_preferred: boolean;
   image_url?: string;
   distance_from_airport?: number;
+  nearest_airport?: string;
+  latitude?: number;
+  longitude?: number;
   amenities?: string[];
   safety_score?: {
     overall_score: number;

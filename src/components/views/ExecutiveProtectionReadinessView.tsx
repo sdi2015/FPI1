@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
-import { ScopeContextChip } from '../ScopeContextChip';
 import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import type { EprData, EprFacility, EprHotel, EprIncident, EprSecuritySolution, EprTask } from '../../data/eprTypes';
 import { applyEprScope } from '../../data/eprScope';
 import { useEprData } from '../../data/useEprData';
+import { RouteMap } from '../RouteMap';
+import { VisitBriefWizard } from '../VisitBriefWizard';
 
 export type ExecutiveProtectionReadinessViewProps = {
   facilities: FpiFacility[];
@@ -76,7 +77,7 @@ export function ExecutiveProtectionReadinessView({
   storeScope,
   onChangeScopeRequest,
 }: ExecutiveProtectionReadinessViewProps) {
-  const [activeTab, setActiveTab] = useState<EprTab>('overview');
+  const [activeTab, setActiveTab] = useState<EprTab>('visits');
   const eprState = useEprData();
   const eprData = useMemo(() => (eprState.data ? applyEprScope(eprState.data, fireSites, storeScope) : null), [eprState.data, fireSites, storeScope]);
   const topRiskFacilities = useMemo(() => getTopRiskFacilities(eprData), [eprData]);
@@ -94,8 +95,6 @@ export function ExecutiveProtectionReadinessView({
         </div>
         <StatusPill label={eprState.loading ? 'LOADING' : eprState.error ? 'DATA ISSUE' : 'DATA LOADED'} tone={eprState.error ? 'critical' : eprState.loading ? 'buildout' : 'ready'} />
       </header>
-
-      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
 
       {eprState.loading ? <StatePanel title="Loading EPR data package" message="Preparing the analyzed executive protection, travel, hotel, incident, and mitigation data." /> : null}
       {eprState.error ? <StatePanel title="EPR data unavailable" message={eprState.error} tone="critical" /> : null}
@@ -126,20 +125,8 @@ export function ExecutiveProtectionReadinessView({
 
 function OverviewTab({ data, topRiskFacilities, onTabSelect }: { data: EprData; topRiskFacilities: EprFacility[]; onTabSelect: (tab: EprTab) => void }) {
   const kpis = data.kpis;
-  const criticalTaskCount = data.tasks_governance.tasks.filter((task) => task.priority === 'Critical').length;
-  const highRiskFacilityCount = data.field_operations.facilities.filter((facility) => facility.risk_score >= 70).length;
-  const overdueFacilityCount = topRiskFacilities.filter((facility) => facility.overdue_task_count > 0).length;
-  const visitReadiness: StatusTone = criticalTaskCount > 0 || overdueFacilityCount > 0 ? 'watch' : 'ready';
-
   return (
     <>
-      <section className="executive-strip" aria-label="EPR operating summary">
-        <ExecutiveItem label="Visit readiness" value={visitReadiness === 'watch' ? 'WATCH' : 'READY'} trend="Review routes" tone={visitReadiness} />
-        <ExecutiveItem label="High-risk visit facilities" value={highRiskFacilityCount} trend="Prioritized" tone="watch" />
-        <ExecutiveItem label="Safe hotel options" value={kpis.hotel_recommendations} trend="Safety scored" tone="track" />
-        <ExecutiveItem label="Open critical tasks" value={criticalTaskCount} trend="Needs owner" tone={criticalTaskCount > 0 ? 'critical' : 'ready'} />
-      </section>
-
       <section className="dashboard-grid epr-grid" aria-label="EPR overview detail">
         <section className="panel selected-service-panel">
           <div className="card-heading service-heading">
@@ -194,6 +181,7 @@ function VisitPlannerTab({ data }: { data: EprData }) {
   const [search, setSearch] = useState('');
   const [riskFilter, setRiskFilter] = useState('all');
   const [selectedRouteIds, setSelectedRouteIds] = useState<number[]>([]);
+  const [briefOpen, setBriefOpen] = useState(false);
   const facilities = useMemo(() => {
     const term = search.trim().toLowerCase();
     return [...data.visit_planner.route_facilities]
@@ -202,25 +190,11 @@ function VisitPlannerTab({ data }: { data: EprData }) {
       .sort((a, b) => b.risk_score - a.risk_score);
   }, [data.visit_planner.route_facilities, riskFilter, search]);
   const selectedRoute = useMemo(() => selectedRouteIds.map((id) => data.visit_planner.route_facilities.find((facility) => facility.facility_id === id)).filter((facility): facility is EprFacility => Boolean(facility)), [data.visit_planner.route_facilities, selectedRouteIds]);
-  const routeSummary = buildRouteSummary(selectedRoute);
   const addToRoute = (facility: EprFacility) => setSelectedRouteIds((current) => current.includes(facility.facility_id) ? current : [...current, facility.facility_id]);
   const removeFromRoute = (facilityId: number) => setSelectedRouteIds((current) => current.filter((id) => id !== facilityId));
 
   return (
     <section className="dashboard-grid epr-grid">
-      <section className="panel selected-service-panel">
-        <div className="card-heading"><div><p className="eyebrow">Visit planning and routing</p><h2>Executive/field visit route builder</h2></div><StatusPill label="DATA BACKED" tone="ready" /></div>
-        <p>Build a mock route from high-priority facilities, review task exposure, and prepare a safe visit handoff. This draft route is local-only and does not export calendars or send notifications.</p>
-        <div className="service-meta-grid service-live-metrics epr-route-summary">
-          <div><span>Selected stops</span><strong>{routeSummary.stops}</strong></div>
-          <div><span>Highest risk</span><strong>{routeSummary.highestRisk}</strong></div>
-          <div><span>Open tasks</span><strong>{routeSummary.openTasks}</strong></div>
-          <div><span>Route posture</span><strong>{routeSummary.posture}</strong></div>
-        </div>
-        <ol className="activity-list epr-workflow-list">
-          {data.visit_planner.workflow.map((step) => <li key={step}>{step}</li>)}
-        </ol>
-      </section>
       <section className="panel fire-facilities-panel">
         <div className="card-heading"><div><p className="eyebrow">Route queue</p><h2>Facilities available for executive/field visit planning</h2></div><StatusPill label={`${facilities.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search facility, market, region, city" /><select value={riskFilter} onChange={(event) => setRiskFilter(event.target.value)}><option value="all">All risk levels</option><option value="critical">Critical risk 80+</option><option value="high">High risk 70-79</option><option value="moderate">Moderate risk below 70</option></select></div>
@@ -228,10 +202,19 @@ function VisitPlannerTab({ data }: { data: EprData }) {
       </section>
       <section className="panel epr-route-panel">
         <div className="card-heading"><div><p className="eyebrow">Draft route</p><h2>Selected visit route and handoff summary</h2></div><StatusPill label="MOCK ONLY" tone="track" /></div>
-        {selectedRoute.length === 0 ? <p className="epr-empty-state">No facilities selected yet. Add facilities from the route queue to build a draft visit route.</p> : <div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div>}
-        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled>Create Visit Brief — Mock Only</button><button className="epr-action-button" type="button" disabled>Export Route — Coming Soon</button><button className="epr-action-button secondary" type="button" disabled>Send Handoff — Mock Only</button></div>
+        {selectedRoute.length === 0 ? <p className="epr-empty-state">No facilities selected yet. Add facilities from the route queue to build a draft visit route.</p> : <div className="epr-route-body"><RouteMap facilities={selectedRoute} /><div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div></div>}
+        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Create Visit Brief</button><button className="epr-action-button" type="button" disabled>Export Route — Coming Soon</button><button className="epr-action-button secondary" type="button" disabled>Send Handoff — Mock Only</button></div>
         <p className="epr-disclaimer">Draft only — no calendar export, notification, booking, or production workflow is triggered.</p>
       </section>
+      {briefOpen && (
+        <VisitBriefWizard
+          facilities={selectedRoute}
+          hotels={data.hotel_intelligence.hotels}
+          incidents={data.incident_intelligence.recent_incident_sample}
+          tasks={data.tasks_governance.tasks}
+          onClose={() => setBriefOpen(false)}
+        />
+      )}
     </section>
   );
 }
@@ -448,10 +431,6 @@ function SourceAnalysisTab({ data }: { data: EprData }) {
   );
 }
 
-function ExecutiveItem({ label, value, trend, tone }: { label: string; value: string | number; trend: string; tone: StatusTone }) {
-  return <article className="executive-item"><span>{label}</span><strong>{formatNumber(value)}</strong><StatusPill label={trend} tone={tone} /></article>;
-}
-
 function FacilityRow({ facility, onAdd, selected = false }: { facility: EprFacility; onAdd?: (facility: EprFacility) => void; selected?: boolean }) {
   return <tr><td><strong>{facility.facility_name}</strong><small>{facility.facility_id}</small></td><td>{facility.market}<small>{facility.region}</small></td><td>{Math.round(facility.risk_score)}</td><td>{facility.open_task_count} open / {facility.overdue_task_count} overdue</td>{onAdd ? <td><button className="epr-action-button" type="button" onClick={() => onAdd(facility)} disabled={selected}>{selected ? 'Added' : 'Add to Route'}</button></td> : null}</tr>;
 }
@@ -606,19 +585,6 @@ function StatePanel({ title, message, tone = 'stable' }: { title: string; messag
 
 function getTopRiskFacilities(data: EprData | null): EprFacility[] {
   return [...(data?.field_operations.facilities ?? [])].sort((a, b) => b.risk_score - a.risk_score).slice(0, 5);
-}
-
-function buildRouteSummary(facilities: EprFacility[]): { stops: number; highestRisk: string; openTasks: number; posture: 'READY' | 'WATCH' } {
-  const highestRisk = facilities.length ? Math.max(...facilities.map((facility) => facility.risk_score)) : 0;
-  const openTasks = facilities.reduce((total, facility) => total + facility.open_task_count, 0);
-  const overdueTasks = facilities.reduce((total, facility) => total + facility.overdue_task_count, 0);
-  const criticalTasks = facilities.reduce((total, facility) => total + facility.critical_task_count, 0);
-  return {
-    stops: facilities.length,
-    highestRisk: facilities.length ? String(Math.round(highestRisk)) : '—',
-    openTasks,
-    posture: highestRisk >= 70 || overdueTasks > 0 || criticalTasks > 0 ? 'WATCH' : 'READY',
-  };
 }
 
 function priorityRank(priority: string): number {
