@@ -113,17 +113,17 @@ button.tech-kpi:hover, button.tech-kpi:focus-visible { transform: translateY(-3p
 .tech-predictive-grid, .tech-governance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .tech-predictive-card, .tech-governance-grid article { position: relative; padding: 14px; border: 1px solid #e2e8f0; border-radius: 16px; background: #f8fafc; }
 .tech-predictive-card strong { display: block; color: #0f172a; font-size: 1.05rem; }
-.tech-predictive-card em { position: absolute; top: 12px; right: 12px; color: #0053e2; font-size: 1.9rem; font-style: normal; font-weight: 950; }
+.tech-predictive-card em { color: #0053e2; font-size: 1.9rem; font-style: normal; font-weight: 950; }
 .tech-predictive-card span { display: block; margin-top: 5px; color: #475569; font-weight: 850; }
 .tech-predictive-card ul { margin: 10px 0; padding-left: 18px; color: #475569; }
 .tech-predictive-card p { margin: 0; color: #0053e2; font-weight: 850; }
 /* predictive card sub-layout */
 .tech-predictive-scope { margin: 0 0 14px; color: #64748b; font-size: 0.82rem; }
-.tech-pc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.tech-pc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 .tech-pc-head strong { font-size: 1rem; font-weight: 700; color: #0f172a; }
-.tech-pc-badge { font-size: 0.73rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em; }
+.tech-pc-badge { font-size: 0.73rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em; flex-shrink: 0; }
 .tech-pc-score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.tech-pc-score-row em { font-size: 2.2rem; font-weight: 900; font-style: normal; line-height: 1; flex-shrink: 0; }
+.tech-pc-score-row em { font-size: 2.2rem; font-weight: 900; font-style: normal; line-height: 1; flex-shrink: 0; position: static; top: unset; right: unset; }
 .tech-pc-score-meta { display: flex; flex-direction: column; gap: 1px; }
 .tech-pc-score-meta b { font-size: 0.78rem; font-weight: 700; color: #374151; }
 .tech-pc-score-meta small { font-size: 0.69rem; color: #94a3b8; line-height: 1.3; }

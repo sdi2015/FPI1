@@ -368,6 +368,15 @@ function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacil
   const solutions = useMemo(() => [...data.security_mitigation.solutions].sort((a, b) => b.effectiveness_rating - a.effectiveness_rating), [data.security_mitigation.solutions]);
   const stores = useMemo(() => [...allStores].sort((a, b) => a.facility_name.localeCompare(b.facility_name)), [allStores]);
   const selectedStore = storeFilter === 'all' ? null : stores.find((store) => String(store.facility_id) === storeFilter) ?? null;
+  // Incidents at the selected store — always pulled from the FULL unscoped mitigation incident list so dashboard scope filters can't hide them.
+  const storeIncidents = useMemo(() => {
+    if (!selectedStore) return [];
+    return data.security_mitigation.incidents
+      .filter((incident) => Number(incident.facility_id) === Number(selectedStore.facility_id))
+      .map((incident) => ({ incident, cost: incidentCostEstimate(incident) }))
+      .sort((a, b) => b.cost - a.cost);
+  }, [data.security_mitigation.incidents, selectedStore]);
+  const storeIncidentTotal = storeIncidents.reduce((sum, row) => sum + row.cost, 0);
   const selectedDraft = selectedSolution ? createMitigationDraft(selectedSolution, selectedStore?.facility_name) : null;
 
   return (
@@ -595,6 +604,38 @@ function createMitigationDraft(solution: EprSecuritySolution, storeName?: string
 
 function solutionFiveYearCost(solution: EprSecuritySolution): number {
   return solution.upfront_cost + solution.annual_cost * 5;
+}
+
+// Estimated cost-per-event to Walmart by incident type (direct loss + LE response + investigation + EAP/legal exposure).
+// Flat $12,500 fallback matches the canonical generator's default when no specific category is defined.
+const INCIDENT_COST_BY_TYPE: Readonly<Record<string, number>> = {
+  'Person with a Gun': 72000,
+  'Aggravated Assault': 48000,
+  'Burglary': 34000,
+  'Battery': 22000,
+  'Suicide / Attempt': 18000,
+  'Lost/Missing Person': 9500,
+  'Threat of Violence': 7500,
+  'Vandalism / Criminal Mischief': 4200,
+};
+const INCIDENT_COST_FALLBACK = 12500;
+// Severity multiplier applied on top of the base cost so a severity-3 incident costs more than severity-1.
+const INCIDENT_SEVERITY_MULTIPLIER: Readonly<Record<string, number>> = { '1': 0.6, '2': 1.0, '3': 1.5 };
+
+function incidentCostEstimate(incident: EprIncident): number {
+  const base = INCIDENT_COST_BY_TYPE[incident.incident_type] ?? INCIDENT_COST_FALLBACK;
+  const multiplier = INCIDENT_SEVERITY_MULTIPLIER[String(incident.severity)] ?? 1.0;
+  return Math.round(base * multiplier);
+}
+
+function severityLabel(severity: number | string): string {
+  const value = String(severity);
+  return value === '3' ? 'High' : value === '2' ? 'Medium' : value === '1' ? 'Low' : value;
+}
+
+function severityTone(severity: number | string): StatusTone {
+  const value = String(severity);
+  return value === '3' ? 'critical' : value === '2' ? 'watch' : 'stable';
 }
 
 function TaskRow({ task, onCreateDraft }: { task: EprTask; onCreateDraft?: (task: EprTask) => void }) {
