@@ -9,6 +9,16 @@ import { RouteMap } from '../RouteMap';
 import { VisitBriefWizard } from '../VisitBriefWizard';
 import { HandoffModal } from '../HandoffModal';
 import {
+  buildMitigationContext,
+  candidateStatusTone,
+  findMitigationVendorCandidates,
+  MITIGATION_VENDOR_CANDIDATES_STORAGE_KEY,
+  type MitigationContext,
+  type MitigationVendorCandidate,
+  type MitigationVendorCandidateLink,
+} from '../../data/mitigationVendorBridge';
+import { useVendorIntelligenceData } from '../../data/useVendorIntelligenceData';
+import {
   exportRouteCsv,
   exportRouteGpx,
   exportRouteIcs,
@@ -349,6 +359,11 @@ function IncidentRiskTab({ data }: { data: EprData }) {
 
 export function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacility[] }) {
   const [storeFilter, setStoreFilter] = useState('all');
+  const [showVendorCandidates, setShowVendorCandidates] = useState(false);
+  const [candidateSearch, setCandidateSearch] = useState('');
+  const [candidateStatusFilter, setCandidateStatusFilter] = useState('all');
+  const [linkedCandidateRecords, setLinkedCandidateRecords] = useState<MitigationVendorCandidateLink[]>(readMitigationVendorCandidateLinks());
+  const vendorState = useVendorIntelligenceData();
   // User-built deployment plan. Recommendations are advisory — the plan is what drives the KPI math + email request.
   const [planSolutionIds, setPlanSolutionIds] = useState<ReadonlySet<number>>(new Set<number>());
   // Reset the plan when the store changes so each store starts clean.
@@ -379,10 +394,34 @@ export function MitigationTab({ data, allStores }: { data: EprData; allStores: E
     return counts;
   }, [storeIncidents]);
   const suggestions = useMemo(() => getStoreSuggestions(storeIncidentTypes, solutions), [solutions, storeIncidentTypes]);
+  const planSolutions = useMemo(() => solutions.filter((solution) => planSolutionIds.has(solution.id)), [solutions, planSolutionIds]);
+  const mitigationContext = useMemo(() => buildMitigationContext(selectedStore, storeIncidents.map((row) => row.incident), planSolutions), [selectedStore, storeIncidents, planSolutions]);
+  const foundVendorCandidates = useMemo(() => mitigationContext && vendorState.data ? findMitigationVendorCandidates(vendorState.data.vendors, mitigationContext, 12) : [], [mitigationContext, vendorState.data]);
+  const linkedVendorCandidates = useMemo(() => {
+    if (!mitigationContext || !vendorState.data) return [];
+    return linkedCandidateRecords
+      .filter((link) => link.mitigation_id === mitigationContext.id)
+      .map((link) => {
+        const vendor = vendorState.data?.vendors.find((entry) => entry.id === link.vendor_id);
+        return vendor ? { ...link, vendor } : null;
+      })
+      .filter((candidate): candidate is MitigationVendorCandidate => Boolean(candidate));
+  }, [linkedCandidateRecords, mitigationContext, vendorState.data]);
+  function persistCandidateLinks(next: MitigationVendorCandidateLink[]) {
+    setLinkedCandidateRecords(next);
+    writeMitigationVendorCandidateLinks(next);
+  }
+  function linkVendorCandidate(candidate: MitigationVendorCandidate) {
+    if (linkedCandidateRecords.some((link) => link.id === candidate.id)) return;
+    const { vendor: _vendor, ...link } = candidate;
+    persistCandidateLinks([link, ...linkedCandidateRecords]);
+  }
+  function removeVendorCandidateLink(candidateId: string) {
+    persistCandidateLinks(linkedCandidateRecords.filter((link) => link.id !== candidateId));
+  }
   // KPI math drives off the user's PLAN (what they've actively chosen to deploy) — not the auto-recommendations.
   // Recommendations stay visible as advisory hints (badges + suggestions panel + one-click apply button).
   // Observed incident sample spans ~1.42 years; we project bleed forward to 5 yrs so it's comparable to the catalog's 5-yr solution cost.
-  const planSolutions = useMemo(() => solutions.filter((solution) => planSolutionIds.has(solution.id)), [solutions, planSolutionIds]);
   const planSolutionCost = planSolutions.reduce((sum, solution) => sum + solutionFiveYearCost(solution), 0);
   const avgPlanEffectiveness = planSolutions.length > 0 ? planSolutions.reduce((sum, solution) => sum + solution.effectiveness_rating, 0) / planSolutions.length : 0;
   const fiveYearProjectedBleed = Math.round(storeIncidentTotal * (5 / INCIDENT_SAMPLE_YEARS));
@@ -434,6 +473,7 @@ export function MitigationTab({ data, allStores }: { data: EprData; allStores: E
             </div>
             <div className="epr-plan-actions">
               <button type="button" className="epr-action-button" onClick={applyRecommendations} disabled={suggestions.recommendedSolutionIds.size === 0}>✨ Use {suggestions.recommendedSolutionIds.size} recommended</button>
+              <button type="button" className="epr-action-button" onClick={() => setShowVendorCandidates(true)} disabled={!mitigationContext}>Find Vendor Candidates</button>
               <button type="button" className="epr-action-button epr-action-button-secondary" onClick={clearPlan} disabled={planSolutionIds.size === 0}>Clear plan</button>
               <span className="epr-plan-hint">Recommendations are advisory — toggle any solution card to add or remove from your plan.</span>
             </div>
@@ -473,6 +513,22 @@ export function MitigationTab({ data, allStores }: { data: EprData; allStores: E
         <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={selectedStore ? `${planSolutions.length} IN PLAN · ${suggestions.recommendedSolutionIds.size} RECOMMENDED · ${solutions.length} TOTAL` : `${solutions.length} SOLUTIONS`} tone={selectedStore && planSolutions.length > 0 ? 'ready' : 'stable'} /></div>
         <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} recommended={suggestions.recommendedSolutionIds.has(solution.id)} inPlan={planSolutionIds.has(solution.id)} onTogglePlan={selectedStore ? togglePlanSolution : undefined} />)}</div>
       </section>
+      {selectedStore && mitigationContext ? (
+        <VendorCandidatesPanel
+          context={mitigationContext}
+          linkedCandidates={linkedVendorCandidates}
+          foundCandidates={showVendorCandidates ? foundVendorCandidates : []}
+          search={candidateSearch}
+          statusFilter={candidateStatusFilter}
+          vendorLoading={vendorState.loading}
+          vendorError={vendorState.error}
+          onSearchChange={setCandidateSearch}
+          onStatusFilterChange={setCandidateStatusFilter}
+          onFindCandidates={() => setShowVendorCandidates(true)}
+          onLinkCandidate={linkVendorCandidate}
+          onRemoveCandidate={removeVendorCandidateLink}
+        />
+      ) : null}
       <section className="panel epr-mitigation-draft-panel epr-resizable-panel" data-resizable-panel="mitigation-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Plan request — email output</p><h2>Send security solution install request</h2></div><StatusPill label={planRequestEmail ? `${planSolutions.length} CONTROL${planSolutions.length === 1 ? '' : 'S'} · MOCK ADDRESSES` : 'NO PLAN'} tone={planRequestEmail ? 'ready' : 'stable'} /></div>
         {planRequestEmail ? (
@@ -709,6 +765,101 @@ function incidentRecommendedAction(incident: EprIncident): string {
   return 'Track for awareness, confirm no active executive movement impact, and document any required store-facing follow-up.';
 }
 
+function VendorCandidatesPanel({ context, linkedCandidates, foundCandidates, search, statusFilter, vendorLoading, vendorError, onSearchChange, onStatusFilterChange, onFindCandidates, onLinkCandidate, onRemoveCandidate }: {
+  context: MitigationContext;
+  linkedCandidates: MitigationVendorCandidate[];
+  foundCandidates: MitigationVendorCandidate[];
+  search: string;
+  statusFilter: string;
+  vendorLoading: boolean;
+  vendorError: string | null;
+  onSearchChange: (value: string) => void;
+  onStatusFilterChange: (value: string) => void;
+  onFindCandidates: () => void;
+  onLinkCandidate: (candidate: MitigationVendorCandidate) => void;
+  onRemoveCandidate: (candidateId: string) => void;
+}) {
+  const linkedIds = new Set(linkedCandidates.map((candidate) => candidate.id));
+  const term = search.trim().toLowerCase();
+  const filteredFound = foundCandidates
+    .filter((candidate) => statusFilter === 'all' || candidate.candidate_status === statusFilter)
+    .filter((candidate) => !term || [candidate.vendor.company, candidate.vendor.technologyProduct, candidate.vendor.category, candidate.match_rationale, candidate.capability_match.join(' ')].join(' ').toLowerCase().includes(term));
+  return (
+    <section className="panel epr-vendor-candidates-panel">
+      <div className="card-heading">
+        <div><p className="eyebrow">Vendor bridge</p><h2>SENTRY candidate links for this mitigation plan</h2></div>
+        <StatusPill label={`${linkedCandidates.length} LINKED · ${foundCandidates.length} FOUND`} tone={linkedCandidates.length > 0 ? 'ready' : foundCandidates.length > 0 ? 'watch' : 'stable'} />
+      </div>
+      <p>Use this sandbox bridge to associate mitigation gaps with SENTRY vendors for review. Candidate links are saved locally only and do not change vendor records, create tickets, or start procurement.</p>
+      <div className="epr-vendor-context-grid">
+        <div><span>Mitigation</span><strong>{context.id}</strong></div>
+        <div><span>Facility</span><strong>{context.facilityScope}</strong></div>
+        <div><span>Risk domain</span><strong>{context.riskDomain}</strong></div>
+        <div><span>Capabilities</span><strong>{context.capabilityTags.join(', ')}</strong></div>
+      </div>
+      <div className="epr-plan-actions">
+        <button type="button" className="epr-action-button" onClick={onFindCandidates} disabled={vendorLoading}>Find Vendor Candidates</button>
+        <span className="epr-plan-hint">Matching uses capability tags, risk domain alignment, assessment status, recommendation score, and evidence quality.</span>
+      </div>
+      {vendorError ? <p className="epr-empty-state">Vendor Intelligence data unavailable: {vendorError}</p> : null}
+      {linkedCandidates.length > 0 ? (
+        <div className="epr-vendor-section-block">
+          <h3>Linked candidates</h3>
+          <VendorCandidateTable candidates={linkedCandidates} linkedIds={linkedIds} mode="linked" onRemoveCandidate={onRemoveCandidate} />
+        </div>
+      ) : <p className="epr-empty-state">No vendor candidates linked to this mitigation context yet.</p>}
+      <div className="epr-controls epr-candidate-controls">
+        <input type="search" value={search} onChange={(event) => onSearchChange(event.target.value)} placeholder="Search candidate vendors, products, categories, rationale" />
+        <select value={statusFilter} onChange={(event) => onStatusFilterChange(event.target.value)} aria-label="Filter candidate status">
+          <option value="all">All candidate statuses</option>
+          <option value="Suggested">Suggested</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Assessment Requested">Assessment Requested</option>
+          <option value="Approved Candidate">Approved Candidate</option>
+          <option value="Not Recommended">Not Recommended</option>
+          <option value="Deferred">Deferred</option>
+        </select>
+      </div>
+      {foundCandidates.length === 0 ? (
+        <p className="epr-empty-state">Run <b>Find Vendor Candidates</b> to score SENTRY vendors against this mitigation context.</p>
+      ) : filteredFound.length === 0 ? (
+        <p className="epr-empty-state">No vendor candidates match the current filters.</p>
+      ) : (
+        <VendorCandidateTable candidates={filteredFound} linkedIds={linkedIds} mode="found" onLinkCandidate={onLinkCandidate} />
+      )}
+    </section>
+  );
+}
+
+function VendorCandidateTable({ candidates, linkedIds, mode, onLinkCandidate, onRemoveCandidate }: {
+  candidates: MitigationVendorCandidate[];
+  linkedIds: Set<string>;
+  mode: 'found' | 'linked';
+  onLinkCandidate?: (candidate: MitigationVendorCandidate) => void;
+  onRemoveCandidate?: (candidateId: string) => void;
+}) {
+  return (
+    <div className="epr-vendor-candidate-table">
+      <table>
+        <thead><tr><th>Vendor</th><th>Match</th><th>Capability / Domain</th><th>Status</th><th>Rationale</th><th>Action</th></tr></thead>
+        <tbody>{candidates.map((candidate) => {
+          const linked = linkedIds.has(candidate.id);
+          return (
+            <tr key={candidate.id}>
+              <td><strong>{candidate.vendor.company}</strong><small>{candidate.vendor.technologyProduct || candidate.vendor.category}</small></td>
+              <td><strong>{candidate.match_score}%</strong><small>Rec {candidate.recommendation_score_at_link}</small></td>
+              <td><small>{candidate.capability_match.length ? candidate.capability_match.join(', ') : 'Review capability fit'}</small><small>{candidate.risk_domain_match.length ? candidate.risk_domain_match.join(', ') : 'Domain review needed'}</small></td>
+              <td><StatusPill label={candidate.candidate_status} tone={candidateStatusTone(candidate.candidate_status)} /><small>{candidate.assessment_status_at_link}</small></td>
+              <td><small>{candidate.match_rationale}</small></td>
+              <td>{mode === 'linked' ? <button type="button" className="epr-action-button secondary" onClick={() => onRemoveCandidate?.(candidate.id)}>Remove Link</button> : <button type="button" className="epr-action-button" onClick={() => onLinkCandidate?.(candidate)} disabled={linked}>{linked ? 'Linked' : 'Link Candidate'}</button>}</td>
+            </tr>
+          );
+        })}</tbody>
+      </table>
+    </div>
+  );
+}
+
 function SolutionCard({ solution, recommended = false, inPlan = false, onTogglePlan }: { solution: EprSecuritySolution; recommended?: boolean; inPlan?: boolean; onTogglePlan?: (solution: EprSecuritySolution) => void }) {
   const classes = ['facility-record', 'epr-solution-card'];
   if (recommended) classes.push('recommended');
@@ -877,6 +1028,27 @@ function getStoreSuggestions(storeIncidentTypes: ReadonlyMap<string, number>, so
     }
   }
   return { recommendedSolutionIds, vendorFallbacks };
+}
+
+function readMitigationVendorCandidateLinks(): MitigationVendorCandidateLink[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(MITIGATION_VENDOR_CANDIDATES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeMitigationVendorCandidateLinks(records: MitigationVendorCandidateLink[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(MITIGATION_VENDOR_CANDIDATES_STORAGE_KEY, JSON.stringify(records));
+  } catch {
+    // Local persistence is best-effort only; never block mitigation workflow actions.
+  }
 }
 
 function TaskRow({ task, onCreateDraft }: { task: EprTask; onCreateDraft?: (task: EprTask) => void }) {

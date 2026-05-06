@@ -83,8 +83,9 @@
 .vendor-search-filters { grid-template-columns: minmax(260px, 1fr) minmax(190px, 0.24fr); }
 .vendor-search-panel { margin-bottom: 16px; background: linear-gradient(135deg, #ffffff, #eff6ff); }
 .vendor-empty-state { text-align: center; }
+.vendor-scoring-note { margin: 0 0 12px; padding: 10px 12px; color: #334155; border: 1px solid #bfdbfe; border-radius: 14px; background: rgba(239,246,255,0.82); font-size: 0.88rem; }
 .vendor-table-wrap { overflow: auto; border: 1px solid #e2e8f0; border-radius: 15px; }
-.vendor-table { width: 100%; min-width: 1100px; border-collapse: collapse; background: #ffffff; }
+.vendor-table { width: 100%; min-width: 1380px; border-collapse: collapse; background: #ffffff; }
 .vendor-table th { position: sticky; top: 0; z-index: 1; padding: 11px 10px; color: #475569; background: #f8fafc; font-size: 0.72rem; text-align: left; text-transform: uppercase; letter-spacing: 0.08em; }
 .vendor-table td { padding: 11px 10px; color: #0f172a; border-top: 1px solid #e2e8f0; font-size: 0.84rem; vertical-align: top; }
 .vendor-table small { display: block; margin-top: 3px; color: #64748b; }
@@ -93,6 +94,17 @@
 .vendor-row-score-watchlist td:first-child { box-shadow: inset 4px 0 0 #ffc220; }
 .vendor-row-score-review td:first-child { box-shadow: inset 4px 0 0 #94a3b8; }
 .vendor-row-score-deprioritized td:first-child { box-shadow: inset 4px 0 0 #dc2626; }
+.vendor-detail-row td { padding-top: 0; background: #f8fafc; }
+.vendor-detail-row details { padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; }
+.vendor-detail-row summary { color: #0053e2; font-weight: 950; cursor: pointer; }
+.vendor-detail-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 14px; margin-top: 10px; }
+.vendor-detail-grid strong { display: block; margin-bottom: 5px; color: #0f172a; }
+.vendor-detail-grid p { margin: 0 0 8px; font-size: 0.84rem; }
+.vendor-score-breakdown { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.vendor-score-breakdown.compact { grid-template-columns: 1fr; margin-top: 8px; }
+.vendor-score-breakdown div { padding: 8px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+.vendor-score-breakdown span { display: block; color: #64748b; font-size: 0.62rem; font-weight: 950; letter-spacing: 0.08em; text-transform: uppercase; }
+.vendor-score-breakdown strong { display: block; margin-top: 4px; color: #0f172a; font-size: 0.82rem; }
 .vendor-score-bar { height: 9px; overflow: hidden; margin-top: 8px; border-radius: 999px; background: #e2e8f0; }
 .vendor-score-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #94a3b8, #0053e2); }
 .vendor-score-bar.score-band-strategic span { background: linear-gradient(90deg, #064e3b, #10b981); }
@@ -119,4 +131,4 @@
 .vendor-note-list { margin: 0; padding-left: 18px; color: #475569; line-height: 1.5; }
 .vendor-state .danger { color: #b45309; }
 @media (max-width: 1280px) { .vendor-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .vendor-tab-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); } .vendor-candidate-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 900px) { .vendor-page { margin: -16px; padding: 14px; } .vendor-header { flex-direction: column; } .vendor-mode { text-align: left; } .vendor-kpi-grid, .vendor-focus-strip, .vendor-grid, .vendor-tab-bar, .vendor-metric-grid, .vendor-form-grid, .vendor-filters, .vendor-directory-filters, .vendor-mini-list, .vendor-candidate-grid { grid-template-columns: 1fr; } .vendor-card.wide, .vendor-form-grid label.wide { grid-column: span 1; } .vendor-candidate > div:first-child { flex-direction: column; } }
+@media (max-width: 900px) { .vendor-page { margin: -16px; padding: 14px; } .vendor-header { flex-direction: column; } .vendor-mode { text-align: left; } .vendor-kpi-grid, .vendor-focus-strip, .vendor-grid, .vendor-tab-bar, .vendor-metric-grid, .vendor-form-grid, .vendor-filters, .vendor-directory-filters, .vendor-mini-list, .vendor-candidate-grid, .vendor-detail-grid, .vendor-score-breakdown { grid-template-columns: 1fr; } .vendor-card.wide, .vendor-form-grid label.wide { grid-column: span 1; } .vendor-candidate > div:first-child { flex-direction: column; } }
