@@ -200,15 +200,19 @@ function Landing({
           <span className="stars-layer layer-two" />
           <span className="stars-layer layer-three" />
           <span className="nebula-glow" />
+          <span className="aurora-sweep" />
+          <span className="scan-grid" />
         </div>
 
         <div className="fpi-landing-content">
           <div className="spark-flight-wrapper">
+            <span className="spark-ring ring-one" aria-hidden="true" />
+            <span className="spark-ring ring-two" aria-hidden="true" />
             <img className="spark-flight" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
           </div>
           <div className="landing-copy">
             <h1>Facility Protection Intelligence</h1>
-            <p>Region 75 Security Intelligence &amp; Risk Operations Platform</p>
+            <p>Command Center Experience</p>
           </div>
 
           <div className="landing-actions" role="group" aria-label="FPI entry actions">
