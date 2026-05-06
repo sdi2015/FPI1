@@ -45,75 +45,6 @@ const VISIT_BRIEF_RECIPIENTS = {
   apRegion: { name: 'AP Region 75 Director', email: 'ap-region75-director@walmart.com' },
 } as const;
 
-type VisitBriefEmail = { to: string; cc: string; subject: string; body: string };
-
-function buildVisitBriefEmail(args: {
-  subject: string;
-  airport: Airport;
-  route: EprFacility[];
-  briefs: StoreBrief[];
-  hotelChoice: HotelChoice | null;
-  selectedHotel: EprHotel | null;
-  lastStop: EprFacility | null;
-  totalMiles: number;
-}): VisitBriefEmail {
-  const { subject, airport, route, briefs, hotelChoice, selectedHotel, lastStop, totalMiles } = args;
-  const totalIncidents = briefs.reduce((sum, brief) => sum + brief.recentIncidents.length, 0);
-  const totalCritical = briefs.reduce((sum, brief) => sum + brief.facility.critical_task_count, 0);
-  const totalOverdue = briefs.reduce((sum, brief) => sum + brief.facility.overdue_task_count, 0);
-  const hotelLine = selectedHotel
-    ? `${selectedHotel.name} — ${selectedHotel.address} (${selectedHotel.brand}, ${selectedHotel.rating.toFixed(1)}★, $${selectedHotel.price_per_night.toFixed(0)}/night${selectedHotel.walmart_preferred ? ', Walmart preferred' : ''})`
-    : hotelChoice === 'airport'
-      ? `Anchored near ${airport.iata}`
-      : hotelChoice === 'lastStop' && lastStop
-        ? `Anchored near last stop (${lastStop.city}, ${lastStop.state})`
-        : 'TBD';
-  const lines = [
-    `${VISIT_BRIEF_RECIPIENTS.executive.name},`,
-    ``,
-    `Attached/below is the draft executive visit brief for the upcoming Region 75 (Mid-Atlantic) tour starting from ${airport.iata} — ${airport.name} (${airport.city}, ${airport.state}).`,
-    `The route is sequenced for shortest drive (${totalMiles.toFixed(0)} mi total, great-circle estimate).`,
-    ``,
-    `TRIP SUMMARY`,
-    `  • Stops: ${route.length}`,
-    `  • Recent incidents (sampled): ${totalIncidents}`,
-    `  • Critical tasks open: ${totalCritical}`,
-    `  • Overdue tasks: ${totalOverdue}`,
-    ``,
-    `TRAVEL`,
-    `  • Arrival: ${airport.iata} — ${airport.name}`,
-    `  • Lodging: ${hotelLine}`,
-    ``,
-    `STOP-BY-STOP`,
-    ...briefs.flatMap((brief, index) => {
-      const facility = brief.facility;
-      const tier = facility.risk_tier ?? (facility.risk_score >= 80 ? 'Critical' : facility.risk_score >= 50 ? 'High' : facility.risk_score >= 25 ? 'Moderate' : 'Low');
-      const topics = brief.topics.slice(0, 3).map((topic) => `      - ${topic}`);
-      return [
-        `  ${index + 1}. ${facility.facility_name} (${facility.market}) — ${tier} risk (score ${facility.risk_score})`,
-        `      Open critical: ${facility.critical_task_count} · Overdue: ${facility.overdue_task_count} · Recent incidents: ${brief.recentIncidents.length}`,
-        ...(topics.length > 0 ? [`      Discussion topics:`, ...topics] : []),
-      ];
-    }),
-    ``,
-    `Please reply with any preferred adjustments. Field teams have been notified to prepare site walks aligned to the discussion topics above.`,
-    ``,
-    `— ${VISIT_BRIEF_RECIPIENTS.fpiOps.name}`,
-    `(Mock draft — generated from FPI Foundry Pack · EPR · Visit Brief Wizard. No production workflow has been triggered.)`,
-  ];
-  return {
-    to: `${VISIT_BRIEF_RECIPIENTS.executive.email},${VISIT_BRIEF_RECIPIENTS.epLead.email}`,
-    cc: `${VISIT_BRIEF_RECIPIENTS.epTeam.email},${VISIT_BRIEF_RECIPIENTS.apRegion.email},${VISIT_BRIEF_RECIPIENTS.fpiOps.email}`,
-    subject,
-    body: lines.join('\n'),
-  };
-}
-
-function openVisitBriefEmail(email: VisitBriefEmail): void {
-  const url = `mailto:${encodeURIComponent(email.to)}?cc=${encodeURIComponent(email.cc)}&subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`;
-  window.location.href = url;
-}
-
 // The wizard moves linearly through 4 steps: airport entry -> review the
 // optimised route -> pick a hotel anchor -> final brief summary. Each step
 // renders its own panel; nothing here mutates source data.
@@ -653,6 +584,7 @@ function BriefStep({
   onClose: () => void;
 }) {
   const [sent, setSent] = useState(false);
+  const [composing, setComposing] = useState(false);
   // Browser-native PDF export: clone the email into a top-level print host
   // so it lives in normal document flow (no position:absolute, which breaks
   // multi-page pagination). Hide the rest of the app via @media print.
@@ -687,9 +619,12 @@ function BriefStep({
   const subject = `Executive Visit Brief — Region 75 — ${today.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} (${route.length} stop${route.length === 1 ? '' : 's'})`;
 
   function handleSendBrief() {
-    const email = buildVisitBriefEmail({ subject, airport, route, briefs, hotelChoice, selectedHotel, lastStop, totalMiles });
-    openVisitBriefEmail(email);
+    setComposing(true);
+  }
+
+  function handleConfirmSend() {
     setSent(true);
+    setComposing(false);
   }
 
   return (
@@ -816,7 +751,7 @@ function BriefStep({
 
       {sent && (
         <div className="vb-email-sent" role="status">
-          ✓ Mail client opened with the brief pre-filled for {VISIT_BRIEF_RECIPIENTS.executive.name} and the EP team. Nothing is sent until you hit Send in your mail client.
+          ✓ Visit brief sent (mock) to {VISIT_BRIEF_RECIPIENTS.executive.name}. In production, this opens your mail client for final review and sending.
         </div>
       )}
 
@@ -826,10 +761,146 @@ function BriefStep({
           <button type="button" className="epr-action-button secondary" onClick={onClose}>Close</button>
           <button type="button" className="epr-action-button secondary" onClick={handleSaveAsPdf}>⤵ Save as PDF</button>
           <button type="button" className="epr-action-button" onClick={handleSendBrief}>
-            {sent ? '📧 Re-open in mail client' : '📧 Send Brief (mock)'}
+            {sent ? '✓ Sent (mock)' : '📧 Send Brief (mock)'}
           </button>
         </div>
       </div>
+
+      {composing && (
+        <div className="vb-compose-overlay" role="dialog" aria-modal="true" aria-labelledby="vb-compose-title">
+          <div className="vb-compose-backdrop" onClick={() => setComposing(false)} />
+          <div className="vb-compose-panel">
+            <div className="vb-compose-header">
+              <h3 id="vb-compose-title">Review & Send Brief</h3>
+              <button type="button" className="vb-compose-close" onClick={() => setComposing(false)} aria-label="Close">×</button>
+            </div>
+            <div className="vb-compose-body">
+              <p className="vb-compose-help">Review the email below. Click "Send" to record the send for this mock. In production, this opens your mail client.</p>
+              {/* Re-render the email preview inline */}
+              <article className="vb-email vb-email--branded" aria-label="Executive visit brief email">
+                <div className="vb-brand-banner" aria-hidden="true">
+                  <div className="vb-brand-banner-inner">
+                    <div className="vb-brand-mark">
+                      <svg className="vb-brand-spark" viewBox="0 0 64 64" role="img" aria-label="Walmart spark">
+                        <g fill="#ffc220">
+                          {Array.from({ length: 6 }).map((_, i) => (
+                            <rect key={i} x="30" y="6" width="4" height="22" rx="2" transform={`rotate(${i * 60} 32 32)`} />
+                          ))}
+                        </g>
+                      </svg>
+                      <div className="vb-brand-wordmark">
+                        <span className="vb-brand-wordmark-name">Walmart</span>
+                        <span className="vb-brand-wordmark-sub">Global Security · Foundry Pack Initiative</span>
+                      </div>
+                    </div>
+                    <div className="vb-brand-meta">
+                      <span className="vb-brand-meta-label">Executive Protection</span>
+                      <span className="vb-brand-meta-value">Region 75 · Mid-Atlantic</span>
+                    </div>
+                  </div>
+                  <div className="vb-brand-stripe" />
+                </div>
+
+                <div className="vb-email-classification" aria-label="Document classification">
+                  <span className="vb-classification-dot" aria-hidden="true" />
+                  Walmart Internal · Executive Protection · Confidential — do not forward outside the EP / AP distribution.
+                </div>
+
+                <header className="vb-email-headers">
+                  <div><span className="vb-email-label">From</span><span>{VISIT_BRIEF_RECIPIENTS.fpiOps.name} &lt;{VISIT_BRIEF_RECIPIENTS.fpiOps.email}&gt;</span></div>
+                  <div><span className="vb-email-label">To</span><span>{VISIT_BRIEF_RECIPIENTS.executive.name}, {VISIT_BRIEF_RECIPIENTS.executive.title} &lt;{VISIT_BRIEF_RECIPIENTS.executive.email}&gt;; {VISIT_BRIEF_RECIPIENTS.epLead.name} &lt;{VISIT_BRIEF_RECIPIENTS.epLead.email}&gt;</span></div>
+                  <div><span className="vb-email-label">Cc</span><span>{VISIT_BRIEF_RECIPIENTS.epTeam.name} &lt;{VISIT_BRIEF_RECIPIENTS.epTeam.email}&gt;; {VISIT_BRIEF_RECIPIENTS.apRegion.name} &lt;{VISIT_BRIEF_RECIPIENTS.apRegion.email}&gt;</span></div>
+                  <div><span className="vb-email-label">Subject</span><span className="vb-email-subject">{subject}</span></div>
+                </header>
+
+                <section className="vb-email-hero">
+                  <p className="vb-email-hero-eyebrow">Executive Visit Brief</p>
+                  <h2 className="vb-email-hero-title">Region 75 Mid-Atlantic Tour</h2>
+                  <p className="vb-email-hero-meta">Prepared for {VISIT_BRIEF_RECIPIENTS.executive.name}, {VISIT_BRIEF_RECIPIENTS.executive.title} · {today.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                </section>
+
+                <div className="vb-email-body">
+                  <p>{VISIT_BRIEF_RECIPIENTS.executive.name},</p>
+                  <p>
+                    Below is the draft visit brief for your upcoming Region 75 (Mid-Atlantic) tour starting from <strong>{airport.iata} — {airport.name}</strong>.
+                    The route is sequenced for shortest drive (<strong>{totalMiles.toFixed(0)} mi</strong> total, great-circle estimate).
+                    Each stop section includes a risk snapshot and recommended discussion topics so you can engage site teams effectively.
+                  </p>
+
+                  <div className="vb-email-summary">
+                    <div><span>Stops</span><strong>{route.length}</strong></div>
+                    <div><span>Recent incidents</span><strong>{totalIncidents}</strong></div>
+                    <div><span>Critical tasks open</span><strong>{totalCritical}</strong></div>
+                    <div><span>Overdue tasks</span><strong>{totalOverdue}</strong></div>
+                  </div>
+
+                  <h4 className="vb-email-h">Travel</h4>
+                  <ul className="vb-email-ul">
+                    <li><strong>Arrival:</strong> {airport.iata} — {airport.name} ({airport.city}, {airport.state})</li>
+                    <li><strong>Hotel anchor:</strong> {hotelChoice === 'airport' ? `Near ${airport.iata}` : hotelChoice === 'lastStop' && lastStop ? `Near last stop (${lastStop.city}, ${lastStop.state})` : '—'}</li>
+                    {selectedHotel && (
+                      <li><strong>Lodging:</strong> {selectedHotel.name} — {selectedHotel.address} ({selectedHotel.brand}, {selectedHotel.rating.toFixed(1)}★, ${selectedHotel.price_per_night.toFixed(0)}/night)</li>
+                    )}
+                  </ul>
+
+                  {selectedHotel && (
+                    <div className="vb-email-hotel">
+                      <div className="vb-email-hotel-photo"><HotelPhoto hotel={selectedHotel} /></div>
+                      <div>
+                        <p className="vb-email-hotel-name">{selectedHotel.name}</p>
+                        <p className="vb-email-hotel-meta">
+                          {selectedHotel.brand} · {selectedHotel.rating.toFixed(1)}★ · ${selectedHotel.price_per_night.toFixed(0)}/night
+                          {selectedHotel.walmart_preferred ? ' · Walmart preferred' : ''}
+                          {selectedHotel.safety_score ? ` · Safety ${selectedHotel.safety_score.overall_score}/100` : ''}
+                        </p>
+                        <p className="vb-email-hotel-meta">{selectedHotel.address}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <h4 className="vb-email-h">Stop-by-stop risk briefing</h4>
+                  {briefs.map((brief, idx) => (
+                    <StoreBriefBlock key={brief.facility.facility_id} brief={brief} index={idx} />
+                  ))}
+
+                  <p className="vb-email-signoff">
+                    Please review and reply with any preferred adjustments. Field teams have been notified to prepare site walks aligned to the discussion topics above. EP On-Call will sweep each stop the morning of arrival.
+                    <br /><br />
+                    With respect,<br />
+                    <strong>FPI Operations</strong> — Walmart Global Security<br />
+                    <span className="vb-email-signoff-meta">Foundry Pack Initiative · Region 75 Cell</span>
+                  </p>
+                </div>
+
+                <footer className="vb-email-footer" aria-label="Walmart corporate footer">
+                  <div className="vb-email-footer-grid">
+                    <div>
+                      <p className="vb-email-footer-h">Walmart Inc.</p>
+                      <p className="vb-email-footer-line">702 SW 8th Street · Bentonville, AR 72716</p>
+                      <p className="vb-email-footer-line">Global Security · Executive Protection</p>
+                    </div>
+                    <div>
+                      <p className="vb-email-footer-h">Need to reach EP urgently?</p>
+                      <p className="vb-email-footer-line">EP On-Call (24/7): <strong>1-800-WMT-EPRO</strong></p>
+                      <p className="vb-email-footer-line">Global Security Operations Center: <strong>gsoc@walmart.com</strong></p>
+                    </div>
+                  </div>
+                  <p className="vb-email-footer-fine">
+                    This message and any attachments are confidential and intended solely for the named recipients.
+                    If you received this in error, please notify the sender and delete all copies.
+                    <br />Save the planet. Don't print this email unless absolutely necessary.
+                    · © {today.getFullYear()} Walmart Inc. All rights reserved.
+                  </p>
+                </footer>
+              </article>
+            </div>
+            <div className="vb-compose-footer">
+              <button type="button" className="epr-action-button secondary" onClick={() => setComposing(false)}>Cancel</button>
+              <button type="button" className="epr-action-button" onClick={handleConfirmSend}>📧 Send Brief (mock)</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

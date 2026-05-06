@@ -98,9 +98,17 @@ export function ReadinessOverviewView({
 }
 
 function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
+  const statusCluster = [
+    { label: 'Current Posture', value: metrics.posture },
+    { label: 'Trend', value: metrics.trend },
+    { label: 'Executive Attention Required', value: metrics.criticalExceptions > 0 ? 'Yes' : 'No' },
+    { label: 'Highest Risk Domain', value: 'Remediation / Technical Controls' },
+    { label: 'Data Mode', value: metrics.dataMode },
+  ];
+
   return (
     <header className="dashboard-header executive-dashboard-header">
-      <div>
+      <div className="executive-hero-copy">
         <p className="eyebrow">Command Center dashboard</p>
         <h1>Facility Protection Command Center</h1>
         <p className="posture-summary">
@@ -116,6 +124,14 @@ function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
           control issues, and life-safety/device health signals requiring governance review.
         </p>
       </div>
+      <aside className="hero-status-cluster" aria-label="Executive situation status">
+        {statusCluster.map((item) => (
+          <div className="status-cluster-item" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+          </div>
+        ))}
+      </aside>
     </header>
   );
 }
