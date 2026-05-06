@@ -107,6 +107,10 @@
 [data-theme='dark'] .tech-summary-tile,
 [data-theme='dark'] .tech-posture-card,
 [data-theme='dark'] .tech-warning-card,
+[data-theme='dark'] .tech-metric-grid div,
+[data-theme='dark'] .tech-record,
+[data-theme='dark'] .tech-predictive-card,
+[data-theme='dark'] .tech-governance-grid article,
 [data-theme='dark'] .fire-ops-card,
 [data-theme='dark'] .fire-ops-kpi,
 [data-theme='dark'] .fire-ops-summary-list button,
@@ -169,6 +173,10 @@
 [data-theme='dark'] .tech-summary-tile strong,
 [data-theme='dark'] .tech-posture-card strong,
 [data-theme='dark'] .tech-warning-card strong,
+[data-theme='dark'] .tech-metric-grid strong,
+[data-theme='dark'] .tech-predictive-card strong,
+[data-theme='dark'] .tech-governance-grid article strong,
+[data-theme='dark'] .tech-chart-row strong,
 [data-theme='dark'] .fire-ops-card h2,
 [data-theme='dark'] .fire-ops-kpi strong,
 [data-theme='dark'] .fire-ops-summary-list strong,
@@ -218,6 +226,17 @@
 [data-theme='dark'] .tech-posture-card li,
 [data-theme='dark'] .tech-warning-card p,
 [data-theme='dark'] .tech-warning-card li,
+[data-theme='dark'] .tech-warning-card small,
+[data-theme='dark'] .tech-metric-grid span,
+[data-theme='dark'] .tech-metric-grid small,
+[data-theme='dark'] .tech-summary-tile span,
+[data-theme='dark'] .tech-posture-card span,
+[data-theme='dark'] .tech-predictive-card span,
+[data-theme='dark'] .tech-predictive-card ul,
+[data-theme='dark'] .tech-governance-grid article small,
+[data-theme='dark'] .tech-chart-row > div:first-child,
+[data-theme='dark'] .tech-note-list,
+[data-theme='dark'] .tech-ordered-list,
 [data-theme='dark'] .fire-ops-card p,
 [data-theme='dark'] .fire-ops-kpi span,
 [data-theme='dark'] .fire-ops-kpi small,
@@ -322,6 +341,32 @@
 [data-theme='dark'] .remediation-table tr.is-overdue td,
 [data-theme='dark'] .remediation-board-card.overdue {
   background: rgba(180, 83, 9, 0.16);
+}
+
+[data-theme='dark'] .tech-chart-track,
+[data-theme='dark'] .threat-chart-row > div:last-child,
+[data-theme='dark'] .vendor-chart-row > div:last-child,
+[data-theme='dark'] .remediation-chart-row > div:last-child {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .tech-warning-card.severity-critical {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: linear-gradient(180deg, rgba(127, 29, 29, 0.28), rgba(255, 255, 255, 0.055));
+}
+
+[data-theme='dark'] .tech-warning-card.severity-high {
+  border-color: rgba(245, 158, 11, 0.58);
+  background: linear-gradient(180deg, rgba(146, 64, 14, 0.24), rgba(255, 255, 255, 0.055));
+}
+
+[data-theme='dark'] .tech-warning-card span,
+[data-theme='dark'] .tech-warning-card small,
+[data-theme='dark'] .tech-predictive-card em,
+[data-theme='dark'] .tech-predictive-card p,
+[data-theme='dark'] .tech-posture-card em,
+[data-theme='dark'] .tech-directory-header strong {
+  color: var(--sky-blue);
 }
 
 [data-theme='dark'] .tech-filters input,
