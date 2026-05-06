@@ -175,7 +175,7 @@ export function ExecutiveProtectionReadinessView({
           {activeTab === 'visits' ? <VisitPlannerTab data={eprData} /> : null}
           {activeTab === 'hotels' ? <HotelIntelligenceTab data={eprData} /> : null}
           {activeTab === 'incidents' ? <IncidentRiskTab data={eprData} /> : null}
-          {activeTab === 'mitigation' ? <MitigationTab data={eprData} /> : null}
+          {activeTab === 'mitigation' ? <MitigationTab data={eprData} allStores={eprState.data?.field_operations.facilities ?? eprData.field_operations.facilities} /> : null}
         </>
       ) : null}
     </section>
@@ -360,36 +360,28 @@ function IncidentRiskTab({ data }: { data: EprData }) {
   );
 }
 
-function MitigationTab({ data }: { data: EprData }) {
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [effectivenessFilter, setEffectivenessFilter] = useState('0');
-  const [costFilter, setCostFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('effectiveness');
+function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacility[] }) {
+  const [storeFilter, setStoreFilter] = useState('all');
   const [selectedSolution, setSelectedSolution] = useState<EprSecuritySolution | null>(null);
-  const solutionTypes = Array.from(new Set(data.security_mitigation.solutions.map((solution) => solution.solution_type))).sort();
-  const solutions = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    const minEffectiveness = Number(effectivenessFilter);
-    return [...data.security_mitigation.solutions]
-      .filter((solution) => typeFilter === 'all' || solution.solution_type === typeFilter)
-      .filter((solution) => solution.effectiveness_rating >= minEffectiveness)
-      .filter((solution) => costFilter === 'all' || (costFilter === 'low' ? solutionFiveYearCost(solution) < 50000 : costFilter === 'medium' ? solutionFiveYearCost(solution) >= 50000 && solutionFiveYearCost(solution) < 150000 : solutionFiveYearCost(solution) >= 150000))
-      .filter((solution) => !term || [solution.name, solution.solution_type, solution.coverage_area, solution.prevents_incident_types, solution.notes].join(' ').toLowerCase().includes(term))
-      .sort((a, b) => sortBy === 'cost' ? solutionFiveYearCost(a) - solutionFiveYearCost(b) : sortBy === 'type' ? a.solution_type.localeCompare(b.solution_type) : b.effectiveness_rating - a.effectiveness_rating);
-  }, [costFilter, data.security_mitigation.solutions, effectivenessFilter, search, sortBy, typeFilter]);
-  const selectedDraft = selectedSolution ? createMitigationDraft(selectedSolution) : null;
+  // Catalog is intentionally not filtered — store selection is contextual (which store you're shopping for) and surfaces in the draft panel.
+  // Store list is the FULL unscoped facility set, so this picker is never narrowed by any dashboard-level scope chip.
+  const solutions = useMemo(() => [...data.security_mitigation.solutions].sort((a, b) => b.effectiveness_rating - a.effectiveness_rating), [data.security_mitigation.solutions]);
+  const stores = useMemo(() => [...allStores].sort((a, b) => a.facility_name.localeCompare(b.facility_name)), [allStores]);
+  const selectedStore = storeFilter === 'all' ? null : stores.find((store) => String(store.facility_id) === storeFilter) ?? null;
+  const selectedDraft = selectedSolution ? createMitigationDraft(selectedSolution, selectedStore?.facility_name) : null;
 
   return (
     <section className="dashboard-grid epr-grid">
       <section className="panel selected-service-panel">
         <div className="card-heading"><div><p className="eyebrow">Security Mitigation Manager</p><h2>Recommended controls and projected-prevention ROI</h2></div><StatusPill label="RULES MAPPED" tone="ready" /></div>
-        <p>Security mitigation recommendations are staged here for EPR coordination with security vendors and external partners. Shortlist options to prepare a mock governance comparison without purchasing or contacting vendors.</p>
+        <p>Security mitigation recommendations are staged here for potential execution in store.</p>
       </section>
-      <section className="panel fire-remediation-panel epr-resizable-panel" data-resizable-panel="mitigation-options" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
-        <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={`${solutions.length} MATCHES`} tone="stable" /></div>
-        <div className="epr-controls epr-mitigation-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search solutions, coverage, incident types" /><select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}><option value="all">All solution types</option>{solutionTypes.map((type) => <option value={type} key={type}>{formatLabel(type)}</option>)}</select><select value={effectivenessFilter} onChange={(event) => setEffectivenessFilter(event.target.value)}><option value="0">Any effectiveness</option><option value="70">70%+ effective</option><option value="80">80%+ effective</option><option value="90">90%+ effective</option></select><select value={costFilter} onChange={(event) => setCostFilter(event.target.value)}><option value="all">All cost bands</option><option value="low">Under $50K / 5 yr</option><option value="medium">$50K-$150K / 5 yr</option><option value="high">$150K+ / 5 yr</option></select><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="effectiveness">Sort by effectiveness</option><option value="cost">Sort by 5-year cost</option><option value="type">Sort by type</option></select></div>
-        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options match the current filters.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} />)}</div>
+      <section className="panel fire-remediation-panel">
+        <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={`${solutions.length} SOLUTIONS`} tone="stable" /></div>
+        <div className="epr-controls epr-mitigation-controls">
+          <label className="epr-store-picker"><span>Select your store</span><select value={storeFilter} onChange={(event) => setStoreFilter(event.target.value)} aria-label="Select your store"><option value="all">— Choose a store —</option>{stores.map((store) => <option value={String(store.facility_id)} key={store.facility_id}>{store.facility_name} — {store.market}</option>)}</select></label>
+        </div>
+        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} />)}</div>
       </section>
       <section className="panel epr-mitigation-draft-panel epr-resizable-panel" data-resizable-panel="mitigation-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Mitigation comparison and governance draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
@@ -586,14 +578,15 @@ function MitigationDraftPanel({ draft, onClear }: { draft: EprMitigationDraft | 
   return <article className="epr-draft-panel"><div className="epr-draft-header"><div><StatusPill label={draft.priority} tone={draft.priority === 'Recommended' ? 'ready' : 'watch'} /><StatusPill label="MOCK ONLY" tone="stable" /></div><button className="epr-action-button secondary" type="button" onClick={onClear}>Clear Draft</button></div><div className="service-meta-grid service-live-metrics epr-draft-grid"><div><span>Solution</span><strong>{draft.solutionName}</strong></div><div><span>Status</span><strong>Draft</strong></div><div><span>Source</span><strong>{draft.id.replace('mitigation-draft-', '')}</strong></div></div><h3>{draft.subject}</h3><p>{draft.summary}</p><h4>Recommendation</h4><p>{draft.recommendation}</p><h4>Evidence needed</h4><div className="badge-list">{draft.evidenceNeeded.map((item) => <span className="scope-chip selected" key={item}>{item}</span>)}</div><h4>Requested response</h4><p>{draft.requestedResponse}</p><div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled>Create Governance Review — Mock Only</button><button className="epr-action-button" type="button" disabled>Send to Vendor Team — Mock Only</button><button className="epr-action-button secondary" type="button" disabled>Approve Purchase — Disabled</button></div><p className="epr-disclaimer">Draft only — no purchase, vendor contact, or production workflow is triggered.</p></article>;
 }
 
-function createMitigationDraft(solution: EprSecuritySolution): EprMitigationDraft {
+function createMitigationDraft(solution: EprSecuritySolution, storeName?: string): EprMitigationDraft {
   const cost = solutionFiveYearCost(solution);
+  const storeContext = storeName ? ` for ${storeName}` : '';
   return {
     id: `mitigation-draft-${solution.id}`,
     priority: solution.effectiveness_rating >= 85 && cost < 150000 ? 'Recommended' : 'Review',
     solutionName: solution.name,
-    subject: `EPR Mitigation Review — ${solution.name}`,
-    summary: `${solution.name} is a ${formatLabel(solution.solution_type)} control with ${solution.effectiveness_rating}% effectiveness, coverage area of ${solution.coverage_area}, and estimated 5-year base cost of ${formatCurrency(cost)}.`,
+    subject: `EPR Mitigation Review — ${solution.name}${storeContext}`,
+    summary: `${solution.name} is a ${formatLabel(solution.solution_type)} control with ${solution.effectiveness_rating}% effectiveness, coverage area of ${solution.coverage_area}, and estimated 5-year base cost of ${formatCurrency(cost)}${storeContext ? `. Staged${storeContext}` : ''}.`,
     recommendation: solution.effectiveness_rating >= 85 ? 'Recommended for governance comparison pending facility applicability, vendor readiness, and budget validation.' : 'Review before prioritization; compare against higher-effectiveness or lower-cost controls before vendor handoff.',
     evidenceNeeded: ['Control effectiveness', '5-year cost estimate', 'Facility applicability', 'Prevented incident types', 'Vendor/program owner validation'],
     requestedResponse: 'Please validate applicability, implementation constraints, budget path, and whether this option should move into formal governance review. This is a mock-only mitigation draft.',

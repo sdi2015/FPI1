@@ -3195,6 +3195,50 @@
         "coverage_area": "Entrances, cash office, pharmacy",
         "effectiveness_rating": 81,
         "prevents_incident_types": "Unauthorized access; emergency response delay"
+      },
+      {
+        "id": 5,
+        "name": "License Plate Recognition (LPR)",
+        "solution_type": "license_plate_recognition",
+        "upfront_cost": 45000,
+        "annual_cost": 14000,
+        "coverage_area": "Full-property camera network (12–16 cameras per store)",
+        "effectiveness_rating": 82,
+        "prevents_incident_types": "Repeat-offender vehicle activity; organized retail crime",
+        "notes": "Hardware + install ranges $35K–$55K depending on store layout (12–16 cameras covering ingress, egress, and lot perimeter). Integrates with hot-list alerts and AP investigations."
+      },
+      {
+        "id": 6,
+        "name": "LotCop Mobile Surveillance Trailer",
+        "solution_type": "parking_lot_camera",
+        "upfront_cost": 6000,
+        "annual_cost": 34000,
+        "coverage_area": "Parking lot perimeter (1 trailer per high-risk store)",
+        "effectiveness_rating": 79,
+        "prevents_incident_types": "Vehicle break-ins; loitering; after-hours trespass",
+        "notes": "Solar-powered, mast-mounted PTZ cameras with live monitoring; rapid deploy / move between sites."
+      },
+      {
+        "id": 7,
+        "name": "PoleCop Pole-Mounted Camera Array",
+        "solution_type": "parking_lot_camera",
+        "upfront_cost": 28000,
+        "annual_cost": 11000,
+        "coverage_area": "Parking lot perimeter (permanent install per store)",
+        "effectiveness_rating": 83,
+        "prevents_incident_types": "Auto theft; assault in parking areas; vandalism",
+        "notes": "Permanent pole installation with multi-sensor cameras and analytics; 24/7 coverage with NVR retention."
+      },
+      {
+        "id": 8,
+        "name": "Associate Body-Worn Cameras",
+        "solution_type": "body_camera",
+        "upfront_cost": 14000,
+        "annual_cost": 11000,
+        "coverage_area": "AP and front-end associates (10 units per store)",
+        "effectiveness_rating": 76,
+        "prevents_incident_types": "Verbal escalation; assault on associates; disputed-incident evidence gaps",
+        "notes": "De-escalation deterrent + chain-of-custody video evidence; cloud storage with role-based redaction."
       }
     ],
     "incident_type_counts": [

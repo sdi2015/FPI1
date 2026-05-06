@@ -514,6 +514,10 @@
 [data-theme='dark'] .tech-directory-header strong {
   color: var(--sky-blue);
 }
+[data-theme='dark'] .tech-pc-head strong { color: #e2e8f0; }
+[data-theme='dark'] .tech-pc-score-meta b { color: #cbd5e1; }
+[data-theme='dark'] .tech-pc-score-meta small,
+[data-theme='dark'] .tech-predictive-scope { color: #64748b; }
 
 [data-theme='dark'] .tech-filters input,
 [data-theme='dark'] .tech-filters select,

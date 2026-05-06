@@ -298,8 +298,13 @@ function ComplianceView({ data }: { data: TechnologyHealthData }) {
   );
 }
 
+function forecastTone(f: string) {
+  if (/critical/i.test(f)) return { border: '#dc2626', score: '#dc2626', bg: '#fee2e2', fg: '#991b1b', label: 'Critical Service Risk' };
+  if (/degradation/i.test(f)) return { border: '#f59e0b', score: '#b45309', bg: '#fef3c7', fg: '#92400e', label: 'Degradation Likely' };
+  return { border: '#0053e2', score: '#0053e2', bg: '#dbeafe', fg: '#1e40af', label: f };
+}
 function PredictiveView({ data }: { data: TechnologyHealthData }) {
-  return <section className="tech-card"><CardHeading eyebrow="Predictive CCTV Agent" title="Stores trending toward service-impacting camera risk" pill="SIMULATED" tone="watch" /><p>{data.predictiveSummary.scope}</p><div className="tech-predictive-grid">{data.predictiveSummary.candidates.map((candidate) => <article className="tech-predictive-card" key={candidate.siteAlias}><strong>{candidate.siteAlias}</strong><em>{candidate.riskScore}</em><span>{candidate.forecast}</span><ul>{candidate.drivers.map((driver) => <li key={driver}>{driver}</li>)}</ul><p>{candidate.recommendedAction}</p></article>)}</div></section>;
+  return <section className="tech-card"><CardHeading eyebrow="Predictive CCTV Agent" title="Stores trending toward service-impacting camera risk" pill="SIMULATED" tone="watch" /><p className="tech-predictive-scope">{data.predictiveSummary.scope}</p><div className="tech-predictive-grid">{data.predictiveSummary.candidates.map((c) => { const t = forecastTone(c.forecast); return <article className="tech-predictive-card" key={c.siteAlias} style={{ borderLeft: `4px solid ${t.border}`, background: `${t.border}0d` }}><div className="tech-pc-head"><strong>{c.siteAlias}</strong><span className="tech-pc-badge" style={{ background: t.bg, color: t.fg }}>{t.label}</span></div><div className="tech-pc-score-row"><em style={{ color: t.score }}>{c.riskScore}</em><div className="tech-pc-score-meta"><b>Model confidence score</b><small>0 = low signal · 100 = near-certain service impact</small></div></div><ul>{c.drivers.map((d) => <li key={d}>{d}</li>)}</ul><p>↳ {c.recommendedAction}</p></article>; })}</div></section>;
 }
 
 function WorkQueueView({ data }: { data: TechnologyHealthData }) {
