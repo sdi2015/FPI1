@@ -246,3 +246,57 @@
 .vb-pill--lpr          { background: #0053e2; color: #ffffff; }
 .vb-pill--body-cam     { background: #2a8703; color: #ffffff; }
 .vb-pill--security-guard { background: #995213; color: #ffffff; }
+
+
+/* ===== PRINT / Save-as-PDF stylesheet =====
+   Strategy: handleSaveAsPdf() clones the .vb-email into a fresh
+   top-level <div id="vb-print-host"> appended to <body>, then adds the
+   .vb-printing class. We hide everything *except* that print host, so
+   the printable element sits in normal document flow and paginates
+   naturally across multiple pages without overlap. */
+@media print {
+  @page { size: letter; margin: 0.5in; }
+
+  /* When the print host is mounted, hide every other body child. */
+  body.vb-printing > *:not(#vb-print-host) { display: none !important; }
+
+  /* The print host fills the page and resets all the dark-theme/modal
+     decoration so it prints as a clean white email. */
+  body.vb-printing { background: #ffffff !important; }
+  body.vb-printing #vb-print-host {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #1c2a3d !important;
+  }
+  body.vb-printing #vb-print-host .vb-email {
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #1c2a3d !important;
+    overflow: visible !important;
+    max-width: 100% !important;
+  }
+
+  /* Page-break behavior: keep cohesive blocks together. */
+  .vb-storebrief,
+  .vb-email-hotel,
+  .vb-email-summary,
+  .vb-email-headers { break-inside: avoid; page-break-inside: avoid; }
+  .vb-email-h,
+  .vb-storebrief-h { break-after: avoid; page-break-after: avoid; }
+
+  /* Print color fidelity (Walmart blue, gold, green pills, ribbons). */
+  #vb-print-host,
+  #vb-print-host * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Suppress browser's "(https://...)" footnote on links. */
+  #vb-print-host a { color: inherit !important; text-decoration: none !important; }
+  #vb-print-host a[href]:after { content: "" !important; }
+}

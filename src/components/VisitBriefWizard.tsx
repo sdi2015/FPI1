@@ -580,6 +580,29 @@ function BriefStep({
   onClose: () => void;
 }) {
   const [sent, setSent] = useState(false);
+  // Browser-native PDF export: clone the email into a top-level print host
+  // so it lives in normal document flow (no position:absolute, which breaks
+  // multi-page pagination). Hide the rest of the app via @media print.
+  function handleSaveAsPdf() {
+    const email = document.querySelector('.vb-email');
+    if (!email) {
+      window.print();
+      return;
+    }
+    const host = document.createElement('div');
+    host.id = 'vb-print-host';
+    host.appendChild(email.cloneNode(true));
+    document.body.appendChild(host);
+    document.body.classList.add('vb-printing');
+    const cleanup = () => {
+      document.body.classList.remove('vb-printing');
+      host.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    // Tiny delay lets React/CSS settle before the print snapshot.
+    setTimeout(() => window.print(), 50);
+  }
   const briefs = useMemo(
     () => route.map((f) => buildStoreBrief(f, incidents, tasks)),
     [route, incidents, tasks],
@@ -665,6 +688,7 @@ function BriefStep({
         <button type="button" className="epr-action-button secondary" onClick={onBack}>← Back</button>
         <div style={{ display: 'flex', gap: 8 }}>
           <button type="button" className="epr-action-button secondary" onClick={onClose}>Close</button>
+          <button type="button" className="epr-action-button secondary" onClick={handleSaveAsPdf}>⤓ Save as PDF</button>
           <button type="button" className="epr-action-button" onClick={() => setSent(true)} disabled={sent}>
             {sent ? 'Sent (mock) ✓' : 'Send Brief (mock)'}
           </button>

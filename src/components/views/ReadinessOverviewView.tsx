@@ -70,25 +70,29 @@ export function ReadinessOverviewView({
       <HeroSummary metrics={executiveMetrics} />
       <LeadershipAttentionRequired metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
       <ExecutiveKpiRow metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
-      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
-      <CommandCenterGuidancePanel onChangeScope={onChangeScopeRequest} />
 
-      <section className="progress-grid" aria-label="FPI operational readiness indicators">
+      <section className="dashboard-grid executive-risk-grid" aria-label="Executive risk drivers and facility heat map">
+        <TopDriversOfWatchPosture metrics={executiveMetrics} />
+        <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
+      </section>
+
+      <section className="progress-grid" aria-label="Operational Readiness">
         {pillars.map((pillar) => (
           <ProgressCard pillar={pillar} key={pillar.id} />
         ))}
       </section>
-      <AdditionalProgramMetrics metrics={dashboardMetrics} />
 
-      <section className="dashboard-grid" aria-label="Dashboard operational detail">
-        <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
+      <section className="dashboard-grid" aria-label="Recent exceptions and supporting operational detail">
+        <RecentExceptionsActivity metrics={dashboardMetrics} />
         <ReadinessDistribution metrics={dashboardMetrics} />
         <DataConfidencePanel metrics={executiveMetrics} />
-        <TopDriversOfWatchPosture metrics={executiveMetrics} />
-        <RecentExceptionsActivity metrics={dashboardMetrics} />
-        <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
+        <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
         <ServiceAreaBuildout activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
       </section>
+
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <CommandCenterGuidancePanel onChangeScope={onChangeScopeRequest} />
+      <AdditionalProgramMetrics metrics={dashboardMetrics} />
     </>
   );
 }
@@ -325,8 +329,8 @@ function DataConfidencePanel({ metrics }: { metrics: CommandCenterExecutiveMetri
     { label: 'Data Mode', value: metrics.dataMode },
     { label: 'Facilities Profiled', value: formatNumber(metrics.facilitiesProfiled) },
     { label: 'Data Readiness', value: `${metrics.dataReadiness}%` },
-    { label: 'Profile Completeness', value: `${metrics.profileCompleteness}%` },
-    { label: 'Governance Confidence', value: `${metrics.governanceConfidence}%` },
+    { label: 'Facility Risk Profile Completeness', value: `${metrics.profileCompleteness}%` },
+    { label: 'Governance & Evidence Confidence', value: `${metrics.governanceConfidence}%` },
   ];
 
   return (
@@ -644,8 +648,8 @@ function FacilityRiskHeatMap({ facilities, onSelectFacility }: { facilities: Fpi
           <span role="columnheader">Risk Tier</span>
           <span role="columnheader">Critical Exceptions</span>
           <span role="columnheader">Work Items</span>
-          <span role="columnheader">Active Signals</span>
-          <span role="columnheader">Panel Trouble</span>
+          <span role="columnheader">Life Safety</span>
+          <span role="columnheader">Tech Health</span>
           <span role="columnheader">Primary Concern</span>
           <span role="columnheader">Action</span>
         </div>
@@ -658,8 +662,8 @@ function FacilityRiskHeatMap({ facilities, onSelectFacility }: { facilities: Fpi
             <div role="cell"><StatusPill label={facility.riskTier.toUpperCase()} tone={riskTierTone(facility.riskTier)} /></div>
             <span role="cell">{facility.criticalExceptions}</span>
             <span role="cell">{facility.openWorkItems}</span>
-            <span role="cell">{facility.activeSignals}</span>
-            <span role="cell">{facility.panelTrouble}</span>
+            <span role="cell">{lifeSafetyStatus(facility)}</span>
+            <span role="cell">{technicalHealthStatus(facility)}</span>
             <span role="cell" className="facility-risk-concern">{facility.primaryIssueType}</span>
             <div role="cell">
               <button type="button" onClick={() => onSelectFacility(facility.facilityId)} aria-label={`Review ${facility.facilityName}`}>
@@ -682,6 +686,19 @@ function riskTierTone(riskTier: FpiTopRiskFacility['riskTier']): StatusTone {
   if (riskTier === 'High') return 'watch';
   if (riskTier === 'Medium') return 'stable';
   return 'ready';
+}
+
+function lifeSafetyStatus(facility: FpiTopRiskFacility): string {
+  if (facility.panelTrouble > 0) return 'Trouble';
+  if (facility.activeSignals > 0) return 'Watch';
+  return 'Stable';
+}
+
+function technicalHealthStatus(facility: FpiTopRiskFacility): string {
+  const issue = facility.primaryIssueType.toLowerCase();
+  if (facility.panelTrouble > 0 || issue.includes('camera') || issue.includes('device') || issue.includes('technical')) return 'Watch';
+  if (facility.criticalExceptions > 0) return 'Needs Review';
+  return 'Stable';
 }
 
 function statusToneForCapability(status: Capability['status']): StatusTone {
