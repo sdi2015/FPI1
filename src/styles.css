@@ -244,8 +244,32 @@ h1, h2, h3, p { margin-top: 0; }
 }
 .dashboard-header h1 { max-width: 880px; margin-bottom: 8px; font-size: clamp(2rem, 3.8vw, 3.65rem); line-height: 0.98; letter-spacing: -0.065em; }
 .dashboard-header p { max-width: 920px; margin-bottom: 0; color: var(--text-secondary); line-height: 1.55; }
+.executive-dashboard-header { align-items: stretch; }
+.posture-summary { margin: 0 0 6px; color: var(--text-primary); font-weight: 850; }
+.executive-summary-copy { margin-top: 10px; }
+.hero-status-cluster { display: grid; width: min(100%, 300px); gap: 8px; }
+.status-cluster-item { padding: 10px 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.045); }
+.status-cluster-item span { display: block; color: var(--text-muted); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.status-cluster-item strong { display: block; margin-top: 4px; color: var(--text-primary); font-size: 0.92rem; line-height: 1.25; }
 .mode-pill { min-width: 128px; padding: 9px 12px; border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; background: rgba(255,194,32,0.09); color: var(--yellow); font-size: 0.82rem; font-weight: 900; text-align: right; }
 .mode-pill span { display: block; color: var(--text-muted); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.leadership-attention-panel { margin-bottom: 14px; }
+.leadership-attention-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.leadership-attention-item { display: flex; min-height: 220px; flex-direction: column; gap: 12px; padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: rgba(255,255,255,0.045); }
+.leadership-attention-headline { display: grid; gap: 9px; }
+.leadership-attention-headline strong { font-size: 1rem; line-height: 1.22; }
+.leadership-attention-item p { margin: 0; }
+.leadership-attention-meta { margin-top: auto; }
+.leadership-attention-meta span { display: block; color: var(--text-muted); font-size: 0.68rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.leadership-attention-meta strong { display: block; margin-top: 4px; }
+.leadership-attention-item button { width: 100%; margin-top: 2px; padding: 10px 12px; border: 1px solid var(--border-subtle); border-radius: 999px; color: var(--text-secondary); background: rgba(255,255,255,0.035); font-weight: 850; cursor: not-allowed; opacity: 0.82; }
+.risk-drivers-panel { grid-column: span 5; }
+.risk-driver-list { display: grid; gap: 9px; }
+.risk-driver-item { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.risk-driver-rank { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; color: var(--yellow); background: rgba(255,194,32,0.08); font-size: 0.76rem; font-weight: 950; }
+.risk-driver-item strong { display: block; font-size: 0.92rem; }
+.risk-driver-item p { margin: 3px 0 0; font-size: 0.82rem; line-height: 1.35; }
+.risk-driver-count { color: var(--sky-blue); font-weight: 950; text-align: right; white-space: nowrap; }
 .executive-strip, .progress-grid, .kpi-grid, .dashboard-grid { display: grid; gap: 14px; }
 .executive-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px; }
 .executive-item, .progress-card, .kpi-card, .panel {
@@ -417,7 +441,8 @@ button.scope-chip { cursor: pointer; }
   .dashboard-shell { grid-template-columns: 248px minmax(0, 1fr); }
   .executive-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi-grid, .progress-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: span 6; }
+  .leadership-attention-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .selected-service-panel, .readiness-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: span 6; }
 }
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -428,15 +453,16 @@ button.scope-chip { cursor: pointer; }
   .dashboard-header { flex-direction: column; padding: 18px; }
   .mode-pill { text-align: left; }
   .executive-strip, .progress-grid, .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: 1 / -1; }
-  .service-meta-grid, .service-live-metrics, .module-map, .facility-summary-grid, .facility-detail-grid, .scope-summary-grid, .facility-checkbox-list, .store-region-grid { grid-template-columns: 1fr; }
+  .hero-status-cluster { width: 100%; }
+  .selected-service-panel, .readiness-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: 1 / -1; }
+  .service-meta-grid, .service-live-metrics, .module-map, .leadership-attention-grid, .facility-summary-grid, .facility-detail-grid, .scope-summary-grid, .facility-checkbox-list, .store-region-grid { grid-template-columns: 1fr; }
   .facility-detail-header, .facility-scope-heading, .locked-scope-panel { flex-direction: column; align-items: stretch; }
   .locked-scope-actions { justify-items: start; }
 }
 @media (max-width: 620px) {
   .landing-shell, .dashboard-content { padding: 12px; }
   .hero-panel { min-height: auto; padding: 24px; border-radius: 24px; }
-  .hero-panel, .pillar-grid, .preview-grid, .executive-strip, .progress-grid, .kpi-grid { grid-template-columns: 1fr; }
+  .hero-panel, .pillar-grid, .preview-grid, .executive-strip, .progress-grid, .kpi-grid, .leadership-attention-grid { grid-template-columns: 1fr; }
   .hero-content > .eyebrow { margin-top: 42px; }
   .hero-visual { min-height: 410px; }
   .orbital-card { position: static; width: 100%; margin: 10px 0; }

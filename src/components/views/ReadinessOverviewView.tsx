@@ -17,6 +17,41 @@ export type ReadinessOverviewViewProps = {
   onCapabilitySelect: (capabilityId: string) => void;
 };
 
+type CommandCenterExecutiveMetrics = {
+  posture: FpiDashboardMetrics['overallStatus'];
+  facilitiesProfiled: number;
+  criticalExceptions: number;
+  activeSignals: number;
+  panelTrouble: number;
+  activeWorkQueue: number;
+  dataReadiness: number;
+  profileCompleteness: number;
+  governanceConfidence: number;
+  trend: string;
+  dataMode: string;
+};
+
+const readinessInterpretations: Record<string, { title: string; signal: string; interpretation: string }> = {
+  ingestion: {
+    title: 'Data Readiness',
+    signal: 'Executive operating signal',
+    interpretation:
+      'Most core facility, device, vendor, monitoring, and readiness signals are normalized into a usable program view.',
+  },
+  profiling: {
+    title: 'Facility Risk Profile Completeness',
+    signal: 'Risk profile confidence',
+    interpretation:
+      'Facility profiles are usable for executive review, but remaining gaps may affect risk scoring confidence.',
+  },
+  governance: {
+    title: 'Governance & Evidence Confidence',
+    signal: 'Leadership evidence quality',
+    interpretation:
+      'Evidence quality is strong enough for leadership dashboarding, audit review, and remediation governance.',
+  },
+};
+
 export function ReadinessOverviewView({
   facilities,
   dashboardMetrics,
@@ -28,13 +63,16 @@ export function ReadinessOverviewView({
   onFacilitySelect,
   onCapabilitySelect,
 }: ReadinessOverviewViewProps) {
+  const executiveMetrics = buildExecutiveMetrics(dashboardMetrics);
+
   return (
     <>
-      <HeroSummary metrics={dashboardMetrics} />
+      <HeroSummary metrics={executiveMetrics} />
+      <LeadershipAttentionRequired metrics={executiveMetrics} />
       <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       <ExecutiveStatusStrip metrics={dashboardMetrics} />
 
-      <section className="progress-grid" aria-label="FPI program progress indicators">
+      <section className="progress-grid" aria-label="FPI operational readiness indicators">
         {pillars.map((pillar) => (
           <ProgressCard pillar={pillar} key={pillar.id} />
         ))}
@@ -49,6 +87,7 @@ export function ReadinessOverviewView({
       <section className="dashboard-grid" aria-label="Dashboard operational detail">
         <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
         <ReadinessDistribution metrics={dashboardMetrics} />
+        <TopDriversOfWatchPosture metrics={executiveMetrics} />
         <ProgramSignals metrics={dashboardMetrics} />
         <TopRiskFacilities facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
         <ServiceAreaBuildout activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
@@ -57,23 +96,168 @@ export function ReadinessOverviewView({
   );
 }
 
-function HeroSummary({ metrics }: { metrics: FpiDashboardMetrics }) {
+function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
   return (
-    <header className="dashboard-header">
+    <header className="dashboard-header executive-dashboard-header">
       <div>
         <p className="eyebrow">Command Center dashboard</p>
-        <h1>Facility protection command center</h1>
+        <h1>Facility Protection Command Center</h1>
+        <p className="posture-summary">
+          Current Posture: <strong>{metrics.posture}</strong>
+        </p>
         <p>
-          {metrics.headline.split(metrics.overallStatus)[0]}
-          <strong>{metrics.overallStatus}</strong>
-          {metrics.headline.split(metrics.overallStatus).slice(1).join(metrics.overallStatus)}
+          {formatNumber(metrics.facilitiesProfiled)} facilities monitored | {formatNumber(metrics.criticalExceptions)} critical exceptions |{' '}
+          {formatNumber(metrics.activeWorkQueue)} active work items | {formatNumber(metrics.panelTrouble)} panel trouble
+        </p>
+        <p className="executive-summary-copy">
+          <strong>Executive Summary:</strong> Facility protection posture remains at {metrics.posture} due to unresolved critical
+          exceptions across the active facility portfolio. Current exposure is driven by active remediation items, technical
+          control issues, and life-safety/device health signals requiring governance review.
         </p>
       </div>
-      <div className="mode-pill" aria-label="Mode Synthetic data">
-        <span>MODE</span>
-        Synthetic data
+      <div className="hero-status-cluster" aria-label="Executive command center status">
+        <StatusClusterItem label="Current Posture" value={metrics.posture} />
+        <StatusClusterItem label="Trend" value={metrics.trend} />
+        <StatusClusterItem label="Executive Attention Required" value="Yes" />
+        <StatusClusterItem label="Highest Risk Domain" value="Remediation / Technical Controls" />
+        <div className="mode-pill" aria-label={`Mode ${metrics.dataMode}`}>
+          <span>MODE</span>
+          {metrics.dataMode}
+        </div>
       </div>
     </header>
+  );
+}
+
+function StatusClusterItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="status-cluster-item">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
+  const leadershipAttentionItems = [
+    {
+      priority: 'P1',
+      issue: `${formatNumber(metrics.criticalExceptions)} active critical exceptions`,
+      businessImpact: 'Unresolved exposure across the facility portfolio',
+      owner: 'Security Operations',
+      action: 'Review Critical Exceptions',
+    },
+    {
+      priority: 'P1',
+      issue: `${formatNumber(metrics.activeWorkQueue)} active work queue items`,
+      businessImpact: 'Remediation backlog may create SLA and governance pressure',
+      owner: 'Program Owner',
+      action: 'Open Work Queue',
+    },
+    {
+      priority: 'P2',
+      issue: `${formatNumber(metrics.panelTrouble)} panel trouble`,
+      businessImpact: 'Device health issue may affect monitoring reliability',
+      owner: 'Technical Controls',
+      action: 'Investigate Panel Trouble',
+    },
+    {
+      priority: 'P2',
+      issue: `${formatNumber(metrics.activeSignals)} active alarm signals`,
+      businessImpact: 'Requires signal validation and false-alarm review',
+      owner: 'Command Center',
+      action: 'Review Signals',
+    },
+  ];
+
+  return (
+    <section className="panel leadership-attention-panel" aria-labelledby="leadership-attention-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Executive decisions</p>
+          <h2 id="leadership-attention-title">Leadership Attention Required</h2>
+        </div>
+        <StatusPill label="ACTION" tone="watch" />
+      </div>
+      <div className="leadership-attention-grid">
+        {leadershipAttentionItems.map((item) => (
+          <article className="leadership-attention-item" key={`${item.priority}-${item.action}`}>
+            <div className="leadership-attention-headline">
+              <StatusPill label={item.priority} tone={item.priority === 'P1' ? 'critical' : 'watch'} />
+              <strong>{item.issue}</strong>
+            </div>
+            <p>{item.businessImpact}</p>
+            <div className="leadership-attention-meta">
+              <span>Owner</span>
+              <strong>{item.owner}</strong>
+            </div>
+            <button type="button" disabled aria-disabled="true" title="Route pending for this non-destructive action">
+              {item.action}
+            </button>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TopDriversOfWatchPosture({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
+  const profileCompletenessGap = 100 - metrics.profileCompleteness;
+  const riskDrivers = [
+    {
+      rank: 1,
+      driver: 'Critical active records',
+      count: formatNumber(metrics.criticalExceptions),
+      why: 'Indicates unresolved high-priority exposure',
+    },
+    {
+      rank: 2,
+      driver: 'Active remediation queue',
+      count: formatNumber(metrics.activeWorkQueue),
+      why: 'Shows governance workload and possible SLA pressure',
+    },
+    {
+      rank: 3,
+      driver: 'Panel trouble',
+      count: formatNumber(metrics.panelTrouble),
+      why: 'May affect monitoring reliability',
+    },
+    {
+      rank: 4,
+      driver: 'Active alarm signals',
+      count: formatNumber(metrics.activeSignals),
+      why: 'Requires triage and validation',
+    },
+    {
+      rank: 5,
+      driver: 'Profile completeness gap',
+      count: `${profileCompletenessGap}% incomplete`,
+      why: 'Limits confidence in risk scoring',
+    },
+  ];
+
+  return (
+    <section className="panel risk-drivers-panel" aria-labelledby="risk-drivers-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Posture rationale</p>
+          <h2 id="risk-drivers-title">Top Drivers of Current WATCH Posture</h2>
+        </div>
+        <StatusPill label={metrics.posture} tone="watch" />
+      </div>
+      <div className="risk-driver-list">
+        {riskDrivers.map((driver) => (
+          <article className="risk-driver-item" key={driver.rank}>
+            <span className="risk-driver-rank">{driver.rank}</span>
+            <div>
+              <strong>{driver.driver}</strong>
+              <p>{driver.why}</p>
+            </div>
+            <span className="risk-driver-count">{driver.count}</span>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -92,17 +276,29 @@ function ExecutiveStatusStrip({ metrics }: { metrics: FpiDashboardMetrics }) {
 }
 
 function ProgressCard({ pillar }: { pillar: Pillar }) {
+  const executiveReadiness = readinessInterpretations[pillar.id];
+  const title = executiveReadiness?.title ?? pillar.title;
+  const signal = executiveReadiness?.signal ?? pillar.signal;
+  const interpretation = executiveReadiness?.interpretation ?? pillar.description;
+
   return (
     <article className="progress-card">
       <div className="card-heading compact-heading">
         <div>
-          <p className="eyebrow">{pillar.signal}</p>
-          <h2>{pillar.title}</h2>
+          <p className="eyebrow">{signal}</p>
+          <h2>{title}</h2>
         </div>
         <strong>{pillar.progress}%</strong>
       </div>
-      <p>{pillar.description}</p>
-      <div className="progress-track" role="progressbar" aria-valuenow={pillar.progress} aria-valuemin={0} aria-valuemax={100}>
+      <p>{interpretation}</p>
+      <div
+        className="progress-track"
+        role="progressbar"
+        aria-valuenow={pillar.progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${title}: ${pillar.progress}% complete`}
+      >
         <span style={{ width: `${pillar.progress}%` }} />
       </div>
     </article>
@@ -255,4 +451,24 @@ function statusToneForCapability(status: Capability['status']): StatusTone {
   if (status === 'Ready') return 'ready';
   if (status === 'Buildout') return 'buildout';
   return 'watch';
+}
+
+function buildExecutiveMetrics(metrics: FpiDashboardMetrics): CommandCenterExecutiveMetrics {
+  return {
+    posture: metrics.overallStatus,
+    facilitiesProfiled: metrics.facilitiesProfiled,
+    criticalExceptions: metrics.criticalExceptions,
+    activeSignals: metrics.activeSignals,
+    panelTrouble: metrics.panelTrouble,
+    activeWorkQueue: metrics.activeWorkQueue,
+    dataReadiness: pillars.find((pillar) => pillar.id === 'ingestion')?.progress ?? 86,
+    profileCompleteness: pillars.find((pillar) => pillar.id === 'profiling')?.progress ?? 74,
+    governanceConfidence: pillars.find((pillar) => pillar.id === 'governance')?.progress ?? 91,
+    trend: 'Stable',
+    dataMode: 'Synthetic data',
+  };
+}
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US').format(value);
 }
