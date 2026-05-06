@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StoreScopeState } from '../../data/storeScope';
@@ -71,6 +71,53 @@ const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'analysis', label: 'Data Provenance', eyebrow: 'Admin' },
 ];
 
+const EPR_PANEL_LAYOUT_STORAGE_KEY = 'fpi-epr-panel-layout-v1';
+type StoredPanelLayout = Record<string, { width: number; height: number }>;
+
+function readStoredPanelLayout(): StoredPanelLayout {
+  if (typeof window === 'undefined') return {};
+  try {
+    const value = window.localStorage.getItem(EPR_PANEL_LAYOUT_STORAGE_KEY);
+    return value ? JSON.parse(value) as StoredPanelLayout : {};
+  } catch {
+    return {};
+  }
+}
+
+function restoreEprPanelLayout() {
+  if (typeof document === 'undefined') return;
+  const layout = readStoredPanelLayout();
+  document.querySelectorAll<HTMLElement>('[data-resizable-panel]').forEach((panel) => {
+    const panelId = panel.dataset.resizablePanel;
+    const size = panelId ? layout[panelId] : null;
+    if (!size) return;
+    panel.style.width = `${size.width}px`;
+    panel.style.height = `${size.height}px`;
+  });
+}
+
+function saveResizablePanelSize(event: unknown) {
+  if (typeof window === 'undefined') return;
+  const panel = (event as { currentTarget?: EventTarget | null }).currentTarget;
+  if (!(panel instanceof HTMLElement)) return;
+  const panelId = panel.dataset.resizablePanel;
+  if (!panelId) return;
+  const layout = readStoredPanelLayout();
+  layout[panelId] = { width: panel.offsetWidth, height: panel.offsetHeight };
+  window.localStorage.setItem(EPR_PANEL_LAYOUT_STORAGE_KEY, JSON.stringify(layout));
+}
+
+function resetEprResizableLayout() {
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(EPR_PANEL_LAYOUT_STORAGE_KEY);
+  }
+  if (typeof document === 'undefined') return;
+  document.querySelectorAll<HTMLElement>('[data-resizable-panel]').forEach((panel) => {
+    panel.style.width = '';
+    panel.style.height = '';
+  });
+}
+
 export function ExecutiveProtectionReadinessView({
   facilities,
   fireSites,
@@ -79,6 +126,10 @@ export function ExecutiveProtectionReadinessView({
 }: ExecutiveProtectionReadinessViewProps) {
   const [activeTab, setActiveTab] = useState<EprTab>('visits');
   const eprState = useEprData();
+
+  useEffect(() => {
+    window.requestAnimationFrame(restoreEprPanelLayout);
+  }, [activeTab]);
   const eprData = useMemo(() => (eprState.data ? applyEprScope(eprState.data, fireSites, storeScope) : null), [eprState.data, fireSites, storeScope]);
   const topRiskFacilities = useMemo(() => getTopRiskFacilities(eprData), [eprData]);
 
@@ -101,14 +152,17 @@ export function ExecutiveProtectionReadinessView({
 
       {eprData ? (
         <>
-          <nav className="epr-tab-bar" aria-label="Executive Protection Readiness sub tabs">
-            {tabs.map((tab) => (
-              <button className={tab.id === activeTab ? 'epr-tab active' : 'epr-tab'} type="button" key={tab.id} onClick={() => setActiveTab(tab.id)} aria-pressed={tab.id === activeTab}>
-                <span>{tab.eyebrow}</span>
-                {tab.label}
-              </button>
-            ))}
-          </nav>
+          <div className="epr-tab-toolbar">
+            <nav className="epr-tab-bar" aria-label="Executive Protection Readiness sub tabs">
+              {tabs.map((tab) => (
+                <button className={tab.id === activeTab ? 'epr-tab active' : 'epr-tab'} type="button" key={tab.id} onClick={() => setActiveTab(tab.id)} aria-pressed={tab.id === activeTab}>
+                  <span>{tab.eyebrow}</span>
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+            <button className="epr-reset-layout-button" type="button" onClick={resetEprResizableLayout}>Reset Layout</button>
+          </div>
 
           {activeTab === 'overview' ? <OverviewTab data={eprData} topRiskFacilities={topRiskFacilities} onTabSelect={setActiveTab} /> : null}
           {activeTab === 'visits' ? <VisitPlannerTab data={eprData} /> : null}
@@ -194,13 +248,13 @@ function VisitPlannerTab({ data }: { data: EprData }) {
   const removeFromRoute = (facilityId: number) => setSelectedRouteIds((current) => current.filter((id) => id !== facilityId));
 
   return (
-    <section className="dashboard-grid epr-grid">
-      <section className="panel fire-facilities-panel">
+    <section className="dashboard-grid epr-grid epr-visit-grid">
+      <section className="panel fire-facilities-panel epr-resizable-panel" data-resizable-panel="visit-route-queue" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Route queue</p><h2>Facilities available for executive/field visit planning</h2></div><StatusPill label={`${facilities.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search facility, market, region, city" /><select value={riskFilter} onChange={(event) => setRiskFilter(event.target.value)}><option value="all">All risk levels</option><option value="critical">Critical risk 80+</option><option value="high">High risk 70-79</option><option value="moderate">Moderate risk below 70</option></select></div>
         <div className="epr-table-shell"><table><thead><tr><th>Facility</th><th>Market</th><th>Risk</th><th>Tasks</th><th>Route</th></tr></thead><tbody>{facilities.map((facility) => <FacilityRow facility={facility} key={facility.facility_id} onAdd={addToRoute} selected={selectedRouteIds.includes(facility.facility_id)} />)}</tbody></table></div>
       </section>
-      <section className="panel epr-route-panel">
+      <section className="panel epr-route-panel epr-resizable-panel" data-resizable-panel="visit-draft-route" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Draft route</p><h2>Selected visit route and handoff summary</h2></div><StatusPill label="MOCK ONLY" tone="track" /></div>
         {selectedRoute.length === 0 ? <p className="epr-empty-state">No facilities selected yet. Add facilities from the route queue to build a draft visit route.</p> : <div className="epr-route-body"><RouteMap facilities={selectedRoute} /><div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div></div>}
         <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Create Visit Brief</button><button className="epr-action-button" type="button" disabled>Export Route — Coming Soon</button><button className="epr-action-button secondary" type="button" disabled>Send Handoff — Mock Only</button></div>
@@ -251,10 +305,10 @@ function HotelIntelligenceTab({ data }: { data: EprData }) {
         <div className="card-heading"><div><p className="eyebrow">Hotel shortlist</p><h2>Filter and rank travel safety options</h2></div><StatusPill label={`${hotels.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls epr-hotel-controls"><select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}><option value="all">All cities</option>{cities.map((city) => <option value={city} key={city}>{city}</option>)}</select><select value={preferredFilter} onChange={(event) => setPreferredFilter(event.target.value)}><option value="all">All hotel types</option><option value="preferred">Walmart preferred</option><option value="non-preferred">Non-preferred</option></select><select value={minimumSafety} onChange={(event) => setMinimumSafety(event.target.value)}><option value="0">Any safety score</option><option value="70">Safety 70+</option><option value="80">Safety 80+</option><option value="90">Safety 90+</option></select><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="safety">Sort by safety</option><option value="price">Sort by price</option><option value="rating">Sort by rating</option></select></div>
       </section>
-      <section className="epr-hotel-grid">
+      <section className="epr-hotel-grid epr-resizable-panel" data-resizable-panel="hotel-results" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         {hotels.map((hotel) => <HotelCard hotel={hotel} key={hotel.hotel_id} onShortlist={setSelectedHotel} selected={selectedHotel?.hotel_id === hotel.hotel_id} />)}
       </section>
-      <section className="panel epr-hotel-draft-panel">
+      <section className="panel epr-hotel-draft-panel epr-resizable-panel" data-resizable-panel="hotel-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Travel recommendation draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <HotelDraftPanel draft={selectedDraft} onClear={() => setSelectedHotel(null)} />
       </section>
@@ -290,12 +344,12 @@ function IncidentRiskTab({ data }: { data: EprData }) {
           {data.incident_intelligence.incident_type_counts.slice(0, 5).map(([type, count]) => <div key={type}><span>{type}</span><strong>{count}</strong></div>)}
         </div>
       </section>
-      <section className="panel fire-signals-panel">
+      <section className="panel fire-signals-panel epr-resizable-panel" data-resizable-panel="incident-records" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Recent sample</p><h2>Recent incident records</h2></div><StatusPill label={`${filteredIncidents.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls epr-incident-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search incidents, store, city, description" /><select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}><option value="all">All incident types</option>{incidentTypes.map((type) => <option value={type} key={type}>{type}</option>)}</select><select value={severityFilter} onChange={(event) => setSeverityFilter(event.target.value)}><option value="all">All severities</option>{severities.map((severity) => <option value={severity} key={severity}>Severity {severity}</option>)}</select><select value={stateFilter} onChange={(event) => setStateFilter(event.target.value)}><option value="all">All states</option>{states.map((state) => <option value={state} key={state}>{state}</option>)}</select></div>
         <RecordList incidents={filteredIncidents} onCreateDraft={(incident) => setSelectedDraft(createIncidentDraft(incident))} />
       </section>
-      <section className="panel epr-incident-draft-panel">
+      <section className="panel epr-incident-draft-panel epr-resizable-panel" data-resizable-panel="incident-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Incident communication and ticket draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <IncidentDraftPanel draft={selectedDraft} onClear={() => setSelectedDraft(null)} />
       </section>
@@ -332,12 +386,12 @@ function MitigationTab({ data }: { data: EprData }) {
           {data.security_mitigation.recommender_rules.map((rule) => <div className="module-chip" key={rule}><StatusPill label="RULE" tone="stable" /><strong>{rule}</strong></div>)}
         </div>
       </section>
-      <section className="panel fire-remediation-panel">
+      <section className="panel fire-remediation-panel epr-resizable-panel" data-resizable-panel="mitigation-options" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={`${solutions.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls epr-mitigation-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search solutions, coverage, incident types" /><select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}><option value="all">All solution types</option>{solutionTypes.map((type) => <option value={type} key={type}>{formatLabel(type)}</option>)}</select><select value={effectivenessFilter} onChange={(event) => setEffectivenessFilter(event.target.value)}><option value="0">Any effectiveness</option><option value="70">70%+ effective</option><option value="80">80%+ effective</option><option value="90">90%+ effective</option></select><select value={costFilter} onChange={(event) => setCostFilter(event.target.value)}><option value="all">All cost bands</option><option value="low">Under $50K / 5 yr</option><option value="medium">$50K-$150K / 5 yr</option><option value="high">$150K+ / 5 yr</option></select><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="effectiveness">Sort by effectiveness</option><option value="cost">Sort by 5-year cost</option><option value="type">Sort by type</option></select></div>
         <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options match the current filters.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} />)}</div>
       </section>
-      <section className="panel epr-mitigation-draft-panel">
+      <section className="panel epr-mitigation-draft-panel epr-resizable-panel" data-resizable-panel="mitigation-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Mitigation comparison and governance draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <MitigationDraftPanel draft={selectedDraft} onClear={() => setSelectedSolution(null)} />
       </section>
@@ -379,12 +433,12 @@ function TasksGovernanceTab({ data }: { data: EprData }) {
           <div><span>Owners</span><strong>{new Set(allTasks.map((task) => task.owner_name)).size}</strong></div>
         </div>
       </section>
-      <section className="panel fire-workqueue-panel">
+      <section className="panel fire-workqueue-panel epr-resizable-panel" data-resizable-panel="task-queue" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Task queue</p><h2>Priority task sample</h2></div><StatusPill label={`${tasks.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls epr-task-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search tasks, owners, facilities" /><select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)}><option value="all">All priorities</option>{priorities.map((priority) => <option value={priority} key={priority}>{priority}</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{statuses.map((status) => <option value={status} key={status}>{status}</option>)}</select><select value={ownerFilter} onChange={(event) => setOwnerFilter(event.target.value)}><option value="all">All owners</option>{owners.map((owner) => <option value={owner} key={owner}>{owner}</option>)}</select><select value={evidenceFilter} onChange={(event) => setEvidenceFilter(event.target.value)}><option value="all">All evidence states</option><option value="required">Evidence required</option><option value="not-required">No evidence required</option></select></div>
         <div className="epr-table-shell"><table><thead><tr><th>Task</th><th>Owner</th><th>Priority</th><th>Status</th><th>Follow-up</th></tr></thead><tbody>{tasks.slice(0, 25).map((task) => <TaskRow task={task} key={task.task_id} onCreateDraft={(item) => setSelectedDraft(createTaskDraft(item))} />)}</tbody></table></div>
       </section>
-      <section className="panel epr-task-draft-panel">
+      <section className="panel epr-task-draft-panel epr-resizable-panel" data-resizable-panel="task-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Owner follow-up and governance draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <TaskDraftPanel draft={selectedDraft} onClear={() => setSelectedDraft(null)} />
       </section>
@@ -422,7 +476,7 @@ function SourceAnalysisTab({ data }: { data: EprData }) {
           {Object.entries(groups).slice(0, 4).map(([extension, count]) => <div key={extension}><span>{extension}</span><strong>{count}</strong></div>)}
         </div>
       </section>
-      <section className="panel fire-facilities-panel">
+      <section className="panel fire-facilities-panel epr-resizable-panel" data-resizable-panel="source-inventory" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Inventory</p><h2>Analyzed source files</h2></div><StatusPill label={`${filteredInventory.length} MATCHES`} tone="stable" /></div>
         <div className="epr-controls epr-source-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search source path, type, size" /><select value={extensionFilter} onChange={(event) => setExtensionFilter(event.target.value)}><option value="all">All file types</option>{extensions.map((extension) => <option value={extension} key={extension}>{extension}</option>)}</select><select value={sizeFilter} onChange={(event) => setSizeFilter(event.target.value)}><option value="all">All sizes</option><option value="small">Under 100KB</option><option value="medium">100KB-1MB</option><option value="large">1MB+</option></select><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="path">Sort by path</option><option value="type">Sort by type</option><option value="size">Sort by size</option></select></div>
         <div className="epr-table-shell"><table><thead><tr><th>Path</th><th>Type</th><th>Size</th></tr></thead><tbody>{filteredInventory.length === 0 ? <tr><td colSpan={3}>No source files match the current filters.</td></tr> : filteredInventory.map((item) => <tr key={item.path}><td><strong>{item.path}</strong></td><td>{item.extension}</td><td>{formatNumber(item.bytes)} B</td></tr>)}</tbody></table></div>

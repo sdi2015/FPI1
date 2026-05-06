@@ -128,6 +128,71 @@ export type PredictiveCameraCandidate = {
   recommendedAction: string;
 };
 
+export type StoreDirectoryEntry = {
+  storeNumber: string;
+  storeName: string;
+  siteAlias: string;
+  region: string;
+  regionName: string;
+  market: string;
+  marketName: string;
+  city: string;
+  state: string;
+  storeHealthPercent: number;
+  storeHealthStatus: string;
+  totalCameras: number;
+  offlineCameras: number;
+  recorderCount: number;
+  lastCheckIn: string;
+  healthReason: string;
+};
+
+export type CameraInventoryEntry = {
+  cameraId: number;
+  storeNumber: string;
+  storeName: string;
+  siteAlias: string;
+  cameraName: string;
+  cameraType: 'IP' | 'Analog';
+  statusLabel: string;
+  isIssue: boolean;
+  ipAddress: string;
+  macAddress: string;
+  manufacturer: string;
+  model: string;
+  recordingProfile: string;
+  retentionDays: number | null;
+  daysOffline: number;
+  lastSeen: string;
+  assignedVsrvNumber: number;
+  assignedServerAlias: string;
+  assignedServerFqdn: string;
+  recorderIpAddress: string;
+  firmwareVersion: string;
+  misplacedSubnet: boolean;
+  classificationNote: string;
+  networkSegment: string;
+};
+
+export type ProfileWarningEntry = {
+  storeNumber: string;
+  storeName: string;
+  cameraName: string;
+  recorderAssigned: string;
+  severity: 'High' | 'Medium' | 'Low';
+  warningType: string;
+};
+
+export type NetworkPlacementFlagEntry = {
+  storeNumber: string;
+  storeName: string;
+  cameraName: string;
+  ipAddress: string;
+  flagType: string;
+  detail: string;
+  severity: 'High' | 'Medium' | 'Low';
+};
+
 export type TechnologyHealthData = {
   metadata: {
     sourceTask: string;
@@ -161,6 +226,20 @@ export type TechnologyHealthData = {
     criticalServiceTicketCandidates: number;
     profileWarnings: number;
     networkPlacementFlags: number;
+  };
+  storeDirectory?: StoreDirectoryEntry[];
+  cameraInventory?: CameraInventoryEntry[];
+  profileWarnings?: ProfileWarningEntry[];
+  networkPlacementFlags?: NetworkPlacementFlagEntry[];
+  eventSummary?: {
+    retentionBelowPolicyCount: number;
+    vsrvRecorderDegradedCount: number;
+    vsrvStorageDegradedCount: number;
+    vsrvTemperatureWarningCount: number;
+    cameraOfflineAlertCount: number;
+    repeatedCameraInstabilityCount: number;
+    offlineClusterStoreCount: number;
+    unknownCameraCount: number;
   };
   predictiveSummary: {
     scope: string;

@@ -162,10 +162,56 @@
   background: var(--surface-panel-raised);
 }
 
+/* ── Health-threshold color coding – restored after dark-mode base reset ── */
+[data-theme='dark'] .tech-kpi.health-green,
+[data-theme='dark'] .tech-summary-tile.health-green,
+[data-theme='dark'] .tech-posture-card.health-green {
+  border-color: #16a34a;
+  box-shadow: inset 0 4px 0 #16a34a, var(--shadow-card);
+}
+[data-theme='dark'] .tech-kpi.health-yellow,
+[data-theme='dark'] .tech-summary-tile.health-yellow,
+[data-theme='dark'] .tech-posture-card.health-yellow {
+  border-color: #d97706;
+  box-shadow: inset 0 4px 0 #d97706, var(--shadow-card);
+}
+[data-theme='dark'] .tech-kpi.health-red,
+[data-theme='dark'] .tech-summary-tile.health-red,
+[data-theme='dark'] .tech-posture-card.health-red {
+  border-color: #dc2626;
+  box-shadow: inset 0 4px 0 #dc2626, var(--shadow-card);
+}
+/* ── End health color restore ── */
+
 [data-theme='dark'] .tech-focus-strip article {
   border-color: var(--border-subtle);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 83, 226, 0.18));
   box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions {
+  color: var(--text-primary);
+  border-color: rgba(169, 221, 247, 0.18);
+  background: radial-gradient(circle at 92% 10%, rgba(255, 194, 32, 0.08), transparent 9rem), linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.045));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead strong,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions span {
+  color: var(--yellow);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead p,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions ol,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions li {
+  color: var(--text-secondary);
+}
+
+[data-theme='dark'] .threat-page .status-watch {
+  color: var(--yellow);
+  border-color: rgba(255, 194, 32, 0.38);
+  background: rgba(255, 194, 32, 0.12);
 }
 
 [data-theme='dark'] .tech-card h2,
@@ -340,6 +386,80 @@
 [data-theme='dark'] .external-table td {
   color: var(--text-secondary);
   border-color: rgba(169, 221, 247, 0.12);
+}
+
+[data-theme='dark'] .threat-table-wrap {
+  background: #0b1224;
+}
+
+[data-theme='dark'] .threat-table tbody td {
+  color: #eaf1ff;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #111827;
+}
+
+[data-theme='dark'] .threat-table tbody tr:nth-child(even) td {
+  background: #151f33;
+}
+
+[data-theme='dark'] .threat-table tbody strong {
+  color: #ffffff;
+}
+
+[data-theme='dark'] .threat-table tbody small {
+  color: #b9c7e6;
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-critical td {
+  background: rgba(127, 29, 29, 0.36);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-high td {
+  background: rgba(124, 45, 18, 0.34);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-medium td {
+  background: rgba(113, 63, 18, 0.32);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-low td {
+  background: rgba(20, 83, 45, 0.28);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-critical {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(127, 29, 29, 0.44);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-high {
+  color: #fed7aa;
+  border-color: rgba(251, 146, 60, 0.46);
+  background: rgba(124, 45, 18, 0.44);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-medium {
+  color: #001e60;
+  border-color: rgba(255, 194, 32, 0.72);
+  background: #ffc220;
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-low {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.42);
+  background: rgba(20, 83, 45, 0.42);
+}
+
+[data-theme='dark'] .threat-table .status-critical {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.48);
+  background: rgba(127, 29, 29, 0.44);
+}
+
+[data-theme='dark'] .threat-table .status-watch {
+  color: #001e60;
+  border-color: rgba(255, 194, 32, 0.74);
+  background: #ffc220;
 }
 
 [data-theme='dark'] .tech-table tr:hover td,

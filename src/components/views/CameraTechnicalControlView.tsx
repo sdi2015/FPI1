@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ScopeContextChip } from '../ScopeContextChip';
 import { CameraWarrantyPanel } from './CameraWarrantyPanel';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
@@ -6,7 +6,7 @@ import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
 import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
-import type { StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
+import type { NetworkPlacementFlagEntry, ProfileWarningEntry, StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
 
@@ -69,12 +69,12 @@ export function CameraTechnicalControlView({ fireSites, storeScope, onChangeScop
         </div>
         <div className="tech-brand-cluster" aria-label="Walmart Global Governance data mode">
           <img className="tech-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
-          <div className="tech-mode"><span>MODE</span>SANITIZED DEMO DATA · NO WRITEBACK</div>
+          <div className="tech-mode"><span>MODE</span>REGION 75 INTELLICENE SNAPSHOT · READ ONLY</div>
         </div>
       </header>
 
       <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
-      {techState.loading ? <StatePanel title="Loading technology health dataset" message="Preparing sanitized CCTV/VMS and technology-health data." /> : null}
+      {techState.loading ? <StatePanel title="Loading technology health dataset" message="Preparing Region 75 Intellicene CCTV/VMS data." /> : null}
       {techState.error ? <StatePanel title="Technology health dataset unavailable" message={techState.error} danger /> : null}
 
       {scopedTechnologyData ? (
@@ -106,7 +106,7 @@ function CameraOverview({ data }: { data: TechnologyHealthData }) {
   const cameraIssues = getCameraTechnologyIssues(data);
   const healthyStores = useMemo(() => getHealthyStores(data.storeHealth), [data.storeHealth]);
   const unhealthyStores = useMemo(() => getUnhealthyStores(data.storeHealth), [data.storeHealth]);
-  const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data.storeHealth), [data.storeHealth]);
+  const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data), [data]);
   const eventCards = useMemo(() => buildTechnologyEventCards(data), [data]);
 
   return (
@@ -114,7 +114,7 @@ function CameraOverview({ data }: { data: TechnologyHealthData }) {
       <section className="tech-kpi-grid" aria-label="Interactive camera health KPIs">
         <Kpi label="Region online health" value={formatPercent(summary.onlinePercent)} detail={`${formatNumber(summary.onlineCameras)} online / ${formatNumber(summary.totalCameras)} cameras`} tone="blue" healthTone={healthToneForPercent(summary.onlinePercent)} onClick={() => setActiveModal('regionHealth')} />
         <Kpi label="Healthy stores" value={formatNumber(healthyStores.length)} detail="98%+ camera online health" tone="sky" healthTone="green" onClick={() => setActiveModal('healthyStores')} />
-        <Kpi label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or operationally degraded" tone="yellow" healthTone={unhealthyStores.some((store) => healthToneForPercent(store.onlinePercent) === 'red') ? 'red' : 'yellow'} onClick={() => setActiveModal('unhealthyStores')} />
+        <Kpi label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or operationally degraded" tone="yellow" healthTone="yellow" onClick={() => setActiveModal('unhealthyStores')} />
         <Kpi label="Offline cameras" value={formatNumber(summary.offlineCameras)} detail={`${formatNumber(summary.issueCameras)} issue cameras`} tone="yellow" healthTone={summary.offlineCameras > 0 ? 'yellow' : 'green'} onClick={() => setActiveModal('offlineCameras')} />
         <Kpi label="Stores monitored" value={formatNumber(summary.stores)} detail={`${formatNumber(summary.recorders)} VSRV server recorders`} tone="white" healthTone="green" onClick={() => setActiveModal('storesMonitored')} />
         <Kpi label="Fleet health" value={formatPercent(data.fleetSummary.onlinePercent)} detail={`${formatNumber(data.fleetSummary.storeCount)} stores in snapshot`} tone="blue" healthTone={healthToneForPercent(data.fleetSummary.onlinePercent)} onClick={() => setActiveModal('fleetHealth')} />
@@ -122,7 +122,7 @@ function CameraOverview({ data }: { data: TechnologyHealthData }) {
       <ServiceFocusStrip />
       <section className="tech-grid">
         <section className="tech-card wide">
-          <CardHeading eyebrow="Region 75 posture" title="Camera/VMS monitoring health is warning-level but operationally actionable." pill="SANITIZED" tone="ready" />
+          <CardHeading eyebrow="Region 75 posture" title="Camera/VMS monitoring health is warning-level but operationally actionable." pill="INTELLICENE" tone="ready" />
           <p>{data.metadata.sourceNote}</p>
           <div className="tech-metric-grid">
             <Metric label="IP cameras" value={formatNumber(summary.ipCameras)} helper={`${percent(summary.ipCameras, summary.totalCameras)}% of region · online state governed at store level`} />
@@ -138,12 +138,12 @@ function CameraOverview({ data }: { data: TechnologyHealthData }) {
           </div>
         </section>
         <section className="tech-card wide">
-          <CardHeading eyebrow="Event modeling" title="Enterprise camera and VSRV warning categories" pill="SIMULATED" tone="watch" />
+          <CardHeading eyebrow="Warning categories" title="Enterprise camera and VSRV warning categories" pill="OPERATIONS" tone="watch" />
           <TechnologyEventGrid cards={eventCards} />
         </section>
         <section className="tech-card">
-          <CardHeading eyebrow="Offline camera examples" title="Sanitized device visibility" pill="ROLE-GATED" tone="watch" />
-          <p>IP addresses are masked by default. Use the eye control to reveal the sanitized IP value for review; authentication layering can be attached here later.</p>
+          <CardHeading eyebrow="Offline camera examples" title="Store camera visibility" pill="REGION 75" tone="watch" />
+          <p>Rows include store number, camera name, camera type, assigned Intellicene VSRV, and full IP for technical operations review.</p>
           <OfflineCameraTable rows={offlineCameraRows.slice(0, 5)} compact />
         </section>
       </section>
@@ -169,7 +169,7 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
   const [filter, setFilter] = useState<StoreFilter>('all');
   const healthyStores = useMemo(() => getHealthyStores(data.storeHealth), [data.storeHealth]);
   const unhealthyStores = useMemo(() => getUnhealthyStores(data.storeHealth), [data.storeHealth]);
-  const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data.storeHealth), [data.storeHealth]);
+  const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data), [data]);
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
     return sortStoresByTechnicalRisk(data.storeHealth)
@@ -180,22 +180,22 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
   return (
     <section className="tech-grid">
       <section className="tech-card wide">
-        <div className="tech-directory-header"><div><p className="tech-eyebrow">Sanitized store health</p><h2>Region 75 CCTV/VMS posture</h2></div><strong>{rows.length} stores</strong></div>
+        <div className="tech-directory-header"><div><p className="tech-eyebrow">Region 75 store health</p><h2>Region 75 CCTV/VMS posture</h2></div><strong>{rows.length} stores</strong></div>
         <div className="tech-region-summary-grid" aria-label="Region online health summary">
           <SummaryTile label="Healthy stores" value={formatNumber(healthyStores.length)} detail="98%+ online health" tone="green" />
-          <SummaryTile label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or flagged by source" tone={unhealthyStores.some((store) => healthToneForPercent(store.onlinePercent) === 'red') ? 'red' : 'yellow'} />
-          <SummaryTile label="Offline cameras" value={formatNumber(data.regionSummary.offlineCameras)} detail="Sanitized device count" tone={data.regionSummary.offlineCameras > 0 ? 'yellow' : 'green'} />
+          <SummaryTile label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or flagged by source" tone="yellow" />
+          <SummaryTile label="Offline cameras" value={formatNumber(data.regionSummary.offlineCameras)} detail="Offline device count" tone={data.regionSummary.offlineCameras > 0 ? 'yellow' : 'green'} />
           <SummaryTile label="Region health" value={formatPercent(data.regionSummary.onlinePercent)} detail={healthLabelForPercent(data.regionSummary.onlinePercent)} tone={healthToneForPercent(data.regionSummary.onlinePercent)} />
         </div>
         <div className="tech-filters">
-          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search store alias, platform, status, region" />
+          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search store alias, platform, status, region, store number" />
           <select value={filter} onChange={(event) => setFilter(event.target.value as StoreFilter)}><option value="all">All health states</option><option value="Healthy">Healthy</option><option value="Warning">Warning</option><option value="Critical">Critical</option></select>
         </div>
         <StoreHealthTable stores={rows} />
       </section>
       <section className="tech-card">
-        <CardHeading eyebrow="Offline cameras" title="Sanitized device-level examples" pill="IP MASKED" tone="watch" />
-        <p>Rows are derived from sanitized store health. IP visibility is intentionally gated behind the eye control for future authentication enforcement.</p>
+        <CardHeading eyebrow="Offline cameras" title="Store camera-level examples" pill="IP VISIBLE" tone="watch" />
+        <p>Rows are pulled from Region 75 camera inventory and can be sorted by offline duration.</p>
         <OfflineCameraTable rows={offlineCameraRows.slice(0, 12)} compact />
       </section>
     </section>
@@ -274,7 +274,7 @@ function WorkQueueView({ data }: { data: TechnologyHealthData }) {
   return <section className="tech-card"><CardHeading eyebrow="Ticket simulation" title="Grouped CCTV service work queue" pill="NO WRITEBACK" tone="critical" /><div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Site</th><th>Finding</th><th>Severity</th><th>Channel</th><th>Assignment</th><th>SLA</th></tr></thead><tbody>{data.workQueue.map((item) => <tr key={item.id}><td>{item.siteAlias}</td><td><strong>{item.title}</strong><small>{item.status} · Evidence required: {item.evidenceRequired ? 'Yes' : 'No'}</small></td><td><StatusPill label={item.severity} tone={item.severity === 'Critical' ? 'critical' : item.severity === 'High' ? 'watch' : 'stable'} /></td><td>{item.channel}</td><td>{item.assignmentGroup}</td><td>{item.sla}</td></tr>)}</tbody></table></div></section>;
 }
 
-function DetailModal({ open, eyebrow, title, children, onClose }: { open: boolean; eyebrow: string; title: string; children: JSX.Element | null; onClose: () => void }) {
+function DetailModal({ open, eyebrow, title, children, onClose }: { open: boolean; eyebrow: string; title: string; children: ReactNode; onClose: () => void }) {
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(event: KeyboardEvent) {
@@ -307,9 +307,9 @@ function OverviewModalContent({ modal, data, healthyStores, unhealthyStores, off
     return <div className="tech-modal-section"><p>Region online health uses the Global Governance thresholds: 98% and above is Green, 85% to 97.99% is Yellow, and below 85% is Red.</p><div className="tech-region-summary-grid"><SummaryTile label="Online health" value={formatPercent(data.regionSummary.onlinePercent)} detail={healthLabelForPercent(data.regionSummary.onlinePercent)} tone={healthToneForPercent(data.regionSummary.onlinePercent)} /><SummaryTile label="Online cameras" value={formatNumber(data.regionSummary.onlineCameras)} detail={`${formatNumber(data.regionSummary.totalCameras)} total cameras`} tone="green" /><SummaryTile label="Offline cameras" value={formatNumber(data.regionSummary.offlineCameras)} detail="Requires triage by severity" tone={data.regionSummary.offlineCameras > 0 ? 'yellow' : 'green'} /></div></div>;
   }
   if (modal === 'healthyStores') return <StoreHealthTable stores={healthyStores} />;
-  if (modal === 'unhealthyStores') return <StoreHealthTable stores={unhealthyStores} />;
+  if (modal === 'unhealthyStores') return <UnhealthyStoreTable stores={unhealthyStores} />;
   if (modal === 'offlineCameras') return <OfflineCameraTable rows={offlineCameraRows} />;
-  if (modal === 'storesMonitored') return <StoreHealthTable stores={sortStoresByTechnicalRisk(data.storeHealth)} />;
+  if (modal === 'storesMonitored') return <StoresMonitoredTable data={data} />;
   if (modal === 'fleetHealth') {
     return <div className="tech-modal-section"><p>Fleet health shows the broader sanitized snapshot loaded into the technology-health model.</p><div className="tech-region-summary-grid"><SummaryTile label="Fleet online health" value={formatPercent(data.fleetSummary.onlinePercent)} detail={healthLabelForPercent(data.fleetSummary.onlinePercent)} tone={healthToneForPercent(data.fleetSummary.onlinePercent)} /><SummaryTile label="Fleet stores" value={formatNumber(data.fleetSummary.storeCount)} detail="Stores in snapshot" tone="green" /><SummaryTile label="Offline cameras" value={formatNumber(data.fleetSummary.offlineCameras)} detail="Fleet aggregate" tone={data.fleetSummary.offlineCameras > 0 ? 'yellow' : 'green'} /></div></div>;
   }
@@ -318,32 +318,36 @@ function OverviewModalContent({ modal, data, healthyStores, unhealthyStores, off
 
 function PostureModalContent({ activePosture, data, analogOffline }: { activePosture: string | null; data: TechnologyHealthData; analogOffline: number }) {
   const summary = data.regionSummary;
-  if (activePosture === 'IP Cameras') return <div className="tech-modal-section"><p>IP camera posture is normalized at the store-health level in the current sanitized dataset.</p><div className="tech-region-summary-grid"><SummaryTile label="IP cameras" value={formatNumber(summary.ipCameras)} detail={`${percent(summary.ipCameras, summary.totalCameras)}% of region`} tone={healthToneForPercent(summary.onlinePercent)} /><SummaryTile label="Issue cameras" value={formatNumber(summary.issueCameras)} detail="Faults and degraded camera states" tone={summary.issueCameras > 0 ? 'yellow' : 'green'} /></div></div>;
-  if (activePosture === 'Analog Cameras') return <div className="tech-modal-section"><p>Analog camera posture is tracked for migration warnings, offline analog devices, and recorder assignment review.</p><div className="tech-region-summary-grid"><SummaryTile label="Analog cameras" value={formatNumber(summary.analogCameras)} detail={`${percent(summary.analogCameras, summary.totalCameras)}% of region`} tone={analogOffline > 0 ? 'yellow' : 'green'} /><SummaryTile label="Offline analog" value={formatNumber(analogOffline)} detail="Migration and service review candidates" tone={analogOffline > 0 ? 'yellow' : 'green'} /></div></div>;
-  if (activePosture === 'Profile Warnings') return <div className="tech-modal-section"><p>Profile warnings include cameras with no recording profiles, missing source confidence, or store camera recorder assignment gaps.</p><StoreHealthTable stores={sortStoresByTechnicalRisk(data.storeHealth).filter((store) => store.missingProfileCount > 0)} /></div>;
-  if (activePosture === 'Network Placement Flags') return <div className="tech-modal-section"><p>Network placement flags include incorrect subnet placements, VLAN issues, misconfigured gateways, duplicate IPs, and invalid network segments. Raw network details remain role-gated.</p><StoreHealthTable stores={sortStoresByTechnicalRisk(data.storeHealth).filter((store) => store.misplacedSubnetCount > 0)} /></div>;
+  if (activePosture === 'IP Cameras') return <div className="tech-modal-section"><p>IP camera posture reflects the Region 75 Intellicene inventory by store.</p><div className="tech-region-summary-grid"><SummaryTile label="IP cameras" value={formatNumber(summary.ipCameras)} detail={`${percent(summary.ipCameras, summary.totalCameras)}% of region`} tone={healthToneForPercent(summary.onlinePercent)} /><SummaryTile label="Issue cameras" value={formatNumber(summary.issueCameras)} detail="Faults and degraded camera states" tone={summary.issueCameras > 0 ? 'yellow' : 'green'} /></div></div>;
+  if (activePosture === 'Analog Cameras') return <div className="tech-modal-section"><p>Analog camera posture tracks migration warnings, offline analog devices, and recorder assignment review.</p><div className="tech-region-summary-grid"><SummaryTile label="Analog cameras" value={formatNumber(summary.analogCameras)} detail={`${percent(summary.analogCameras, summary.totalCameras)}% of region`} tone={analogOffline > 0 ? 'yellow' : 'green'} /><SummaryTile label="Offline analog" value={formatNumber(analogOffline)} detail="Migration and service review candidates" tone={analogOffline > 0 ? 'yellow' : 'green'} /></div></div>;
+  if (activePosture === 'Profile Warnings') return <div className="tech-modal-section"><p>Profile warnings list cameras with no recording profiles, including store and assigned recorder.</p><ProfileWarningsTable rows={(data.profileWarnings ?? []).slice(0, 250)} /></div>;
+  if (activePosture === 'Network Placement Flags') return <div className="tech-modal-section"><p>Network placement flags include incorrect subnets, duplicate IPs, and invalid network segments.</p><NetworkPlacementFlagsTable rows={(data.networkPlacementFlags ?? []).slice(0, 250)} /></div>;
   return null;
 }
 
 function OfflineCameraTable({ rows, compact = false }: { rows: OfflineCameraRow[]; compact?: boolean }) {
-  if (rows.length === 0) return <p className="tech-empty">No offline camera rows available in the current sanitized scope.</p>;
-  return (
-    <div className="tech-table-wrap offline-camera-wrap">
-      <table className="tech-table offline-camera-table">
-        <thead><tr><th>Store Number</th><th>Store Name</th><th>Camera Name</th><th>IP Address</th>{compact ? null : <th>Recorder</th>}<th>Days Offline</th><th>Last Seen</th><th>Camera Type</th>{compact ? null : <th>Reason</th>}</tr></thead>
-        <tbody>{rows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong></td><td>{row.storeName}</td><td><strong>{row.cameraName}</strong></td><td><MaskedIpAddress value={row.ipAddress} /></td>{compact ? null : <td>{row.recorderName}</td>}<td>{row.daysOffline}</td><td>{row.lastSeen}</td><td>{row.cameraType}</td>{compact ? null : <td>{row.reason}</td>}</tr>)}</tbody>
-      </table>
-    </div>
-  );
-}
+  const [search, setSearch] = useState('');
+  const [sortMode, setSortMode] = useState<'days' | 'store'>('days');
+  const filteredRows = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    const scopedRows = rows.filter((row) => !term || [row.storeNumber, row.storeName, row.cameraName, row.ipAddress, row.cameraType, row.recorderName].join(' ').toLowerCase().includes(term));
+    return [...scopedRows].sort((a, b) => (sortMode === 'days' ? b.daysOffline - a.daysOffline : `${a.storeNumber}-${a.cameraName}`.localeCompare(`${b.storeNumber}-${b.cameraName}`)));
+  }, [rows, search, sortMode]);
 
-function MaskedIpAddress({ value }: { value: string }) {
-  const [visible, setVisible] = useState(false);
+  if (rows.length === 0) return <p className="tech-empty">No offline camera rows available in the current scope.</p>;
   return (
-    <span className="masked-ip">
-      <code>{visible ? value : maskIpAddress(value)}</code>
-      <button type="button" onClick={() => setVisible((current) => !current)} aria-label={visible ? 'Hide IP address' : 'Show IP address'} title={visible ? 'Hide IP address' : 'Show IP address'}>{visible ? '🙈' : '👁'}</button>
-    </span>
+    <>
+      <div className="tech-filters">
+        <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search store, camera, IP, recorder" />
+        <select value={sortMode} onChange={(event) => setSortMode(event.target.value as 'days' | 'store')}><option value="days">Sort: Days offline (desc)</option><option value="store">Sort: Store / Camera</option></select>
+      </div>
+      <div className="tech-table-wrap offline-camera-wrap">
+        <table className="tech-table offline-camera-table">
+          <thead><tr><th>Store Number</th><th>Store Name</th><th>Camera Name</th><th>IP Address</th>{compact ? null : <th>Recorder</th>}<th>Days Offline</th><th>Last Seen</th><th>Camera Type</th>{compact ? null : <th>Reason</th>}</tr></thead>
+          <tbody>{filteredRows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong></td><td>{row.storeName}</td><td><strong>{row.cameraName}</strong></td><td><code>{row.ipAddress}</code></td>{compact ? null : <td>{row.recorderName}</td>}<td>{row.daysOffline}</td><td>{row.lastSeen}</td><td>{row.cameraType}</td>{compact ? null : <td>{row.reason}</td>}</tr>)}</tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -357,6 +361,27 @@ function PostureCard({ title, value, tone, details, onClick }: { title: string; 
 
 function TechnologyEventGrid({ cards }: { cards: TechnologyEventCard[] }) {
   return <div className="tech-warning-grid">{cards.map((card) => <article className={`tech-warning-card severity-${card.severity.toLowerCase()}`} key={card.title}><div><span>{card.category}</span><strong>{card.title}</strong></div><StatusPill label={card.severity.toUpperCase()} tone={card.severity === 'Critical' ? 'critical' : card.severity === 'High' ? 'watch' : 'stable'} /><p>{card.description}</p><small>{card.recorderName}</small><ul>{card.examples.map((example) => <li key={example}>{example}</li>)}</ul></article>)}</div>;
+}
+
+function StoresMonitoredTable({ data }: { data: TechnologyHealthData }) {
+  const rows = data.storeDirectory ?? [];
+  if (rows.length === 0) return <StoreHealthTable stores={sortStoresByTechnicalRisk(data.storeHealth)} />;
+  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Region / Division</th><th>Store Health</th><th>Total Cameras</th><th>Offline</th><th>Recorders</th><th>Last Check-In</th></tr></thead><tbody>{rows.map((store) => <tr key={store.storeNumber}><td><strong>{store.storeNumber}</strong><small>{store.storeName}</small></td><td>{store.regionName}<small>{store.marketName}</small></td><td><HealthBadge status={store.storeHealthStatus} /><small>{formatPercent(store.storeHealthPercent)}</small></td><td>{formatNumber(store.totalCameras)}</td><td>{formatNumber(store.offlineCameras)}</td><td>{formatNumber(store.recorderCount)}</td><td>{formatDate(store.lastCheckIn)}</td></tr>)}</tbody></table></div>;
+}
+
+function UnhealthyStoreTable({ stores }: { stores: StoreCameraHealth[] }) {
+  if (stores.length === 0) return <p className="tech-empty">No unhealthy stores in the selected scope.</p>;
+  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Store Name</th><th>Reason Unhealthy</th><th>Offline Devices</th><th>Last Check-In</th></tr></thead><tbody>{stores.map((store, index) => { const storeNumber = formatStoreNumber(store.siteAlias, index); const storeName = store.siteAlias.replace(/^\d+\s*/, ''); return <tr key={store.siteAlias}><td><strong>{storeNumber}</strong></td><td>{storeName || store.siteAlias}</td><td>{store.scanError ?? `${formatPercent(store.onlinePercent)} online (${healthLabelForPercent(store.onlinePercent)})`}</td><td>{formatNumber(store.offlineCameras)}</td><td>{formatDate(store.lastScan)}</td></tr>; })}</tbody></table></div>;
+}
+
+function ProfileWarningsTable({ rows }: { rows: ProfileWarningEntry[] }) {
+  if (rows.length === 0) return <p className="tech-empty">No profile warnings in current scope.</p>;
+  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Camera</th><th>Recorder Assigned</th><th>Severity</th><th>Warning</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong><small>{row.storeName}</small></td><td>{row.cameraName}</td><td>{row.recorderAssigned}</td><td><StatusPill label={row.severity.toUpperCase()} tone={row.severity === 'High' ? 'watch' : 'stable'} /></td><td>{row.warningType}</td></tr>)}</tbody></table></div>;
+}
+
+function NetworkPlacementFlagsTable({ rows }: { rows: NetworkPlacementFlagEntry[] }) {
+  if (rows.length === 0) return <p className="tech-empty">No network placement flags in current scope.</p>;
+  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Camera</th><th>IP</th><th>Flag</th><th>Severity</th><th>Detail</th></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.storeNumber}-${row.cameraName}-${index}`}><td><strong>{row.storeNumber}</strong><small>{row.storeName}</small></td><td>{row.cameraName}</td><td><code>{row.ipAddress}</code></td><td>{row.flagType}</td><td><StatusPill label={row.severity.toUpperCase()} tone={row.severity === 'High' ? 'watch' : 'stable'} /></td><td>{row.detail}</td></tr>)}</tbody></table></div>;
 }
 
 function StoreHealthTable({ stores }: { stores: StoreCameraHealth[] }) {
@@ -402,20 +427,36 @@ function StatusPill({ label, tone }: { label: StatusTone | string; tone: StatusT
   return <span className={`status-pill status-${tone}`}>{label}</span>;
 }
 
-function buildOfflineCameraRows(stores: StoreCameraHealth[]): OfflineCameraRow[] {
-  return getOfflineCameraStores(stores).flatMap((store, storeIndex) => {
+function buildOfflineCameraRows(data: TechnologyHealthData): OfflineCameraRow[] {
+  const inventory = data.cameraInventory ?? [];
+  if (inventory.length > 0) {
+    return inventory
+      .filter((camera) => camera.statusLabel === 'Offline')
+      .map((camera) => ({
+        storeNumber: camera.storeNumber,
+        storeName: camera.storeName,
+        cameraName: camera.cameraName,
+        ipAddress: camera.ipAddress,
+        daysOffline: camera.daysOffline,
+        lastSeen: formatDate(camera.lastSeen),
+        cameraType: camera.cameraType,
+        recorderName: camera.assignedServerAlias,
+        reason: camera.classificationNote || `${camera.statusLabel} status from Intellicene snapshot`,
+      }));
+  }
+
+  return getOfflineCameraStores(data.storeHealth).flatMap((store, storeIndex) => {
     const rowCount = Math.min(Math.max(store.offlineCameras, 1), 3);
     return Array.from({ length: rowCount }, (_, cameraIndex) => {
       const storeNumber = formatStoreNumber(store.siteAlias, storeIndex);
-      const cameraType: 'IP' | 'Analog' = cameraIndex < store.ipOffline ? 'IP' : 'Analog';
       return {
         storeNumber,
         storeName: store.siteAlias,
-        cameraName: `${cameraType === 'IP' ? 'IPCAM' : 'ANLG'}-${cameraZone(cameraIndex)}-${String(cameraIndex + 1).padStart(2, '0')}`,
+        cameraName: `IPCAM-${String(cameraIndex + 1).padStart(2, '0')}`,
         ipAddress: `10.75.${(storeIndex % 180) + 20}.${(cameraIndex + 11) * 7}`,
         daysOffline: Math.max(1, Math.min(30, Math.round((100 - store.onlinePercent) / 2) + cameraIndex + 1)),
         lastSeen: formatDate(store.lastScan),
-        cameraType,
+        cameraType: 'IP',
         recorderName: recorderNameForStore(storeNumber, cameraIndex),
         reason: store.scanError ?? `${formatNumber(store.offlineCameras)} offline cameras · ${formatNumber(store.issueCameraCount)} issue cameras`,
       };
@@ -424,16 +465,16 @@ function buildOfflineCameraRows(stores: StoreCameraHealth[]): OfflineCameraRow[]
 }
 
 function buildTechnologyEventCards(data: TechnologyHealthData): TechnologyEventCard[] {
-  const topStores = getOfflineCameraStores(data.storeHealth).slice(0, 4);
-  const firstStoreNumber = formatStoreNumber(topStores[0]?.siteAlias ?? 'S01234', 0);
-  const secondStoreNumber = formatStoreNumber(topStores[1]?.siteAlias ?? 'S04567', 1);
+  const eventSummary = data.eventSummary;
+  const firstOfflineCamera = (data.cameraInventory ?? []).find((camera) => camera.statusLabel === 'Offline');
+  const defaultRecorder = firstOfflineCamera?.assignedServerAlias ?? recorderNameForStore('S01234', 0);
   return [
-    { title: 'Retention Below Policy', category: 'Evidence Readiness', severity: data.regionSummary.retentionBelow30d ? 'High' : 'Medium', recorderName: recorderNameForStore(firstStoreNumber, 0), description: 'Recording retention under required threshold with insufficient archive duration indicators.', examples: ['Recording retention under required threshold', 'Insufficient archive duration', `${formatNumber(data.regionSummary.retentionBelow30d ?? 0)} records below policy threshold`] },
-    { title: 'VSRV Recorder Health Degraded', category: 'Recorder Health', severity: 'High', recorderName: recorderNameForStore(firstStoreNumber, 1), description: 'Server recorder health shows degraded operating posture or instability signals.', examples: ['Cameras operating in limited mode', 'Recorder service instability', 'Recording interruption detected'] },
-    { title: 'VSRV Storage Health Degraded', category: 'Storage Health', severity: 'High', recorderName: recorderNameForStore(secondStoreNumber, 0), description: 'Storage subsystem requires review for RAID, SMART, or failed-drive warnings.', examples: ['RAID degradation detected', 'Hard Drive 03 SMART Errors in RAID array', 'Disk nearing failure threshold'] },
-    { title: 'VSRV Temperature Warning', category: 'Thermal Health', severity: 'Medium', recorderName: recorderNameForStore(secondStoreNumber, 1), description: 'Recorder thermal status requires validation before service impact occurs.', examples: ['Recorder overheating', 'Thermal threshold exceeded', 'Fan failure warning'] },
-    { title: 'Camera Offline Alerts', category: 'Camera Availability', severity: data.regionSummary.offlineCameras > 0 ? 'High' : 'Low', recorderName: recorderNameForStore(firstStoreNumber, 0), description: 'Offline camera clusters require triage and validation against monitoring reliability.', examples: [`${formatNumber(data.regionSummary.offlineCameras)} cameras offline`, 'Multiple offline clusters detected', 'Store-level impact review required'] },
-    { title: 'Repeated Camera Instability', category: 'Instability Pattern', severity: 'Medium', recorderName: recorderNameForStore(secondStoreNumber, 0), description: 'Repeated online/offline behavior indicates intermittent connectivity or device degradation.', examples: ['Camera repeatedly offline 6 times in last 30 days', 'Intermittent connectivity detected', 'Network path validation recommended'] },
+    { title: 'Retention Below Policy', category: 'Evidence Readiness', severity: (eventSummary?.retentionBelowPolicyCount ?? Number(data.regionSummary.retentionBelow30d ?? 0)) > 0 ? 'High' : 'Medium', recorderName: defaultRecorder, description: 'Recording retention below required threshold and insufficient archive duration detected.', examples: ['Recording retention under required threshold', 'Insufficient archive duration', `${formatNumber(eventSummary?.retentionBelowPolicyCount ?? Number(data.regionSummary.retentionBelow30d ?? 0))} camera records below policy threshold`] },
+    { title: 'VSRV Recorder Health Degraded', category: 'Recorder Health', severity: 'High', recorderName: defaultRecorder, description: 'Windows-based VSRV recorder health shows degraded operational stability.', examples: ['Cameras operating in limited mode', 'Recorder service instability', `${formatNumber(eventSummary?.vsrvRecorderDegradedCount ?? 0)} recorder warnings in snapshot`] },
+    { title: 'VSRV Storage Health Degraded', category: 'Storage Health', severity: 'High', recorderName: defaultRecorder, description: 'Storage subsystem signals indicate RAID or disk reliability degradation.', examples: ['RAID degradation indicators', 'SMART error pattern detected', `${formatNumber(eventSummary?.vsrvStorageDegradedCount ?? 0)} storage warning clusters`] },
+    { title: 'VSRV Temperature Warning', category: 'Thermal Health', severity: 'Medium', recorderName: defaultRecorder, description: 'Recorder thermal thresholds require proactive remediation before service impact.', examples: ['Recorder overheating risk', 'Thermal threshold exceeded', `${formatNumber(eventSummary?.vsrvTemperatureWarningCount ?? 0)} thermal warning indicators`] },
+    { title: 'Camera Offline Alerts', category: 'Camera Availability', severity: data.regionSummary.offlineCameras > 0 ? 'High' : 'Low', recorderName: defaultRecorder, description: 'Camera offline clusters require immediate triage and store-level service action.', examples: [`${formatNumber(eventSummary?.cameraOfflineAlertCount ?? data.regionSummary.offlineCameras)} cameras offline`, `${formatNumber(eventSummary?.offlineClusterStoreCount ?? 0)} stores with offline clusters`, 'Store-level impact review required'] },
+    { title: 'Repeated Camera Instability', category: 'Instability Pattern', severity: 'Medium', recorderName: defaultRecorder, description: 'Repeated online/offline camera behavior indicates intermittent network or hardware instability.', examples: [`${formatNumber(eventSummary?.repeatedCameraInstabilityCount ?? 0)} unstable camera patterns`, 'Intermittent connectivity detected', `${formatNumber(eventSummary?.unknownCameraCount ?? 0)} cameras in unknown state`] },
   ];
 }
 
@@ -454,16 +495,6 @@ function formatStoreNumber(siteAlias: string, fallbackIndex: number): string {
 
 function recorderNameForStore(storeNumber: string, offset: number): string {
   return `VSRV${String((offset % 2) + 1).padStart(2, '0')}.${storeNumber}.US`;
-}
-
-function cameraZone(index: number): string {
-  return ['ENTRANCE', 'CHECKOUT', 'PHARMACY', 'EXTERIOR', 'RECEIVING'][index % 5];
-}
-
-function maskIpAddress(value: string): string {
-  const parts = value.split('.');
-  if (parts.length !== 4) return '•••.•••.•••.•••';
-  return `${parts[0]}.${parts[1]}.•••.•••`;
 }
 
 function healthLabelFromTone(tone: HealthThresholdTone): string {

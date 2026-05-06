@@ -370,14 +370,7 @@ function DashboardShell({
       <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} theme={theme} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
-        <div className="top-controls dashboard-top-controls">
-          <button type="button" className="shell-scope-chip" onClick={handleChangeStoreScopeRequest} aria-label={`Change dashboard scope. Current scope: ${scopeSummary}`}>
-            <span>Scope</span>
-            <strong>{scopeSummary}</strong>
-          </button>
-          <ThemeToggle theme={theme} onToggle={onThemeToggle} />
-        </div>
-        <ProgramOpsBanner
+        <CompactCommandBar
           activeCapability={activeCapability}
           metrics={metrics}
           scopeSummary={scopeSummary}
@@ -386,6 +379,8 @@ function DashboardShell({
           fireLoading={fireAlarmState.loading}
           fireError={fireAlarmState.error}
           isEmptyScope={isEmptyScope}
+          theme={theme}
+          onThemeToggle={onThemeToggle}
           onCommandCenter={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
           onChangeScope={handleChangeStoreScopeRequest}
           onSettings={() => onSelectService(SERVICE_IDS.SETTINGS)}
@@ -506,7 +501,7 @@ function DashboardShell({
   );
 }
 
-function ProgramOpsBanner({
+function CompactCommandBar({
   activeCapability,
   metrics,
   scopeSummary,
@@ -515,6 +510,8 @@ function ProgramOpsBanner({
   fireLoading,
   fireError,
   isEmptyScope,
+  theme,
+  onThemeToggle,
   onCommandCenter,
   onChangeScope,
   onSettings,
@@ -527,6 +524,8 @@ function ProgramOpsBanner({
   fireLoading: boolean;
   fireError: string | null;
   isEmptyScope: boolean;
+  theme: 'dark' | 'light';
+  onThemeToggle: () => void;
   onCommandCenter: () => void;
   onChangeScope: () => void;
   onSettings: () => void;
@@ -543,30 +542,35 @@ function ProgramOpsBanner({
   ] satisfies Array<{ label: string; value: string; tone: StatusTone }>;
 
   return (
-    <section className="ops-banner" aria-label="Program operations health and quick actions">
-      <div className="ops-banner-main">
+    <section className="compact-command-bar" aria-label="Dashboard command bar">
+      <div className="compact-command-main">
         <div>
-          <p className="eyebrow">DevOps watch panel</p>
-          <h2>Program health, data readiness, and navigation checks</h2>
-          <p>
-            Current posture is <strong>{posture}</strong>. Use this strip to confirm data health, review scope, and jump to the core operating views without leaving the existing dashboard shell.
-          </p>
+          <span>Current view</span>
+          <strong>{activeCapability.navLabel ?? activeCapability.title}</strong>
         </div>
+        <button type="button" className="compact-scope-pill" onClick={onChangeScope} aria-label={`Change dashboard scope. Current scope: ${scopeSummary}`}>
+          <span>Scope</span>
+          <strong>{scopeSummary}</strong>
+        </button>
         <StatusPill label={posture} tone={tone} />
       </div>
-      <div className="ops-diagnostics-grid">
-        {diagnostics.map((item) => (
-          <article className="ops-diagnostic-card" key={item.label}>
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <StatusPill label={item.tone === 'ready' ? 'OK' : item.tone === 'critical' ? 'CHECK' : item.tone.toUpperCase()} tone={item.tone} />
-          </article>
-        ))}
-      </div>
-      <div className="ops-action-row" aria-label="Dashboard quick actions">
-        <button type="button" className="ops-action-button" onClick={onCommandCenter}>Open Command Center</button>
+      <div className="compact-command-actions" aria-label="Dashboard quick actions">
+        <details className="system-health-popover">
+          <summary>System Health</summary>
+          <div className="system-health-menu">
+            {diagnostics.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <StatusPill label={item.tone === 'ready' ? 'OK' : item.tone === 'critical' ? 'CHECK' : item.tone.toUpperCase()} tone={item.tone} />
+              </article>
+            ))}
+          </div>
+        </details>
+        <button type="button" className="ops-action-button" onClick={onCommandCenter}>Command Center</button>
         <button type="button" className="ops-action-button secondary" onClick={onChangeScope}>Change Scope</button>
         <button type="button" className="ops-action-button secondary" onClick={onSettings}>Settings</button>
+        <ThemeToggle theme={theme} onToggle={onThemeToggle} />
       </div>
     </section>
   );
@@ -604,18 +608,16 @@ function SidebarNav({
             aria-current={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'page' : undefined}
             onClick={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
           >
-            <span className="nav-eyebrow">{commandCenterCapability.eyebrow}</span>
             <span className="nav-title-row">
               <strong>{commandCenterCapability.navLabel ?? commandCenterCapability.title}</strong>
               <span className={`nav-status-dot nav-status-${capabilityStatusTone(commandCenterCapability.status)}`} aria-label={`${commandCenterCapability.status} status`} />
             </span>
-            <span className="nav-meta-row">{commandCenterCapability.metric} · {commandCenterCapability.owner}</span>
           </button>
         </nav>
       ) : null}
 
       <nav aria-label="Program service navigation">
-        <p className="nav-label">Program services</p>
+        <p className="nav-label">Modules</p>
         {programServiceCapabilities.map((capability) => {
           const serviceId = serviceIdForCapability(capability.id);
           return (
@@ -626,12 +628,10 @@ function SidebarNav({
               aria-current={serviceId === selectedService ? 'page' : undefined}
               onClick={() => onSelectService(serviceId)}
             >
-              <span className="nav-eyebrow">{capability.eyebrow}</span>
               <span className="nav-title-row">
                 <strong>{capability.navLabel ?? capability.title}</strong>
                 <span className={`nav-status-dot nav-status-${capabilityStatusTone(capability.status)}`} aria-label={`${capability.status} status`} />
               </span>
-              <span className="nav-meta-row">{capability.metric} · {capability.owner}</span>
             </button>
           );
         })}
@@ -645,9 +645,7 @@ function SidebarNav({
           aria-current={selectedService === SERVICE_IDS.SETTINGS ? 'page' : undefined}
           onClick={() => onSelectService(SERVICE_IDS.SETTINGS)}
         >
-          <span className="nav-eyebrow">Controls</span>
           <span className="nav-title-row"><strong>Settings</strong><span className="nav-status-dot nav-status-track" aria-label="Workspace controls" /></span>
-          <span className="nav-meta-row">Scope · Theme · Workspace</span>
         </button>
       </nav>
 

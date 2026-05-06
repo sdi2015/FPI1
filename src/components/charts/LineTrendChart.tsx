@@ -12,6 +12,7 @@ export function LineTrendChart({ data, color = '#2563eb' }: { data: ChartPoint[]
     return { ...item, x, y };
   });
   const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
+  const areaPath = points.length > 0 ? `${path} L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z` : '';
 
   return (
     <div className="ops-line-chart">
@@ -19,8 +20,10 @@ export function LineTrendChart({ data, color = '#2563eb' }: { data: ChartPoint[]
         <>
           <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Line trend chart">
             <path className="ops-grid-line" d={`M ${padding} ${height - padding} L ${width - padding} ${height - padding}`} />
+            <path className="ops-grid-line subtle" d={`M ${padding} ${padding + 28} L ${width - padding} ${padding + 28}`} />
+            <path className="ops-trend-area" d={areaPath} fill={color} />
             <path className="ops-trend-line" d={path} stroke={color} />
-            {points.map((point) => <circle key={`${point.label}-${point.value}`} cx={point.x} cy={point.y} r="5" fill={color}><title>{point.label}: {point.value}</title></circle>)}
+            {points.map((point) => <g key={`${point.label}-${point.value}`} className="ops-trend-point"><circle cx={point.x} cy={point.y} r="5" fill={color} /><text x={point.x} y={Math.max(14, point.y - 10)} textAnchor="middle">{point.value}</text><title>{point.label}: {point.value}</title></g>)}
           </svg>
           <div className="ops-line-labels">{data.map((item) => <span key={item.label}>{item.label}<strong>{item.value}</strong></span>)}</div>
         </>

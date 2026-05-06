@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { TechnologyHealthData } from './technologyHealthTypes';
 
-const TECHNOLOGY_HEALTH_URL = '/data/fpi-canonical-technology-health.json';
+const TECHNOLOGY_HEALTH_URL = '/data/technology-health-region75.json';
 
 export type TechnologyHealthDataState = {
   loading: boolean;

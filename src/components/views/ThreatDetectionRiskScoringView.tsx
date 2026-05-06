@@ -142,13 +142,19 @@ export function ThreatDetectionRiskScoringView({ fireSites, storeScope, onChange
 
 function ThreatOverview({ data }: { data: ThreatRiskData }) {
   const [selectedDraft, setSelectedDraft] = useState<MockDraft | null>(null);
+  const [selectedTier, setSelectedTier] = useState<ThreatRiskFacility['riskTier'] | null>(null);
   const topFacilities = getTopRiskFacilities(data.facilities, 5);
+  const tierFacilities = useMemo(() => (selectedTier ? data.facilities.filter((facility) => facility.riskTier === selectedTier).sort((a, b) => b.riskScore - a.riskScore) : topFacilities), [data.facilities, selectedTier, topFacilities]);
   const topSignals = getTopThreatSignals(data.signals, 6);
   const coordinationCandidates = getCoordinationCandidates(data.facilities);
   const actionQueue = getProactiveActionQueue(data.facilities, 6);
   const tierCounts = getTierCounts(data.facilities);
   const facilitiesNeedingReview = data.summary.criticalFacilities + data.summary.highFacilities;
-  const highestRiskFacility = topFacilities[0];
+  const highestRiskFacility = tierFacilities[0] ?? topFacilities[0];
+  const handleTierSelect = (tier: ThreatRiskFacility['riskTier']) => {
+    setSelectedTier(tier);
+    window.requestAnimationFrame(() => document.getElementById('threat-tier-facilities')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
 
   return (
     <>
@@ -175,10 +181,10 @@ function ThreatOverview({ data }: { data: ThreatRiskData }) {
         <div className="threat-tier-summary" aria-label="Facility risk tier summary">
           <TierLegend />
           <div className="threat-tier-counts">
-            <FacilityTierBadge tier="Critical" count={tierCounts.Critical} />
-            <FacilityTierBadge tier="High" count={tierCounts.High} />
-            <FacilityTierBadge tier="Medium" count={tierCounts.Medium} />
-            <FacilityTierBadge tier="Low" count={tierCounts.Low} />
+            <FacilityTierBadge tier="Critical" count={tierCounts.Critical} active={selectedTier === 'Critical'} onSelect={handleTierSelect} />
+            <FacilityTierBadge tier="High" count={tierCounts.High} active={selectedTier === 'High'} onSelect={handleTierSelect} />
+            <FacilityTierBadge tier="Medium" count={tierCounts.Medium} active={selectedTier === 'Medium'} onSelect={handleTierSelect} />
+            <FacilityTierBadge tier="Low" count={tierCounts.Low} active={selectedTier === 'Low'} onSelect={handleTierSelect} />
           </div>
         </div>
       </section>
@@ -199,7 +205,7 @@ function ThreatOverview({ data }: { data: ThreatRiskData }) {
       <section className="threat-grid">
         <section className="threat-card wide"><CardHeading eyebrow="Proactive triage" title="Recommended action queue" pill="NEXT BEST ACTION" tone="watch" /><ActionQueue facilities={actionQueue} onCreateDraft={(facility) => setSelectedDraft(createMockDraftFromFacility(facility))} /></section>
         <section className="threat-card wide"><CardHeading eyebrow="Action draft builder" title="Prepare an owner-ready next-step draft" pill="NO SUBMISSION" tone="stable" /><p>Preparing a draft does not create a ticket or send a message. It converts the selected facility or signal into a clear review brief with owner, evidence, business reason, and recommended next action.</p><MockDraftPanel draft={selectedDraft} onClear={() => setSelectedDraft(null)} /></section>
-        <section className="threat-card wide"><CardHeading eyebrow="Priority facilities" title="Top facilities driving current risk" pill={highestRiskFacility ? `${highestRiskFacility.riskTier.toUpperCase()} LEAD` : 'EXPLAINABLE'} tone="watch" /><RiskList facilities={topFacilities} /></section>
+        <section className="threat-card wide" id="threat-tier-facilities"><CardHeading eyebrow="Priority facilities" title={selectedTier ? `${tierColorLabel(selectedTier)} Tier facilities` : 'Top facilities driving current risk'} pill={selectedTier ? `${formatNumber(tierFacilities.length)} ${selectedTier.toUpperCase()}` : highestRiskFacility ? `${highestRiskFacility.riskTier.toUpperCase()} LEAD` : 'EXPLAINABLE'} tone="watch" />{selectedTier ? <div className="threat-filter-actions"><span>Showing facilities where tier = {tierColorLabel(selectedTier)} / {selectedTier}.</span><button className="threat-action-button secondary" type="button" onClick={() => setSelectedTier(null)}>Clear Tier Filter</button></div> : null}<RiskList facilities={tierFacilities} /></section>
         <section className="threat-card"><CardHeading eyebrow="Incident intelligence" title="Top protection signals" /><SignalList signals={topSignals} />
         </section>
         <section className="threat-card"><CardHeading eyebrow="Collaboration needed" title="Facilities needing coordinated follow-up" /><div className="threat-record-list">{coordinationCandidates.map((facility) => <article className="threat-record" key={facility.facilityId}><strong>Store {facility.facilityId} · {facility.riskTier}</strong><span>{facility.city}, {facility.state} · {facility.topDriver}</span><small>{facility.recommendedAction}</small></article>)}</div></section>
@@ -238,8 +244,9 @@ function TierLegend() {
   return <div className="threat-tier-legend" aria-label="Risk tier color legend">{tiers.map((tier) => <span className={tierClass(tier)} key={tier}><i aria-hidden="true" />{tierColorLabel(tier)} = {tier}</span>)}</div>;
 }
 
-function FacilityTierBadge({ tier, count }: { tier: ThreatRiskFacility['riskTier']; count: number }) {
-  return <div className={`facility-tier-badge ${tierClass(tier)}`}><span>{tierColorLabel(tier)} tier</span><strong>{formatNumber(count)}</strong><small>{tier}</small></div>;
+function FacilityTierBadge({ tier, count, active, onSelect }: { tier: ThreatRiskFacility['riskTier']; count: number; active: boolean; onSelect: (tier: ThreatRiskFacility['riskTier']) => void }) {
+  const colorLabel = tierColorLabel(tier);
+  return <button className={active ? `facility-tier-badge ${tierClass(tier)} active` : `facility-tier-badge ${tierClass(tier)}`} type="button" onClick={() => onSelect(tier)} aria-pressed={active} aria-label={`View ${colorLabel} Tier facilities`}><span>{colorLabel} tier</span><strong>{formatNumber(count)}</strong><small>{tier}</small></button>;
 }
 
 function ownerForFacility(facility: ThreatRiskFacility): string {

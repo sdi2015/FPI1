@@ -7,10 +7,14 @@ export function applyTechnologyHealthScope(data: TechnologyHealthData, fireSites
   if (hasEmptyStoreScope(scope)) return createEmptyTechnologyHealth(data);
 
   const selectedAliases = new Set(getScopedStoreIds(fireSites, scope));
-  const storeHealth = data.storeHealth.filter((store) => selectedAliases.has(store.siteAlias));
-  const recorderHealth = data.recorderHealth.filter((recorder) => selectedAliases.has(recorder.siteAlias));
-  const workQueue = data.workQueue.filter((item) => selectedAliases.has(item.siteAlias));
-  const predictiveCandidates = data.predictiveSummary.candidates.filter((candidate) => selectedAliases.has(candidate.siteAlias));
+  const storeHealth = data.storeHealth.filter((store) => selectedAliases.has(store.siteAlias) || selectedAliases.has(leadingStoreId(store.siteAlias)));
+  const recorderHealth = data.recorderHealth.filter((recorder) => selectedAliases.has(recorder.siteAlias) || selectedAliases.has(leadingStoreId(recorder.siteAlias)));
+  const workQueue = data.workQueue.filter((item) => selectedAliases.has(item.siteAlias) || selectedAliases.has(leadingStoreId(item.siteAlias)));
+  const predictiveCandidates = data.predictiveSummary.candidates.filter((candidate) => selectedAliases.has(candidate.siteAlias) || selectedAliases.has(leadingStoreId(candidate.siteAlias)));
+  const storeDirectory = (data.storeDirectory ?? []).filter((store) => selectedAliases.has(store.siteAlias) || selectedAliases.has(store.storeNumber));
+  const cameraInventory = (data.cameraInventory ?? []).filter((camera) => selectedAliases.has(camera.siteAlias) || selectedAliases.has(camera.storeNumber));
+  const profileWarnings = (data.profileWarnings ?? []).filter((warning) => selectedAliases.has(warning.storeNumber));
+  const networkPlacementFlags = (data.networkPlacementFlags ?? []).filter((flag) => selectedAliases.has(flag.storeNumber));
 
   return {
     ...data,
@@ -42,9 +46,13 @@ export function applyTechnologyHealthScope(data: TechnologyHealthData, fireSites
       ...data.complianceSummary,
       storeComplianceCards: storeHealth.length,
       criticalServiceTicketCandidates: storeHealth.filter((store) => store.healthStatus === 'Critical' || store.offlineCameras >= 20).length,
-      profileWarnings: sum(storeHealth, 'missingProfileCount'),
-      networkPlacementFlags: sum(storeHealth, 'misplacedSubnetCount'),
+      profileWarnings: profileWarnings.length || sum(storeHealth, 'missingProfileCount'),
+      networkPlacementFlags: networkPlacementFlags.length || sum(storeHealth, 'misplacedSubnetCount'),
     },
+    storeDirectory,
+    cameraInventory,
+    profileWarnings,
+    networkPlacementFlags,
     predictiveSummary: {
       ...data.predictiveSummary,
       candidates: predictiveCandidates,
@@ -76,6 +84,10 @@ function createEmptyTechnologyHealth(data: TechnologyHealthData): TechnologyHeal
     analytics: { ...data.analytics, storeStatusCounts: {}, recorderStatusCounts: {}, topOfflineStores: [], topIssueStores: [] },
     complianceSummary: { ...data.complianceSummary, storeComplianceCards: 0, criticalServiceTicketCandidates: 0, profileWarnings: 0, networkPlacementFlags: 0 },
     predictiveSummary: { ...data.predictiveSummary, candidates: [] },
+    storeDirectory: [],
+    cameraInventory: [],
+    profileWarnings: [],
+    networkPlacementFlags: [],
     workQueue: [],
   };
 }
@@ -101,4 +113,8 @@ function countBy<T>(items: T[], getKey: (item: T) => string): Record<string, num
     accumulator[key] = (accumulator[key] ?? 0) + 1;
     return accumulator;
   }, {});
+}
+
+function leadingStoreId(value: string | undefined): string {
+  return String(value ?? '').trim().split(' ')[0] ?? '';
 }
