@@ -80,6 +80,9 @@ button:focus-visible, a:focus-visible {
   outline-offset: 3px;
 }
 h1, h2, h3, p { margin-top: 0; }
+.dashboard-shell *, .landing-shell * { min-width: 0; }
+.panel, .kpi-card, .progress-card, .executive-item, .preview-card, .pillar-card, .nav-item, .status-pill, .theme-toggle, .shell-scope-chip { overflow-wrap: anywhere; }
+.card-heading > div, .dashboard-header > div, .service-meta-grid > div, .nav-title-row strong { min-width: 0; }
 .eyebrow {
   margin: 0 0 10px;
   color: var(--yellow);
@@ -97,6 +100,19 @@ h1, h2, h3, p { margin-top: 0; }
 .shell-scope-chip span { flex: 0 0 auto; color: var(--yellow); font-size: 0.68rem; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
 .shell-scope-chip strong { overflow: hidden; font-size: 0.84rem; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
 [data-theme='light'] .shell-scope-chip { border-color: rgba(0,83,226,0.18); background: rgba(255,255,255,0.94); }
+.ops-banner { display: grid; gap: 12px; margin-bottom: 14px; padding: 14px; border: 1px solid rgba(255,194,32,0.22); border-radius: var(--radius-xl); background: radial-gradient(circle at 92% 12%, rgba(255,194,32,0.16), transparent 16rem), linear-gradient(135deg, rgba(0,83,226,0.18), rgba(255,255,255,0.045)); box-shadow: var(--shadow-card); }
+.ops-banner-main { display: flex; gap: 14px; align-items: flex-start; justify-content: space-between; }
+.ops-banner-main h2 { margin-bottom: 6px; color: var(--white); font-size: clamp(1.05rem, 1.8vw, 1.35rem); line-height: 1.18; }
+.ops-banner-main p { margin: 0; color: var(--text-secondary); line-height: 1.45; }
+.ops-diagnostics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.ops-diagnostic-card { display: grid; gap: 8px; min-width: 0; padding: 12px; overflow: hidden; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.055); }
+.ops-diagnostic-card span { color: var(--text-muted); font-size: 0.66rem; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
+.ops-diagnostic-card strong { color: var(--white); font-size: 0.94rem; line-height: 1.2; overflow-wrap: anywhere; }
+.ops-action-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ops-action-button { min-height: 36px; padding: 8px 12px; color: var(--bentonville-blue); border: 1px solid rgba(255,194,32,0.65); border-radius: 999px; background: var(--yellow); font-size: 0.76rem; font-weight: 950; cursor: pointer; }
+.ops-action-button.secondary { color: var(--text-primary); border-color: rgba(169,221,247,0.28); background: rgba(255,255,255,0.08); }
+[data-theme='light'] .ops-banner { border-color: rgba(0,83,226,0.16); background: radial-gradient(circle at 92% 12%, rgba(255,194,32,0.18), transparent 16rem), rgba(255,255,255,0.92); }
+[data-theme='light'] .ops-banner-main h2, [data-theme='light'] .ops-diagnostic-card strong { color: var(--blue-900); }
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -218,10 +234,11 @@ h1, h2, h3, p { margin-top: 0; }
 .logo-button small { display: block; color: var(--sky-blue); font-size: 0.72rem; font-weight: 700; }
 .nav-label { margin: 0 0 14px; color: var(--yellow); font-size: 0.68rem; font-weight: 950; letter-spacing: 0.17em; text-transform: uppercase; }
 .nav-item {
-  display: block;
+  display: grid;
   width: 100%;
   margin-bottom: 7px;
   padding: 11px 12px;
+  gap: 4px;
   color: var(--text-secondary);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
@@ -229,7 +246,15 @@ h1, h2, h3, p { margin-top: 0; }
   text-align: left;
   transition: transform var(--motion-fast), background var(--motion-fast), border-color var(--motion-fast);
 }
-.nav-item span { display: block; margin-bottom: 4px; color: var(--text-muted); font-size: 0.64rem; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav-eyebrow { display: block; color: var(--text-muted); font-size: 0.62rem; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav-title-row { display: flex; gap: 8px; align-items: center; justify-content: space-between; color: var(--text-primary); line-height: 1.2; }
+.nav-title-row strong { font-size: 0.88rem; font-weight: 900; }
+.nav-meta-row { display: block; color: var(--text-muted); font-size: 0.66rem; font-weight: 750; line-height: 1.25; }
+.nav-status-dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 999px; background: var(--sky-blue); box-shadow: 0 0 14px currentColor; }
+.nav-status-ready { color: #5ee0a0; background: #5ee0a0; }
+.nav-status-watch { color: var(--yellow); background: var(--yellow); }
+.nav-status-buildout { color: var(--sky-blue); background: var(--sky-blue); }
+.nav-status-track { color: var(--everyday-blue); background: var(--everyday-blue); }
 .nav-item.active, .nav-item:hover { border-color: rgba(169,221,247,0.28); background: rgba(0,83,226,0.17); }
 .nav-item.active { box-shadow: inset 3px 0 0 var(--yellow); }
 .nav-item:hover { transform: translateX(2px); }
@@ -509,6 +534,8 @@ button.scope-chip { cursor: pointer; }
   .dashboard-content { padding: 16px; }
   .dashboard-top-controls { align-items: stretch; flex-direction: column-reverse; }
   .shell-scope-chip { max-width: 100%; width: 100%; }
+  .ops-banner-main { flex-direction: column; }
+  .ops-diagnostics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dashboard-header { flex-direction: column; padding: 18px; }
   .mode-pill { text-align: left; }
   .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -521,7 +548,7 @@ button.scope-chip { cursor: pointer; }
 @media (max-width: 620px) {
   .landing-shell, .dashboard-content { padding: 12px; }
   .hero-panel { min-height: auto; padding: 24px; border-radius: 24px; }
-  .hero-panel, .pillar-grid, .preview-grid, .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid, .leadership-attention-grid, .command-guidance-grid, .data-confidence-grid { grid-template-columns: 1fr; }
+  .hero-panel, .pillar-grid, .preview-grid, .ops-diagnostics-grid, .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid, .leadership-attention-grid, .command-guidance-grid, .data-confidence-grid { grid-template-columns: 1fr; }
   .hero-content > .eyebrow { margin-top: 42px; }
   .hero-visual { min-height: 410px; }
   .orbital-card { position: static; width: 100%; margin: 10px 0; }

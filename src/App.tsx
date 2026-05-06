@@ -377,6 +377,19 @@ function DashboardShell({
           </button>
           <ThemeToggle theme={theme} onToggle={onThemeToggle} />
         </div>
+        <ProgramOpsBanner
+          activeCapability={activeCapability}
+          metrics={metrics}
+          scopeSummary={scopeSummary}
+          fpiLoading={fpiState.loading}
+          fpiError={fpiState.error}
+          fireLoading={fireAlarmState.loading}
+          fireError={fireAlarmState.error}
+          isEmptyScope={isEmptyScope}
+          onCommandCenter={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
+          onChangeScope={handleChangeStoreScopeRequest}
+          onSettings={() => onSelectService(SERVICE_IDS.SETTINGS)}
+        />
         {fpiState.loading ? <DashboardStatePanel title="Loading FPI master data" message="Preparing the local master JSON dataset and calculating dashboard metrics." /> : null}
         {fpiState.error ? <DashboardStatePanel title="Dashboard data is unavailable" message={fpiState.error} tone="critical" /> : null}
         {!fpiState.loading && !fpiState.error && !metrics ? (
@@ -493,6 +506,72 @@ function DashboardShell({
   );
 }
 
+function ProgramOpsBanner({
+  activeCapability,
+  metrics,
+  scopeSummary,
+  fpiLoading,
+  fpiError,
+  fireLoading,
+  fireError,
+  isEmptyScope,
+  onCommandCenter,
+  onChangeScope,
+  onSettings,
+}: {
+  activeCapability: Capability;
+  metrics?: NonNullable<FpiProgramDataState['data']>['dashboardMetrics'];
+  scopeSummary: string;
+  fpiLoading: boolean;
+  fpiError: string | null;
+  fireLoading: boolean;
+  fireError: string | null;
+  isEmptyScope: boolean;
+  onCommandCenter: () => void;
+  onChangeScope: () => void;
+  onSettings: () => void;
+}) {
+  const hasDataIssue = Boolean(fpiError || fireError);
+  const isLoading = fpiLoading || fireLoading;
+  const posture = isEmptyScope ? 'NO SCOPE' : metrics?.overallStatus ?? (isLoading ? 'LOADING' : 'WATCH');
+  const tone: StatusTone = hasDataIssue ? 'critical' : isEmptyScope ? 'watch' : isLoading ? 'buildout' : metrics?.overallStatus === 'CRITICAL' ? 'critical' : metrics?.overallStatus === 'WATCH' ? 'watch' : 'ready';
+  const diagnostics = [
+    { label: 'FPI data', value: fpiError ? 'Issue' : fpiLoading ? 'Loading' : 'Loaded', tone: fpiError ? 'critical' : fpiLoading ? 'buildout' : 'ready' },
+    { label: 'Fire data', value: fireError ? 'Issue' : fireLoading ? 'Loading' : 'Loaded', tone: fireError ? 'critical' : fireLoading ? 'buildout' : 'ready' },
+    { label: 'Scope', value: isEmptyScope ? 'No facilities' : scopeSummary, tone: isEmptyScope ? 'watch' : 'stable' },
+    { label: 'Active view', value: activeCapability.navLabel ?? activeCapability.title, tone: 'track' },
+  ] satisfies Array<{ label: string; value: string; tone: StatusTone }>;
+
+  return (
+    <section className="ops-banner" aria-label="Program operations health and quick actions">
+      <div className="ops-banner-main">
+        <div>
+          <p className="eyebrow">DevOps watch panel</p>
+          <h2>Program health, data readiness, and navigation checks</h2>
+          <p>
+            Current posture is <strong>{posture}</strong>. Use this strip to confirm data health, review scope, and jump to the core operating views without leaving the existing dashboard shell.
+          </p>
+        </div>
+        <StatusPill label={posture} tone={tone} />
+      </div>
+      <div className="ops-diagnostics-grid">
+        {diagnostics.map((item) => (
+          <article className="ops-diagnostic-card" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <StatusPill label={item.tone === 'ready' ? 'OK' : item.tone === 'critical' ? 'CHECK' : item.tone.toUpperCase()} tone={item.tone} />
+          </article>
+        ))}
+      </div>
+      <div className="ops-action-row" aria-label="Dashboard quick actions">
+        <button type="button" className="ops-action-button" onClick={onCommandCenter}>Open Command Center</button>
+        <button type="button" className="ops-action-button secondary" onClick={onChangeScope}>Change Scope</button>
+        <button type="button" className="ops-action-button secondary" onClick={onSettings}>Settings</button>
+      </div>
+    </section>
+  );
+}
+
 function SidebarNav({
   selectedService,
   onSelectService,
@@ -525,8 +604,12 @@ function SidebarNav({
             aria-current={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'page' : undefined}
             onClick={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
           >
-            <span>{commandCenterCapability.eyebrow}</span>
-            {commandCenterCapability.navLabel ?? commandCenterCapability.title}
+            <span className="nav-eyebrow">{commandCenterCapability.eyebrow}</span>
+            <span className="nav-title-row">
+              <strong>{commandCenterCapability.navLabel ?? commandCenterCapability.title}</strong>
+              <span className={`nav-status-dot nav-status-${capabilityStatusTone(commandCenterCapability.status)}`} aria-label={`${commandCenterCapability.status} status`} />
+            </span>
+            <span className="nav-meta-row">{commandCenterCapability.metric} · {commandCenterCapability.owner}</span>
           </button>
         </nav>
       ) : null}
@@ -543,8 +626,12 @@ function SidebarNav({
               aria-current={serviceId === selectedService ? 'page' : undefined}
               onClick={() => onSelectService(serviceId)}
             >
-              <span>{capability.eyebrow}</span>
-              {capability.navLabel ?? capability.title}
+              <span className="nav-eyebrow">{capability.eyebrow}</span>
+              <span className="nav-title-row">
+                <strong>{capability.navLabel ?? capability.title}</strong>
+                <span className={`nav-status-dot nav-status-${capabilityStatusTone(capability.status)}`} aria-label={`${capability.status} status`} />
+              </span>
+              <span className="nav-meta-row">{capability.metric} · {capability.owner}</span>
             </button>
           );
         })}
@@ -558,8 +645,9 @@ function SidebarNav({
           aria-current={selectedService === SERVICE_IDS.SETTINGS ? 'page' : undefined}
           onClick={() => onSelectService(SERVICE_IDS.SETTINGS)}
         >
-          <span>Controls</span>
-          Settings
+          <span className="nav-eyebrow">Controls</span>
+          <span className="nav-title-row"><strong>Settings</strong><span className="nav-status-dot nav-status-track" aria-label="Workspace controls" /></span>
+          <span className="nav-meta-row">Scope · Theme · Workspace</span>
         </button>
       </nav>
 
@@ -569,6 +657,10 @@ function SidebarNav({
       </footer>
     </aside>
   );
+}
+
+function capabilityStatusTone(status: Capability['status']): StatusTone {
+  return status === 'Ready' ? 'ready' : status === 'Watching' ? 'watch' : 'buildout';
 }
 
 function DashboardStatePanel({ title, message, tone = 'stable' }: { title: string; message: string; tone?: StatusTone }) {
