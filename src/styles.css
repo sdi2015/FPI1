@@ -120,7 +120,7 @@ h1, h2, h3, p { margin-top: 0; }
 .ops-action-button { min-height: 34px; padding: 7px 11px; color: var(--bentonville-blue); border: 1px solid rgba(255,194,32,0.65); border-radius: 999px; background: var(--yellow); font-size: 0.74rem; font-weight: 950; cursor: pointer; }
 .ops-action-button.secondary { color: var(--text-primary); border-color: rgba(169,221,247,0.28); background: rgba(255,255,255,0.08); }
 [data-theme='light'] .compact-command-bar { border-color: rgba(0,83,226,0.14); background: rgba(255,255,255,0.92); }
-[data-theme='light'] .compact-command-main strong, [data-theme='light'] .system-health-menu strong { color: var(--blue-900); }
+[data-theme='light'] .compact-command-main strong, [data-theme='light'] .system-health-menu strong { color: var(--bentonville-blue); }
 [data-theme='light'] .compact-scope-pill, [data-theme='light'] .system-health-popover summary, [data-theme='light'] .ops-action-button.secondary { border-color: rgba(0,83,226,0.16); background: rgba(0,83,226,0.06); }
 [data-theme='light'] .system-health-menu { background: #ffffff; }
 .theme-toggle {
