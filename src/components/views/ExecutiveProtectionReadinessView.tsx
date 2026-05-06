@@ -75,8 +75,8 @@ type EprMitigationDraft = {
 const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'visits', label: 'Visit Planner', eyebrow: 'Travel' },
   { id: 'hotels', label: 'Hotel Intelligence', eyebrow: 'Safety' },
-  { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
   { id: 'mitigation', label: 'Security Mitigation', eyebrow: 'Controls' },
+  { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
 ];
 
 const EPR_PANEL_LAYOUT_STORAGE_KEY = 'fpi-epr-panel-layout-v1';
@@ -312,7 +312,7 @@ function HotelIntelligenceTab({ data }: { data: EprData }) {
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Travel recommendation draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <HotelDraftPanel draft={selectedDraft} onClear={() => setSelectedHotel(null)} />
       </section>
-      <section className="epr-hotel-grid epr-resizable-panel" data-resizable-panel="hotel-results" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
+      <section className="epr-hotel-grid">
         {hotels.map((hotel) => <HotelCard hotel={hotel} key={hotel.hotel_id} onShortlist={setSelectedHotel} selected={selectedHotel?.hotel_id === hotel.hotel_id} />)}
       </section>
     </section>
@@ -385,9 +385,6 @@ function MitigationTab({ data }: { data: EprData }) {
       <section className="panel selected-service-panel">
         <div className="card-heading"><div><p className="eyebrow">Security Mitigation Manager</p><h2>Recommended controls and projected-prevention ROI</h2></div><StatusPill label="RULES MAPPED" tone="ready" /></div>
         <p>Security mitigation recommendations are staged here for EPR coordination with security vendors and external partners. Shortlist options to prepare a mock governance comparison without purchasing or contacting vendors.</p>
-        <div className="module-map epr-rule-map">
-          {data.security_mitigation.recommender_rules.map((rule) => <div className="module-chip" key={rule}><StatusPill label="RULE" tone="stable" /><strong>{rule}</strong></div>)}
-        </div>
       </section>
       <section className="panel fire-remediation-panel epr-resizable-panel" data-resizable-panel="mitigation-options" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={`${solutions.length} MATCHES`} tone="stable" /></div>

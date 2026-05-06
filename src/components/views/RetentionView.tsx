@@ -19,8 +19,8 @@ interface StoreRet {
 // ── Policy definitions ─────────────────────────────────────────────────────────
 const POLICIES = [
   { key: 'general' as const, label: 'General',        required: 30,  warn: 5,  desc: 'All cameras · AP-14 baseline',              color: '#0053e2', accent: '#dbeafe' },
-  { key: 'rx'      as const, label: 'Pharmacy (Rx)',  required: 90,  warn: 10, desc: 'Pharmacy area cameras · regulatory req.',     color: '#7c3aed', accent: '#ede9fe' },
-  { key: 'gun'     as const, label: 'Firearms / Gun', required: 180, warn: 20, desc: 'Firearms dept. cameras · compliance req.',   color: '#d97706', accent: '#fef3c7' },
+  { key: 'rx'      as const, label: 'Pharmacy (Rx)',  required: 90,  warn: 0,  desc: 'Pharmacy area cameras · regulatory req.',     color: '#7c3aed', accent: '#ede9fe' },
+  { key: 'gun'     as const, label: 'Firearms / Gun', required: 180, warn: 0,  desc: 'Firearms dept. cameras · compliance req.',   color: '#d97706', accent: '#fef3c7' },
 ];
 
 // ── Tone helpers ───────────────────────────────────────────────────────────────
@@ -118,8 +118,8 @@ export function RetentionView({ data }: { data: TechnologyHealthData }) {
     if (sortKey === 'rx')      return (a.rx ?? 999) - (b.rx ?? 999);
     if (sortKey === 'gun')     return (a.gun ?? 999) - (b.gun ?? 999);
     // status: worst first
-    const tA = worstTone(retTone(a.general, 30, 5), retTone(a.rx, 90, 10), retTone(a.gun, 180, 20));
-    const tB = worstTone(retTone(b.general, 30, 5), retTone(b.rx, 90, 10), retTone(b.gun, 180, 20));
+    const tA = worstTone(retTone(a.general, 30, 5), retTone(a.rx, 90, 0), retTone(a.gun, 180, 0));
+    const tB = worstTone(retTone(b.general, 30, 5), retTone(b.rx, 90, 0), retTone(b.gun, 180, 0));
     const rank = { red: 0, yellow: 1, green: 2 };
     return rank[tA] - rank[tB];
   }), [filtered, sortKey]);
@@ -130,8 +130,8 @@ export function RetentionView({ data }: { data: TechnologyHealthData }) {
 
   // Summary counts across all rows
   const generalBelow = rows.filter(r => retTone(r.general, 30, 5) !== 'green').length;
-  const rxBelow      = rows.filter(r => r.rx !== null && retTone(r.rx, 90, 10) !== 'green').length;
-  const gunBelow     = rows.filter(r => r.gun !== null && retTone(r.gun, 180, 20) !== 'green').length;
+  const rxBelow      = rows.filter(r => r.rx  !== null && retTone(r.rx,  90,  0) !== 'green').length;
+  const gunBelow     = rows.filter(r => r.gun !== null && retTone(r.gun, 180, 0) !== 'green').length;
   const totalStores  = rows.length;
 
   return (
@@ -176,16 +176,16 @@ export function RetentionView({ data }: { data: TechnologyHealthData }) {
             <tbody>
               {sorted.map(r => {
                 const gt = retTone(r.general, 30, 5);
-                const rt = retTone(r.rx, 90, 10);
-                const ft = retTone(r.gun, 180, 20);
+                const rt = retTone(r.rx, 90, 0);
+                const ft = retTone(r.gun, 180, 0);
                 const ov = worstTone(gt, rt, ft);
                 return (
                   <tr key={r.store.siteAlias}>
                     <td><strong>{r.store.siteAlias}</strong></td>
                     <td><small>{r.store.facilityType ?? 'Supercenter'}</small></td>
                     <td><DaysBadge days={r.general} required={30}  warn={5}  /></td>
-                    <td><DaysBadge days={r.rx}      required={90}  warn={10} /></td>
-                    <td><DaysBadge days={r.gun}     required={180} warn={20} /></td>
+                    <td><DaysBadge days={r.rx}      required={90}  warn={0} /></td>
+                    <td><DaysBadge days={r.gun}     required={180} warn={0} /></td>
                     <td><span className="ret-badge" style={{ background: TONE_BG[ov], color: TONE_FG[ov] }}>{TONE_LABEL[ov]}</span></td>
                   </tr>
                 );
