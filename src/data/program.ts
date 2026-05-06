@@ -102,10 +102,10 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'threat-risk-scoring',
-    title: 'Threat Detection & Risk Scoring',
+    title: 'Risk Intelligence',
     navLabel: 'Risk Intelligence',
     eyebrow: 'Risk intelligence',
-    description: 'Prioritizes threats using explainable scoring across exposure, confidence, and business impact.',
+    description: 'Prioritizes facilities using explainable FPI intelligence across incidents, protection signals, confidence, and business impact.',
     status: 'Ready',
     metric: '812 score',
     owner: 'FPI Analytics',
