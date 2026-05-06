@@ -93,7 +93,7 @@ function Landing({
       <section className="hero-panel">
         <div className="hero-content">
           <div className="brand-row" aria-label="FPI program brand">
-            <span className="spark-mark">✦</span>
+            <img className="brand-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
             <span>Facility Protection Intelligence</span>
           </div>
 
@@ -208,6 +208,11 @@ function Landing({
           ))}
         </div>
       </section>
+
+      <footer className="landing-brand-footer" aria-label="Walmart brand footer">
+        <img className="walmart-wordmark" src={theme === 'dark' ? '/brand/walmart/wordmark/WMT-Wordmark-Standard-White-RGB.svg' : '/brand/walmart/wordmark/WMT-Wordmark-Standard-TrueBlue-RGB.svg'} alt="Walmart" />
+        <span>Facility Protection Intelligence internal prototype</span>
+      </footer>
     </main>
   );
 }
@@ -270,7 +275,7 @@ function DashboardShell({
 
   return (
     <div className="dashboard-shell">
-      <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} />
+      <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} theme={theme} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
         <div className="top-controls">
@@ -396,10 +401,12 @@ function SidebarNav({
   selectedService,
   onSelectService,
   onBackToLanding,
+  theme,
 }: {
   selectedService: ServiceId;
   onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
+  theme: 'dark' | 'light';
 }) {
   const commandCenterCapability = capabilities.find((capability) => serviceIdForCapability(capability.id) === SERVICE_IDS.COMMAND_CENTER);
   const programServiceCapabilities = capabilities.filter((capability) => serviceIdForCapability(capability.id) !== SERVICE_IDS.COMMAND_CENTER);
@@ -407,7 +414,7 @@ function SidebarNav({
   return (
     <aside className="sidebar" aria-label="FPI dashboard navigation">
       <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
-        <span className="spark-mark">✦</span>
+        <img className="brand-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
         <span>
           FPI
           <small>Command Center</small>
@@ -459,6 +466,11 @@ function SidebarNav({
           Settings
         </button>
       </nav>
+
+      <footer className="sidebar-brand-footer" aria-label="Walmart brand footer">
+        <img className="walmart-wordmark" src={theme === 'dark' ? '/brand/walmart/wordmark/WMT-Wordmark-Standard-White-RGB.svg' : '/brand/walmart/wordmark/WMT-Wordmark-Standard-TrueBlue-RGB.svg'} alt="Walmart" />
+        <span>Internal prototype</span>
+      </footer>
     </aside>
   );
 }

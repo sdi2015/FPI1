@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './brand.css';
 import './styles.css';
 import './epr.css';
 import './technology.css';
