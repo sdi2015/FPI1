@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1 --port 5173",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
-    "nova:start": "code-puppy nova start",
+    "nova:start": "node tools/nova-bridge.mjs",
+    "nova:cli": "code-puppy --agent nova --interactive",
     "test": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
