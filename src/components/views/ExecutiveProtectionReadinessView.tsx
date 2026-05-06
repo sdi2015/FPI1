@@ -58,17 +58,6 @@ type EprHotelDraft = {
   requestedResponse: string;
 };
 
-type EprMitigationDraft = {
-  id: string;
-  priority: 'Recommended' | 'Review';
-  solutionName: string;
-  subject: string;
-  summary: string;
-  recommendation: string;
-  evidenceNeeded: string[];
-  requestedResponse: string;
-};
-
 // 'overview' (Readiness), 'tasks' (Tasks & Governance), and 'analysis' (Data Provenance) tabs
 // are intentionally hidden from the EPR sub-nav per product request.
 // The matching components below are kept intact so they can be re-enabled by adding them back to this array.
@@ -362,11 +351,10 @@ function IncidentRiskTab({ data }: { data: EprData }) {
 
 function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacility[] }) {
   const [storeFilter, setStoreFilter] = useState('all');
-  const [selectedSolution, setSelectedSolution] = useState<EprSecuritySolution | null>(null);
-  // User-built deployment plan. Recommendations are advisory — the plan is what drives the KPI math.
+  // User-built deployment plan. Recommendations are advisory — the plan is what drives the KPI math + email request.
   const [planSolutionIds, setPlanSolutionIds] = useState<ReadonlySet<number>>(() => new Set());
-  // Reset the plan + draft when the store changes so each store starts clean.
-  useEffect(() => { setPlanSolutionIds(new Set()); setSelectedSolution(null); }, [storeFilter]);
+  // Reset the plan when the store changes so each store starts clean.
+  useEffect(() => { setPlanSolutionIds(new Set()); }, [storeFilter]);
   const togglePlanSolution = (solution: EprSecuritySolution) => setPlanSolutionIds((current) => {
     const next = new Set(current);
     if (next.has(solution.id)) next.delete(solution.id); else next.add(solution.id);
@@ -404,7 +392,17 @@ function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacil
   const estimatedNetImpact = projectedLossPrevented - planSolutionCost;
   const applyRecommendations = () => setPlanSolutionIds(new Set(suggestions.recommendedSolutionIds));
   const clearPlan = () => setPlanSolutionIds(new Set());
-  const selectedDraft = selectedSolution ? createMitigationDraft(selectedSolution, selectedStore?.facility_name) : null;
+  // Email request to AP coach + Regional AP manager + FPP manager. Only built when there's something to send.
+  const planRequestEmail = useMemo(() => (selectedStore && planSolutions.length > 0) ? buildPlanRequestEmail({
+    store: selectedStore,
+    planSolutions,
+    fiveYearProjectedBleed,
+    planSolutionCost,
+    projectedLossPrevented,
+    estimatedNetImpact,
+    avgPlanEffectiveness,
+    storeIncidentCount: storeIncidents.length,
+  }) : null, [selectedStore, planSolutions, fiveYearProjectedBleed, planSolutionCost, projectedLossPrevented, estimatedNetImpact, avgPlanEffectiveness, storeIncidents.length]);
 
   return (
     <section className="dashboard-grid epr-grid">
@@ -475,11 +473,32 @@ function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacil
       ) : null}
       <section className="panel fire-remediation-panel">
         <div className="card-heading"><div><p className="eyebrow">Solutions catalog</p><h2>Mitigation option shortlist</h2></div><StatusPill label={selectedStore ? `${planSolutions.length} IN PLAN · ${suggestions.recommendedSolutionIds.size} RECOMMENDED · ${solutions.length} TOTAL` : `${solutions.length} SOLUTIONS`} tone={selectedStore && planSolutions.length > 0 ? 'ready' : 'stable'} /></div>
-        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} onShortlist={setSelectedSolution} selected={selectedSolution?.id === solution.id} recommended={suggestions.recommendedSolutionIds.has(solution.id)} inPlan={planSolutionIds.has(solution.id)} onTogglePlan={selectedStore ? togglePlanSolution : undefined} />)}</div>
+        <div className="epr-card-list">{solutions.length === 0 ? <p className="epr-empty-state">No mitigation options available.</p> : solutions.map((solution) => <SolutionCard solution={solution} key={solution.id} recommended={suggestions.recommendedSolutionIds.has(solution.id)} inPlan={planSolutionIds.has(solution.id)} onTogglePlan={selectedStore ? togglePlanSolution : undefined} />)}</div>
       </section>
       <section className="panel epr-mitigation-draft-panel epr-resizable-panel" data-resizable-panel="mitigation-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
-        <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Mitigation comparison and governance draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
-        <MitigationDraftPanel draft={selectedDraft} onClear={() => setSelectedSolution(null)} />
+        <div className="card-heading"><div><p className="eyebrow">Plan request — email output</p><h2>Send security solution install request</h2></div><StatusPill label={planRequestEmail ? `${planSolutions.length} CONTROL${planSolutions.length === 1 ? '' : 'S'} · MOCK ADDRESSES` : 'NO PLAN'} tone={planRequestEmail ? 'ready' : 'stable'} /></div>
+        {planRequestEmail ? (
+          <>
+            <p>Generates a draft email to the AP team & FPP manager for the security solutions in your plan. Opens in your default mail client — nothing is sent until you click Send there.</p>
+            <div className="epr-plan-email-actions">
+              <button type="button" className="epr-action-button" onClick={() => openPlanRequestEmail(planRequestEmail)}>📧 Open in mail client</button>
+              <button type="button" className="epr-action-button epr-action-button-secondary" onClick={() => navigator.clipboard?.writeText(planRequestEmail.body).catch(() => undefined)}>Copy body to clipboard</button>
+            </div>
+            <div className="epr-plan-email-recipients">
+              <h3>Recipients</h3>
+              <ul>{planRequestEmail.recipients.map((recipient) => <li key={recipient.address}><strong>{recipient.label}:</strong> <code>{recipient.address}</code></li>)}</ul>
+              <p className="epr-plan-email-note">Demo addresses — swap for the real Walmart distribution lists in your mail client before sending.</p>
+            </div>
+            <div className="epr-plan-email-preview">
+              <h3>Subject</h3>
+              <p className="epr-plan-email-subject">{planRequestEmail.subject}</p>
+              <h3>Body</h3>
+              <pre className="epr-plan-email-body">{planRequestEmail.body}</pre>
+            </div>
+          </>
+        ) : (
+          <p className="epr-empty-state">{selectedStore ? 'Add at least one control to your plan above to generate the install-request email.' : 'Pick a store and add controls to your plan to generate the install-request email.'}</p>
+        )}
       </section>
       {selectedStore ? (
         <section className="panel epr-store-incidents-panel">
@@ -692,9 +711,8 @@ function incidentRecommendedAction(incident: EprIncident): string {
   return 'Track for awareness, confirm no active executive movement impact, and document any required store-facing follow-up.';
 }
 
-function SolutionCard({ solution, onShortlist, selected = false, recommended = false, inPlan = false, onTogglePlan }: { solution: EprSecuritySolution; onShortlist?: (solution: EprSecuritySolution) => void; selected?: boolean; recommended?: boolean; inPlan?: boolean; onTogglePlan?: (solution: EprSecuritySolution) => void }) {
+function SolutionCard({ solution, recommended = false, inPlan = false, onTogglePlan }: { solution: EprSecuritySolution; recommended?: boolean; inPlan?: boolean; onTogglePlan?: (solution: EprSecuritySolution) => void }) {
   const classes = ['facility-record', 'epr-solution-card'];
-  if (selected) classes.push('selected');
   if (recommended) classes.push('recommended');
   if (inPlan) classes.push('in-plan');
   return <article className={classes.join(' ')}>
@@ -703,32 +721,83 @@ function SolutionCard({ solution, onShortlist, selected = false, recommended = f
     <span>{formatLabel(solution.solution_type)} · {solution.effectiveness_rating}% effective</span>
     <small>{solution.coverage_area}</small>
     <small>5-year base cost: {formatCurrency(solutionFiveYearCost(solution))}</small>
-    <div className="epr-card-actions">
-      {onTogglePlan ? <button className={`epr-action-button epr-card-action ${inPlan ? 'epr-action-button-in-plan' : ''}`} type="button" onClick={() => onTogglePlan(solution)} aria-pressed={inPlan}>{inPlan ? '✓ In plan' : '+ Add to plan'}</button> : null}
-      {onShortlist ? <button className="epr-action-button epr-card-action epr-action-button-secondary" type="button" onClick={() => onShortlist(solution)}>{selected ? 'Drafted' : 'Draft brief'}</button> : null}
-    </div>
+    {onTogglePlan ? <button className={`epr-action-button epr-card-action ${inPlan ? 'epr-action-button-in-plan' : ''}`} type="button" onClick={() => onTogglePlan(solution)} aria-pressed={inPlan}>{inPlan ? '✓ In plan' : '+ Add to plan'}</button> : null}
   </article>;
 }
 
-function MitigationDraftPanel({ draft, onClear }: { draft: EprMitigationDraft | null; onClear: () => void }) {
-  if (!draft) return <p className="epr-empty-state">Select <b>Shortlist Control</b> from a mitigation option to generate a mock comparison and governance draft. No purchase, vendor communication, or production workflow will be triggered.</p>;
-  return <article className="epr-draft-panel"><div className="epr-draft-header"><div><StatusPill label={draft.priority} tone={draft.priority === 'Recommended' ? 'ready' : 'watch'} /><StatusPill label="MOCK ONLY" tone="stable" /></div><button className="epr-action-button secondary" type="button" onClick={onClear}>Clear Draft</button></div><div className="service-meta-grid service-live-metrics epr-draft-grid"><div><span>Solution</span><strong>{draft.solutionName}</strong></div><div><span>Status</span><strong>Draft</strong></div><div><span>Source</span><strong>{draft.id.replace('mitigation-draft-', '')}</strong></div></div><h3>{draft.subject}</h3><p>{draft.summary}</p><h4>Recommendation</h4><p>{draft.recommendation}</p><h4>Evidence needed</h4><div className="badge-list">{draft.evidenceNeeded.map((item) => <span className="scope-chip selected" key={item}>{item}</span>)}</div><h4>Requested response</h4><p>{draft.requestedResponse}</p><div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled>Create Governance Review — Mock Only</button><button className="epr-action-button" type="button" disabled>Send to Vendor Team — Mock Only</button><button className="epr-action-button secondary" type="button" disabled>Approve Purchase — Disabled</button></div><p className="epr-disclaimer">Draft only — no purchase, vendor contact, or production workflow is triggered.</p></article>;
-}
 
-function createMitigationDraft(solution: EprSecuritySolution, storeName?: string): EprMitigationDraft {
-  const cost = solutionFiveYearCost(solution);
-  const storeContext = storeName ? ` for ${storeName}` : '';
+
+
+// Demo recipient roles for the plan request email. Real Walmart distribution lists will be wired in by the AP team —
+// these placeholders make the mailto preview obvious and editable before send.
+const PLAN_EMAIL_RECIPIENTS = {
+  apCoach: 'ap-coach@walmart.com',
+  regionalApManager: 'ap-manager-region75@walmart.com',
+  fppManager: 'fpp-manager@walmart.com',
+} as const;
+
+type PlanRequestEmail = {
+  to: string;
+  cc: string;
+  subject: string;
+  body: string;
+  recipients: { label: string; address: string }[];
+};
+
+function buildPlanRequestEmail(args: {
+  store: EprFacility;
+  planSolutions: EprSecuritySolution[];
+  fiveYearProjectedBleed: number;
+  planSolutionCost: number;
+  projectedLossPrevented: number;
+  estimatedNetImpact: number;
+  avgPlanEffectiveness: number;
+  storeIncidentCount: number;
+}): PlanRequestEmail {
+  const { store, planSolutions, fiveYearProjectedBleed, planSolutionCost, projectedLossPrevented, estimatedNetImpact, avgPlanEffectiveness, storeIncidentCount } = args;
+  const subject = `Security Solution Install Request — ${store.facility_name} (${store.market})`;
+  const lines = [
+    `Team,`,
+    ``,
+    `Requesting review and approval to install the security controls listed below at ${store.facility_name} (${store.market}, ${store.region}).`,
+    ``,
+    `INCIDENT IMPACT (5-yr projection)`,
+    `  • Recent incidents on file: ${storeIncidentCount}`,
+    `  • Estimated cost to Walmart (5-yr): ${formatCurrency(fiveYearProjectedBleed)}`,
+    ``,
+    `PROPOSED SECURITY PLAN`,
+    ...planSolutions.map((solution, index) => `  ${index + 1}. ${solution.name} — ${solution.effectiveness_rating}% effective · 5-yr base ${formatCurrency(solutionFiveYearCost(solution))}`),
+    ``,
+    `PROJECTED ROI (5-yr)`,
+    `  • Total install + operate cost: ${formatCurrency(planSolutionCost)}`,
+    `  • Avg control effectiveness: ${Math.round(avgPlanEffectiveness)}%`,
+    `  • Projected loss prevented: ${formatCurrency(projectedLossPrevented)}`,
+    `  • Estimated net impact: ${estimatedNetImpact >= 0 ? '+' : ''}${formatCurrency(estimatedNetImpact)}`,
+    ``,
+    `REQUESTED ACTION`,
+    `Please confirm budget path, vendor readiness, and implementation timeline. Targeting governance review in the next AP cadence.`,
+    ``,
+    `— Generated from FPI Foundry Pac· Security Mitigation Manager`,
+    `(This is a draft request. No purchase, vendor contact, or production workflow has been triggered.)`,
+  ];
   return {
-    id: `mitigation-draft-${solution.id}`,
-    priority: solution.effectiveness_rating >= 85 && cost < 150000 ? 'Recommended' : 'Review',
-    solutionName: solution.name,
-    subject: `EPR Mitigation Review — ${solution.name}${storeContext}`,
-    summary: `${solution.name} is a ${formatLabel(solution.solution_type)} control with ${solution.effectiveness_rating}% effectiveness, coverage area of ${solution.coverage_area}, and estimated 5-year base cost of ${formatCurrency(cost)}${storeContext ? `. Staged${storeContext}` : ''}.`,
-    recommendation: solution.effectiveness_rating >= 85 ? 'Recommended for governance comparison pending facility applicability, vendor readiness, and budget validation.' : 'Review before prioritization; compare against higher-effectiveness or lower-cost controls before vendor handoff.',
-    evidenceNeeded: ['Control effectiveness', '5-year cost estimate', 'Facility applicability', 'Prevented incident types', 'Vendor/program owner validation'],
-    requestedResponse: 'Please validate applicability, implementation constraints, budget path, and whether this option should move into formal governance review. This is a mock-only mitigation draft.',
+    to: PLAN_EMAIL_RECIPIENTS.apCoach,
+    cc: `${PLAN_EMAIL_RECIPIENTS.regionalApManager},${PLAN_EMAIL_RECIPIENTS.fppManager}`,
+    subject,
+    body: lines.join('\n'),
+    recipients: [
+      { label: 'AP Coach (To)', address: PLAN_EMAIL_RECIPIENTS.apCoach },
+      { label: 'Regional AP Manager (Cc)', address: PLAN_EMAIL_RECIPIENTS.regionalApManager },
+      { label: 'FPP Manager (Cc)', address: PLAN_EMAIL_RECIPIENTS.fppManager },
+    ],
   };
 }
+
+function openPlanRequestEmail(email: PlanRequestEmail): void {
+  const url = `mailto:${encodeURIComponent(email.to)}?cc=${encodeURIComponent(email.cc)}&subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`;
+  window.location.href = url;
+}
+
 
 function solutionFiveYearCost(solution: EprSecuritySolution): number {
   return solution.upfront_cost + solution.annual_cost * 5;

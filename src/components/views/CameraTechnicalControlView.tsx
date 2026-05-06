@@ -408,8 +408,9 @@ function OfflineCameraTable({ rows, compact = false }: { rows: OfflineCameraRow[
       </div>
       <div className="tech-table-wrap offline-camera-wrap">
         <table className="tech-table offline-camera-table">
-          <thead><tr><th>Store Number</th><th>Store Name</th><th>Camera Name</th><th>IP Address</th>{compact ? null : <th>Recorder</th>}<th>Days Offline</th><th>Last Seen</th><th>Camera Type</th>{compact ? null : <th>Reason</th>}</tr></thead>
-          <tbody>{filteredRows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong></td><td>{row.storeName}</td><td><strong>{row.cameraName}</strong></td><td><code>{row.ipAddress}</code></td>{compact ? null : <td>{row.recorderName}</td>}<td>{row.daysOffline}</td><td>{row.lastSeen}</td><td>{row.cameraType}</td>{compact ? null : <td>{row.reason}</td>}</tr>)}</tbody>
+          <colgroup><col className="ocam-num" /><col className="ocam-name" /><col className="ocam-cam" /><col className="ocam-ip" />{compact ? null : <col className="ocam-rec" />}<col className="ocam-days" /><col className="ocam-seen" /><col className="ocam-type" />{compact ? null : <col className="ocam-reason" />}</colgroup>
+          <thead><tr><th>Store</th><th>Store Name</th><th>Camera Name</th><th>IP Address</th>{compact ? null : <th>Recorder</th>}<th>Days</th><th>Last Seen</th><th>Type</th>{compact ? null : <th>Reason</th>}</tr></thead>
+          <tbody>{filteredRows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong></td><td className="ocam-td-clip" title={row.storeName}>{row.storeName}</td><td className="ocam-td-clip" title={row.cameraName}><strong>{row.cameraName}</strong></td><td><code>{row.ipAddress}</code></td>{compact ? null : <td className="ocam-td-clip" title={row.recorderName}>{row.recorderName}</td>}<td>{row.daysOffline}</td><td className="ocam-td-nowrap">{row.lastSeen}</td><td><span className={`ocam-type-pill ocam-type-${row.cameraType.toLowerCase()}`}>{row.cameraType}</span></td>{compact ? null : <td className="ocam-td-clip" title={row.reason}>{row.reason}</td>}</tr>)}</tbody>
         </table>
       </div>
     </>

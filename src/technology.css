@@ -197,7 +197,24 @@ button.tech-summary-tile.active .tech-tile-filter-hint { opacity: 1; color: #005
 .tech-warning-card p, .tech-warning-card li, .tech-warning-card small { margin: 0; color: #475569; line-height: 1.42; }
 .tech-warning-card small { color: #0053e2; font-weight: 900; }
 .offline-camera-wrap { max-height: 440px; }
-.offline-camera-table { min-width: 1040px; }
+.offline-camera-table { width: 100%; table-layout: fixed; }
+/* column widths — compact (7 cols) and full (9 cols) */
+.offline-camera-table col.ocam-num    { width: 68px; }
+.offline-camera-table col.ocam-name   { width: 130px; }
+.offline-camera-table col.ocam-cam    { /* flexible — takes remaining */ }
+.offline-camera-table col.ocam-ip     { width: 118px; }
+.offline-camera-table col.ocam-rec    { width: 160px; }
+.offline-camera-table col.ocam-days   { width: 54px; }
+.offline-camera-table col.ocam-seen   { width: 92px; }
+.offline-camera-table col.ocam-type   { width: 72px; }
+.offline-camera-table col.ocam-reason { width: 160px; }
+/* clip long text; title attr provides full value on hover */
+.offline-camera-table .ocam-td-clip { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 0; }
+.offline-camera-table .ocam-td-nowrap { white-space: nowrap; }
+.offline-camera-table code { display: inline-block; padding: 2px 6px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe; font-size: 0.76rem; color: #001e60; font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; white-space: nowrap; }
+.ocam-type-pill { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 0.71rem; font-weight: 700; }
+.ocam-type-ip     { background: #dbeafe; color: #1d4ed8; }
+.ocam-type-analog { background: #fef3c7; color: #92400e; }
 .warranty-camera-wrap { max-height: 540px; }
 .warranty-camera-table { min-width: 1120px; }
 .masked-ip { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; }

@@ -95,6 +95,19 @@
 .epr-card-actions .epr-card-action { flex: 1 1 auto; }
 .epr-solution-card.in-plan { background: rgba(42,135,3,0.10); }
 .epr-solution-card.in-plan strong { color: #6cdc4a; }
+.epr-plan-email-panel { grid-column: 1 / -1; }
+.epr-plan-email-recipients { margin-top: 12px; padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: rgba(0,30,96,0.45); }
+.epr-plan-email-recipients h3 { margin: 0 0 8px; color: var(--white); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.epr-plan-email-recipients ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+.epr-plan-email-recipients code { padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--sky-blue); font-size: 0.8rem; }
+.epr-plan-email-note { margin: 8px 0 0; color: var(--text-muted); font-size: 0.75rem; font-style: italic; }
+.epr-plan-email-preview { margin-top: 12px; padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: rgba(0,0,0,0.25); }
+.epr-plan-email-preview h3 { margin: 0 0 6px; color: var(--white); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.epr-plan-email-preview h3:not(:first-child) { margin-top: 14px; }
+.epr-plan-email-subject { margin: 0; color: var(--white); font-size: 0.95rem; font-weight: 600; }
+.epr-plan-email-body { margin: 0; padding: 12px; max-height: 360px; overflow: auto; border-radius: var(--radius-sm); background: rgba(0,0,0,0.4); color: var(--text-secondary); font-family: 'Consolas', 'Menlo', 'Monaco', monospace; font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; }
+.epr-plan-email-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid rgba(255,194,32,0.45); background: rgba(0,83,226,0.18); position: sticky; top: 0; z-index: 2; }
+.epr-plan-email-actions .epr-action-button { font-size: 0.95rem; padding: 10px 18px; }
 .epr-action-button { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; padding: 7px 11px; color: var(--bentonville-blue); border: 1px solid rgba(255,194,32,0.65); border-radius: 999px; background: var(--yellow); font-size: 0.74rem; font-weight: 950; line-height: 1.1; cursor: pointer; white-space: nowrap; }
 .epr-action-button.secondary { color: var(--text-primary); border-color: rgba(169,221,247,0.28); background: rgba(255,255,255,0.08); }
 .epr-action-button:disabled { color: var(--text-muted); border-color: var(--border-subtle); background: rgba(148,163,184,0.18); cursor: not-allowed; opacity: 0.82; }
