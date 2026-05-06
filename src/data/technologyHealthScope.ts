@@ -1,5 +1,6 @@
 import type { FireAlarmSite } from './fireAlarmTypes';
 import { getScopedStoreIds, hasEmptyStoreScope, type StoreScopeState } from './storeScope';
+import { storeOfflineTotal } from './technologyHealthSelectors';
 import type { StoreCameraHealth, TechnologyHealthData } from './technologyHealthTypes';
 
 export function applyTechnologyHealthScope(data: TechnologyHealthData, fireSites: FireAlarmSite[], scope: StoreScopeState): TechnologyHealthData {
@@ -24,7 +25,7 @@ export function applyTechnologyHealthScope(data: TechnologyHealthData, fireSites
       recorders: recorderHealth.length,
       totalCameras: sum(storeHealth, 'totalCameras'),
       onlineCameras: sum(storeHealth, 'onlineCameras'),
-      offlineCameras: sum(storeHealth, 'offlineCameras'),
+      offlineCameras: storeHealth.reduce((total, store) => total + storeOfflineTotal(store), 0),
       issueCameras: sum(storeHealth, 'issueCameraCount'),
       ipCameras: sum(storeHealth, 'ipTotal'),
       analogCameras: sum(storeHealth, 'analogTotal'),
@@ -39,13 +40,13 @@ export function applyTechnologyHealthScope(data: TechnologyHealthData, fireSites
       ...data.analytics,
       storeStatusCounts: countBy(storeHealth, (store) => store.healthStatus),
       recorderStatusCounts: countBy(recorderHealth, (recorder) => recorder.recorderStatus),
-      topOfflineStores: [...storeHealth].sort((a, b) => b.offlineCameras - a.offlineCameras).slice(0, 12),
+      topOfflineStores: [...storeHealth].sort((a, b) => storeOfflineTotal(b) - storeOfflineTotal(a)).slice(0, 12),
       topIssueStores: [...storeHealth].sort((a, b) => (b.issueCameraCount + b.missingProfileCount + b.misplacedSubnetCount) - (a.issueCameraCount + a.missingProfileCount + a.misplacedSubnetCount)).slice(0, 12),
     },
     complianceSummary: {
       ...data.complianceSummary,
       storeComplianceCards: storeHealth.length,
-      criticalServiceTicketCandidates: storeHealth.filter((store) => store.healthStatus === 'Critical' || store.offlineCameras >= 20).length,
+      criticalServiceTicketCandidates: storeHealth.filter((store) => store.healthStatus === 'Critical' || storeOfflineTotal(store) >= 20).length,
       profileWarnings: profileWarnings.length || sum(storeHealth, 'missingProfileCount'),
       networkPlacementFlags: networkPlacementFlags.length || sum(storeHealth, 'misplacedSubnetCount'),
     },

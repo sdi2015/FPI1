@@ -5,7 +5,7 @@ import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
-import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
+import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, storeHasOffline, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
 import type { NetworkPlacementFlagEntry, ProfileWarningEntry, StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
@@ -172,7 +172,7 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
   const healthyStores = useMemo(() => getHealthyStores(data.storeHealth), [data.storeHealth]);
   const unhealthyStores = useMemo(() => getUnhealthyStores(data.storeHealth), [data.storeHealth]);
   const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data), [data]);
-  const offlineStoreCount = useMemo(() => data.storeHealth.filter((s) => s.offlineCameras > 0).length, [data.storeHealth]);
+  const offlineStoreCount = useMemo(() => data.storeHealth.filter(storeHasOffline).length, [data.storeHealth]);
 
   function handleTileClick(tile: QuickFilter) {
     setQuickFilter((prev) => (prev === tile ? 'all' : tile));
@@ -190,7 +190,7 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
       .filter((store) => {
         if (quickFilter === 'healthy') return healthToneForPercent(store.onlinePercent) === 'green';
         if (quickFilter === 'unhealthy') return healthToneForPercent(store.onlinePercent) !== 'green';
-        if (quickFilter === 'offline') return store.offlineCameras > 0;
+        if (quickFilter === 'offline') return storeHasOffline(store);
         return filter === 'all' || store.healthStatus === filter;
       })
       .filter((store) => !term || [store.siteAlias, store.region, store.facilityType, store.vmsPlatform, store.healthStatus].join(' ').toLowerCase().includes(term));

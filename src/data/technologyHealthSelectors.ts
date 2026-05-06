@@ -23,8 +23,21 @@ export function getUnhealthyStores(stores: StoreCameraHealth[]): StoreCameraHeal
   return sortStoresByTechnicalRisk(stores).filter((store) => healthToneForPercent(store.onlinePercent) !== 'green');
 }
 
+/** True when any offline count field is non-zero. Needed because offlineCameras
+ *  comes from the source CSV column (often blank) while ipOffline / analogOffline
+ *  are counted from the camera inventory and are always accurate.
+ */
+export function storeHasOffline(store: StoreCameraHealth): boolean {
+  return store.offlineCameras > 0 || store.ipOffline > 0 || store.analogOffline > 0;
+}
+
+/** Best available offline total for a store. */
+export function storeOfflineTotal(store: StoreCameraHealth): number {
+  return Math.max(store.offlineCameras, store.ipOffline + store.analogOffline);
+}
+
 export function getOfflineCameraStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
-  return sortStoresByTechnicalRisk(stores).filter((store) => store.offlineCameras > 0);
+  return sortStoresByTechnicalRisk(stores).filter(storeHasOffline);
 }
 
 export function getCameraTechnologyIssues(data: TechnologyHealthData): TechnologyIssue[] {
@@ -42,7 +55,7 @@ export function sortStoresByTechnicalRisk(stores: StoreCameraHealth[]): StoreCam
 export function riskValue(store: StoreCameraHealth): number {
   return (
     (100 - store.onlinePercent) * 2 +
-    store.offlineCameras * 0.8 +
+    storeOfflineTotal(store) * 0.8 +
     store.issueCameraCount * 0.4 +
     store.missingProfileCount * 0.12 +
     store.misplacedSubnetCount * 2 +
