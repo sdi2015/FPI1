@@ -229,8 +229,10 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
   );
 }
 
-const VENDOR_ALIASES: Record<string, string> = {
-  Samsung: 'Hanwha', 'Samsung Techwin': 'Hanwha', 'Hanwha Techwin': 'Hanwha',
+const VENDOR_ALIASES: Record<string, string> = { SAMSUNG: 'Hanwha', 'SAMSUNG TECHWIN': 'Hanwha', 'HANWHA TECHWIN': 'Hanwha' };
+const VENDOR_DISPLAY: Record<string, string> = {
+  VERINT: 'Verint (Encoder)', BOSCH: 'Bosch', AXIS: 'Axis', VIVOTEK: 'Vivotek',
+  HANWHA: 'Hanwha', 'ONVIF-GENERIC': 'ONVIF-Generic',
 };
 const VENDOR_COLORS: Record<string, string> = {
   Axis: '#0053e2', Bosch: '#1e40af', Hanwha: '#0891b2',
@@ -240,7 +242,7 @@ const CAMERA_STATUS_COLORS: Record<string, string> = { Online: '#16a34a', Offlin
 const RECS_COLORS: Record<string, string> = { Healthy: '#16a34a', Degraded: '#d97706', Offline: '#dc2626' };
 
 function normalizeVendors(raw: Record<string, number>): Record<string, number> {
-  return Object.entries(raw).reduce<Record<string, number>>((out, [key, count]) => { const name = VENDOR_ALIASES[key] ?? key; out[name] = (out[name] ?? 0) + count; return out; }, {});
+  return Object.entries(raw).reduce<Record<string, number>>((o, [k, c]) => { const u = k.toUpperCase(); const r = VENDOR_ALIASES[u] ?? VENDOR_DISPLAY[u] ?? k; o[r] = (o[r] ?? 0) + c; return o; }, {});
 }
 
 function ColoredChartRows({ rows, colorMap, showPct = false }: { rows: Record<string, number>; colorMap: Record<string, string>; showPct?: boolean }) {
