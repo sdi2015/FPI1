@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ScopeContextChip } from '../ScopeContextChip';
+import { CameraWarrantyPanel } from './CameraWarrantyPanel';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
 import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
-import type { CameraWarrantyData, CameraWarrantyRecord } from '../../data/cameraWarrantyTypes';
 import type { StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
@@ -91,7 +91,7 @@ export function CameraTechnicalControlView({ fireSites, storeScope, onChangeScop
           {activeTab === 'inventory' ? <CctvInventory data={scopedTechnologyData} /> : null}
           {activeTab === 'compliance' ? <ComplianceView data={scopedTechnologyData} /> : null}
           {activeTab === 'retention' ? <RetentionView data={scopedTechnologyData} /> : null}
-          {activeTab === 'warranty' ? <WarrantyView data={warrantyState.data} loading={warrantyState.loading} error={warrantyState.error} fireSites={fireSites} storeScope={storeScope} /> : null}
+          {activeTab === 'warranty' ? <CameraWarrantyPanel data={warrantyState.data} loading={warrantyState.loading} error={warrantyState.error} fireSites={fireSites} storeScope={storeScope} /> : null}
           {activeTab === 'predictive' ? <PredictiveView data={scopedTechnologyData} /> : null}
           {activeTab === 'workqueue' ? <WorkQueueView data={scopedTechnologyData} /> : null}
         </>
@@ -274,34 +274,6 @@ function WorkQueueView({ data }: { data: TechnologyHealthData }) {
   return <section className="tech-card"><CardHeading eyebrow="Ticket simulation" title="Grouped CCTV service work queue" pill="NO WRITEBACK" tone="critical" /><div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Site</th><th>Finding</th><th>Severity</th><th>Channel</th><th>Assignment</th><th>SLA</th></tr></thead><tbody>{data.workQueue.map((item) => <tr key={item.id}><td>{item.siteAlias}</td><td><strong>{item.title}</strong><small>{item.status} · Evidence required: {item.evidenceRequired ? 'Yes' : 'No'}</small></td><td><StatusPill label={item.severity} tone={item.severity === 'Critical' ? 'critical' : item.severity === 'High' ? 'watch' : 'stable'} /></td><td>{item.channel}</td><td>{item.assignmentGroup}</td><td>{item.sla}</td></tr>)}</tbody></table></div></section>;
 }
 
-function WarrantyView({ data, loading, error, fireSites, storeScope }: { data: CameraWarrantyData | null; loading: boolean; error: string | null; fireSites: FireAlarmSite[]; storeScope: StoreScopeState }) {
-  if (loading) return <StatePanel title="Loading camera warranty data" message="Preparing Phase 1 enriched camera lifecycle records." />;
-  if (error) return <StatePanel title="Camera warranty data unavailable" message={error} danger />;
-  if (!data) return <StatePanel title="Camera warranty data unavailable" message="No camera warranty data loaded." danger />;
-  const scopedRecords = scopeWarrantyRecords(data.records, fireSites, storeScope);
-  const scopedStores = summarizeWarrantyStores(scopedRecords);
-  const candidates = scopedRecords.filter((record) => record.warrantyReplacementCandidate === 'Yes');
-  const missingInstall = scopedRecords.filter((record) => record.warrantyReplacementCandidate.startsWith('Unknown'));
-  const reviewRows = [...candidates, ...missingInstall].slice(0, 80);
-  return (
-    <section className="tech-grid">
-      <section className="tech-card wide">
-        <CardHeading eyebrow="Camera lifecycle" title="Warranty replacement checks from Phase 1 enriched camera data" pill="SANITIZED" tone="watch" />
-        <p>Network identifiers are excluded from this UI dataset. Warranty status is based on install date, camera model, and assigned canonical store number.</p>
-        <div className="tech-metric-grid">
-          <Metric label="Scoped cameras" value={formatNumber(scopedRecords.length)} helper={`${formatNumber(data.summary.totalCameras)} total cameras in source`} />
-          <Metric label="Stores represented" value={formatNumber(scopedStores.length)} helper="Canonical store assignments from Phase 1" />
-          <Metric label="Replacement candidates" value={formatNumber(candidates.length)} helper={`${data.metadata.warrantyThresholdYears}-year threshold`} />
-          <Metric label="Missing install date" value={formatNumber(missingInstall.length)} helper="Needs data cleanup before warranty decision" />
-        </div>
-      </section>
-      <section className="tech-card"><CardHeading eyebrow="Camera model mix" title="Top models" /><ChartRows rows={topModelCounts(scopedRecords)} /></section>
-      <section className="tech-card wide"><CardHeading eyebrow="Store rollup" title="Warranty posture by assigned store" /><WarrantyStoreTable stores={scopedStores.slice(0, 24)} /></section>
-      <section className="tech-card wide"><CardHeading eyebrow="Review queue" title="Replacement candidates and missing install dates" pill="NO RAW IP/MAC" tone="stable" /><WarrantyCameraTable records={reviewRows} /></section>
-    </section>
-  );
-}
-
 function DetailModal({ open, eyebrow, title, children, onClose }: { open: boolean; eyebrow: string; title: string; children: JSX.Element | null; onClose: () => void }) {
   useEffect(() => {
     if (!open) return;
@@ -387,16 +359,6 @@ function TechnologyEventGrid({ cards }: { cards: TechnologyEventCard[] }) {
   return <div className="tech-warning-grid">{cards.map((card) => <article className={`tech-warning-card severity-${card.severity.toLowerCase()}`} key={card.title}><div><span>{card.category}</span><strong>{card.title}</strong></div><StatusPill label={card.severity.toUpperCase()} tone={card.severity === 'Critical' ? 'critical' : card.severity === 'High' ? 'watch' : 'stable'} /><p>{card.description}</p><small>{card.recorderName}</small><ul>{card.examples.map((example) => <li key={example}>{example}</li>)}</ul></article>)}</div>;
 }
 
-function WarrantyStoreTable({ stores }: { stores: ReturnType<typeof summarizeWarrantyStores> }) {
-  if (stores.length === 0) return <p className="tech-empty">No warranty store rows available for the current scope.</p>;
-  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Cameras</th><th>Replacement Candidates</th><th>Missing Install Dates</th><th>Oldest Age</th></tr></thead><tbody>{stores.map((store) => <tr key={store.storeNumber}><td><strong>{store.storeNumber}</strong><small>{store.facilityName}</small></td><td>{formatNumber(store.cameraCount)}</td><td>{formatNumber(store.warrantyCandidateCount)}</td><td>{formatNumber(store.missingInstallDateCount)}</td><td>{store.oldestCameraAgeYears === null ? 'N/A' : `${store.oldestCameraAgeYears.toFixed(2)} yrs`}<small>{store.oldestInstallDate || 'No install date'}</small></td></tr>)}</tbody></table></div>;
-}
-
-function WarrantyCameraTable({ records }: { records: CameraWarrantyRecord[] }) {
-  if (records.length === 0) return <p className="tech-empty">No replacement candidates or missing install-date records in the current scope.</p>;
-  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Camera</th><th>Model</th><th>Install Date</th><th>Age</th><th>Warranty Status</th></tr></thead><tbody>{records.map((record) => <tr key={`${record.storeNumber}-${record.cameraName}`}><td><strong>{record.storeNumber}</strong><small>{record.facilityName}</small></td><td><strong>{record.cameraName}</strong><small>Firmware {record.firmware || 'N/A'}</small></td><td>{record.cameraModel}</td><td>{record.installDate || 'Missing'}</td><td>{record.warrantyAgeYears === null ? 'N/A' : `${record.warrantyAgeYears.toFixed(2)} yrs`}</td><td><StatusPill label={record.warrantyReplacementCandidate} tone={record.warrantyReplacementCandidate === 'Yes' ? 'critical' : record.warrantyReplacementCandidate.startsWith('Unknown') ? 'watch' : 'ready'} /></td></tr>)}</tbody></table></div>;
-}
-
 function StoreHealthTable({ stores }: { stores: StoreCameraHealth[] }) {
   return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store alias</th><th>Status</th><th>Online</th><th>Cameras</th><th>VSRV</th><th>IP / Analog</th><th>Issues</th><th>Last scan</th></tr></thead><tbody>{stores.map((store) => <tr key={store.siteAlias}><td><strong>{store.siteAlias}</strong><small>{store.facilityType} · {store.vmsPlatform}</small></td><td><HealthBadge status={store.healthStatus} /></td><td>{formatPercent(store.onlinePercent)}</td><td>{formatNumber(store.totalCameras)}<small>{formatNumber(store.offlineCameras)} offline</small></td><td>{store.vsrvCount}</td><td>{formatNumber(store.ipTotal)} / {formatNumber(store.analogTotal)}<small>{formatNumber(store.analogOffline)} analog offline</small></td><td>{formatNumber(store.issueCameraCount)}<small>{formatNumber(store.missingProfileCount)} profile · {formatNumber(store.misplacedSubnetCount)} placement</small></td><td>{formatDate(store.lastScan)}</td></tr>)}</tbody></table></div>;
 }
@@ -438,46 +400,6 @@ function HealthBadge({ status }: { status: string }) {
 
 function StatusPill({ label, tone }: { label: StatusTone | string; tone: StatusTone }) {
   return <span className={`status-pill status-${tone}`}>{label}</span>;
-}
-
-function scopeWarrantyRecords(records: CameraWarrantyRecord[], fireSites: FireAlarmSite[], scope: StoreScopeState): CameraWarrantyRecord[] {
-  if (scope.mode === 'all') return records;
-  const allowedStores = new Set(
-    scope.mode === 'stores'
-      ? scope.selectedStoreIds.map(normalizeStoreId)
-      : fireSites.filter((site) => scope.selectedRegionNames.includes(site.region)).map((site) => normalizeStoreId(site.id)),
-  );
-  return records.filter((record) => allowedStores.has(normalizeStoreId(record.storeNumber)) || allowedStores.has(normalizeStoreId(record.facilityId)));
-}
-
-function summarizeWarrantyStores(records: CameraWarrantyRecord[]) {
-  const byStore = new Map<string, CameraWarrantyRecord[]>();
-  records.forEach((record) => byStore.set(record.storeNumber, [...(byStore.get(record.storeNumber) ?? []), record]));
-  return Array.from(byStore.entries()).map(([storeNumber, storeRecords]) => {
-    const ages = storeRecords.map((record) => record.warrantyAgeYears).filter((age): age is number => age !== null);
-    return {
-      storeNumber,
-      facilityName: storeRecords[0]?.facilityName ?? `Store #${storeNumber}`,
-      cameraCount: storeRecords.length,
-      warrantyCandidateCount: storeRecords.filter((record) => record.warrantyReplacementCandidate === 'Yes').length,
-      missingInstallDateCount: storeRecords.filter((record) => record.warrantyReplacementCandidate.startsWith('Unknown')).length,
-      oldestCameraAgeYears: ages.length ? Math.max(...ages) : null,
-      oldestInstallDate: storeRecords.filter((record) => record.installDate).sort((a, b) => (b.warrantyAgeYears ?? 0) - (a.warrantyAgeYears ?? 0))[0]?.installDate ?? '',
-    };
-  }).sort((a, b) => b.warrantyCandidateCount - a.warrantyCandidateCount || b.missingInstallDateCount - a.missingInstallDateCount || b.cameraCount - a.cameraCount);
-}
-
-function topModelCounts(records: CameraWarrantyRecord[]): Record<string, number> {
-  const counts = records.reduce<Record<string, number>>((modelCounts, record) => {
-    const model = record.cameraModel || 'Unknown';
-    modelCounts[model] = (modelCounts[model] ?? 0) + 1;
-    return modelCounts;
-  }, {});
-  return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10));
-}
-
-function normalizeStoreId(value: string): string {
-  return value.match(/\d+/)?.[0] ?? value;
 }
 
 function buildOfflineCameraRows(stores: StoreCameraHealth[]): OfflineCameraRow[] {
