@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import { agingBucket, buildRemediationItems, getRemediationKpis, getRoutingRules, groupByStatus, isOverdue, summarizeBy } from '../../data/remediationSelectors';
@@ -44,7 +44,7 @@ export function RemediationOrchestrationView({ fireSites, storeScope, onChangeSc
         <div className="remediation-mode"><span>MODE</span>SIMULATED / NO WRITEBACK</div>
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       {techState.loading ? <StatePanel title="Loading remediation inputs" message="Preparing Camera and Network/Posture findings for remediation orchestration." /> : null}
       {techState.error ? <StatePanel title="Remediation inputs unavailable" message={techState.error} danger /> : null}
 

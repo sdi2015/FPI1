@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import { getScopedStoreIds, type StoreScopeState } from '../../data/storeScope';
@@ -40,7 +40,7 @@ export function VendorIntelligenceRecommendationsView({ fireSites, storeScope, o
         <div className="vendor-mode"><span>SPONSORED BY</span>SENTRY</div>
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       {vendorState.loading ? <StatePanel title="Loading SENTRY vendor intelligence" message="Preparing Emerging Tech Tracker records, recommendations, and assessment workflow templates." /> : null}
       {vendorState.error ? <StatePanel title="SENTRY vendor data unavailable" message={vendorState.error} danger /> : null}
 
@@ -66,11 +66,9 @@ function VendorOverview({ data, scopedStoreCount }: { data: VendorIntelligenceDa
   return (
     <>
       <section className="vendor-kpi-grid" aria-label="SENTRY vendor intelligence KPIs">
-        <Kpi label="Tracked vendors" value={formatNumber(data.summary.trackedVendors)} detail="Named companies in SENTRY trackers" tone="blue" />
-        <Kpi label="Tracked solutions" value={formatNumber(data.summary.trackedSolutions)} detail="Deduped product/company records" tone="sky" />
-        <Kpi label="Assessed" value={formatNumber(data.summary.assessedSolutions)} detail="Assessment or status present" tone="yellow" />
         <Kpi label="Recommended" value={formatNumber(data.summary.recommendedCandidates)} detail="Score 70+ candidates" tone="white" />
-        <Kpi label="Capability areas" value={formatNumber(data.summary.capabilityAreas)} detail="Mapped to FPI services" tone="blue" />
+        <Kpi label="Assessed" value={formatNumber(data.summary.assessedSolutions)} detail="Assessment or status present" tone="yellow" />
+        <Kpi label="Tracked vendors" value={formatNumber(data.summary.trackedVendors)} detail="Named companies in SENTRY trackers" tone="blue" />
         <Kpi label="Store scope" value={formatNumber(scopedStoreCount)} detail="Can submit provider feedback" tone="yellow" />
       </section>
 
@@ -84,7 +82,7 @@ function VendorOverview({ data, scopedStoreCount }: { data: VendorIntelligenceDa
         <section className="vendor-card wide"><CardHeading eyebrow="Top named candidates" title="Highest scoring SENTRY tracker solutions" pill="SENTRY" tone="ready" /><VendorMiniList vendors={topVendors} /></section>
         <section className="vendor-card"><CardHeading eyebrow="Capability mix" title="Mapped capability areas" /><ChartRows rows={data.capabilityCounts} /></section>
         <section className="vendor-card"><CardHeading eyebrow="Category mix" title="Tracker categories" /><ChartRows rows={data.categoryCounts} /></section>
-        <section className="vendor-card wide"><CardHeading eyebrow="Program positioning" title="Sponsored by SENTRY, operationalized by FPI" pill="NO WRITEBACK" tone="watch" /><p>{data.metadata.governanceNote}</p><div className="vendor-metric-grid"><Metric label="Sponsor" value={data.metadata.sponsor} helper="Displayed in FPI as source sponsorship" /><Metric label="Trackers" value={formatNumber(data.summary.sourceTrackers)} helper="Monthly workbook imports" /><Metric label="Generated" value={new Date(data.metadata.generatedAt).toLocaleDateString()} helper="Local demo JSON" /><Metric label="Mode" value="API-ready" helper="Reports and requests are workflow seams" /></div></section>
+        <section className="vendor-card wide"><CardHeading eyebrow="Program positioning" title="Sponsored by SENTRY, operationalized by FPI" pill="NO WRITEBACK" tone="watch" /><p>{data.metadata.governanceNote}</p><div className="vendor-metric-grid"><Metric label="Sponsor" value={data.metadata.sponsor} helper="Displayed in FPI as source sponsorship" /><Metric label="Recommended" value={formatNumber(data.summary.recommendedCandidates)} helper="Candidates scoring 70+" /><Metric label="Assessed" value={formatNumber(data.summary.assessedSolutions)} helper="Assessment or status present" /><Metric label="Mode" value="API-ready" helper="Reports and requests are workflow seams" /></div></section>
       </section>
     </>
   );
@@ -117,7 +115,7 @@ function ProviderReports({ data, fireSites, storeScope }: { data: VendorIntellig
   return (
     <section className="vendor-grid">
       <section className="vendor-card wide"><CardHeading eyebrow="Store provider feedback" title="Create a good or bad current-provider report" pill="API SEAM" tone="watch" /><p>Reports are prepared as structured payloads for future backend/SENTRY workflow integration. This shell does not submit to production systems.</p><div className="vendor-form-grid"><label>Store<select value={draft.facilityId} onChange={(event) => update('facilityId', event.target.value)}>{availableStoreIds.map((id) => <option value={id} key={id}>Store {id}</option>)}</select></label><label>Provider name<input value={draft.providerName} onChange={(event) => update('providerName', event.target.value)} placeholder="Current security provider" /></label><label>Report type<select value={draft.reportType} onChange={(event) => update('reportType', event.target.value)}>{data.providerReportTemplate.reportTypes.map((type) => <option value={type} key={type}>{type}</option>)}</select></label><label>Rating<select value={draft.rating} onChange={(event) => update('rating', event.target.value)}><option value="5">5 - Excellent</option><option value="4">4 - Good</option><option value="3">3 - Mixed</option><option value="2">2 - Concern</option><option value="1">1 - Critical Concern</option></select></label><label className="wide">Summary<textarea value={draft.summary} onChange={(event) => update('summary', event.target.value)} placeholder="What happened? What went well or poorly?" /></label><label className="wide">Impact<textarea value={draft.impact} onChange={(event) => update('impact', event.target.value)} placeholder="Store impact, safety impact, evidence gap, SLA issue, or positive outcome" /></label><label className="wide">Requested follow-up<input value={draft.requestedFollowUp} onChange={(event) => update('requestedFollowUp', event.target.value)} /></label></div><button className="vendor-primary-button" type="button" onClick={preparePayload}>Prepare report payload</button></section>
-      <section className="vendor-card"><CardHeading eyebrow="Prepared payload" title="Backend integration preview" />{payload ? <pre className="vendor-payload">{JSON.stringify(payload, null, 2)}</pre> : <p>No payload prepared yet. Complete the report form and prepare the API-ready payload.</p>}</section>
+      <section className="vendor-card"><CardHeading eyebrow="Prepared report" title="Submission readiness summary" />{payload ? <div className="vendor-payload-summary"><p>Provider report prepared for future backend submission. No production system was updated.</p><div className="vendor-metric-grid single"><Metric label="Facility" value={String(draft.facilityId || 'Not selected')} helper="Selected reporting store" /><Metric label="Provider" value={draft.providerName || 'Not provided'} helper={draft.reportType} /><Metric label="Rating" value={draft.rating} helper="User-entered assessment" /></div><details><summary>Show technical payload</summary><pre className="vendor-payload">{JSON.stringify(payload, null, 2)}</pre></details></div> : <p>No report prepared yet. Complete the report form and prepare the API-ready payload.</p>}</section>
     </section>
   );
 }
@@ -146,8 +144,8 @@ function VendorDirectory({ vendors }: { vendors: VendorSolution[] }) {
   const [search, setSearch] = useState('');
   const [capability, setCapability] = useState('all');
   const capabilities = useMemo(() => getCapabilityOptions(vendors), [vendors]);
-  const rows = useMemo(() => filterVendors(vendors, search, capability).slice(0, 200), [vendors, search, capability]);
-  return <section className="vendor-card"><div className="vendor-directory-header"><div><p className="vendor-eyebrow">SENTRY tracker directory</p><h2>Named vendor and solution candidates</h2></div><strong>{rows.length} shown</strong></div><div className="vendor-filters"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search company, product, category, use case" /><select value={capability} onChange={(event) => setCapability(event.target.value)}><option value="all">All capabilities</option>{capabilities.map((item) => <option value={item} key={item}>{item}</option>)}</select></div><div className="vendor-table-wrap"><table className="vendor-table"><thead><tr><th>Score</th><th>Company</th><th>Product</th><th>Category</th><th>Capabilities</th><th>Assessment</th><th>Source</th></tr></thead><tbody>{rows.map((vendor) => <VendorRow vendor={vendor} key={vendor.id} />)}</tbody></table></div></section>;
+  const rows = useMemo(() => filterVendors(vendors, search, capability).slice(0, 50), [vendors, search, capability]);
+  return <section className="vendor-card"><div className="vendor-directory-header"><div><p className="vendor-eyebrow">SENTRY tracker directory</p><h2>Top matching vendor and solution candidates</h2></div><strong>{rows.length} shown</strong></div><div className="vendor-filters"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search company, product, category, use case" /><select value={capability} onChange={(event) => setCapability(event.target.value)}><option value="all">All capabilities</option>{capabilities.map((item) => <option value={item} key={item}>{item}</option>)}</select></div><div className="vendor-table-wrap"><table className="vendor-table"><thead><tr><th>Score</th><th>Company</th><th>Product</th><th>Category</th><th>Capabilities</th><th>Assessment</th><th>Source</th></tr></thead><tbody>{rows.map((vendor) => <VendorRow vendor={vendor} key={vendor.id} />)}</tbody></table></div></section>;
 }
 
 function VendorGovernance({ data }: { data: VendorIntelligenceData }) {

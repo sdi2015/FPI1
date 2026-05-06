@@ -1,4 +1,4 @@
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import { capabilities, pillars, type Capability, type Pillar } from '../../data/program';
 import type { FpiDashboardMetrics, FpiFacility, FpiKpi, FpiTopRiskFacility, StatusTone } from '../../data/fpiTypes';
@@ -68,28 +68,23 @@ export function ReadinessOverviewView({
   return (
     <>
       <HeroSummary metrics={executiveMetrics} />
-      <LeadershipAttentionRequired metrics={executiveMetrics} />
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
-      <ExecutiveStatusStrip metrics={dashboardMetrics} />
+      <LeadershipAttentionRequired metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
+      <ExecutiveKpiRow metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
 
       <section className="progress-grid" aria-label="FPI operational readiness indicators">
         {pillars.map((pillar) => (
           <ProgressCard pillar={pillar} key={pillar.id} />
         ))}
       </section>
-
-      <section className="kpi-grid" aria-label="Key FPI indicators">
-        {dashboardMetrics.kpis.map((kpi) => (
-          <KpiCard kpi={kpi} key={kpi.label} />
-        ))}
-      </section>
+      <AdditionalProgramMetrics metrics={dashboardMetrics} />
 
       <section className="dashboard-grid" aria-label="Dashboard operational detail">
         <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
         <ReadinessDistribution metrics={dashboardMetrics} />
         <TopDriversOfWatchPosture metrics={executiveMetrics} />
         <ProgramSignals metrics={dashboardMetrics} />
-        <TopRiskFacilities facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
+        <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
         <ServiceAreaBuildout activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
       </section>
     </>
@@ -138,7 +133,13 @@ function StatusClusterItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
+function LeadershipAttentionRequired({
+  metrics,
+  onCapabilitySelect,
+}: {
+  metrics: CommandCenterExecutiveMetrics;
+  onCapabilitySelect: (capabilityId: string) => void;
+}) {
   const leadershipAttentionItems = [
     {
       priority: 'P1',
@@ -146,6 +147,7 @@ function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecut
       businessImpact: 'Unresolved exposure across the facility portfolio',
       owner: 'Security Operations',
       action: 'Review Critical Exceptions',
+      targetCapabilityId: 'remediation-orchestration',
     },
     {
       priority: 'P1',
@@ -153,6 +155,7 @@ function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecut
       businessImpact: 'Remediation backlog may create SLA and governance pressure',
       owner: 'Program Owner',
       action: 'Open Work Queue',
+      targetCapabilityId: 'remediation-orchestration',
     },
     {
       priority: 'P2',
@@ -160,6 +163,7 @@ function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecut
       businessImpact: 'Device health issue may affect monitoring reliability',
       owner: 'Technical Controls',
       action: 'Investigate Panel Trouble',
+      targetCapabilityId: 'fire-system-monitoring',
     },
     {
       priority: 'P2',
@@ -167,6 +171,7 @@ function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecut
       businessImpact: 'Requires signal validation and false-alarm review',
       owner: 'Command Center',
       action: 'Review Signals',
+      targetCapabilityId: 'fire-system-monitoring',
     },
   ];
 
@@ -191,12 +196,73 @@ function LeadershipAttentionRequired({ metrics }: { metrics: CommandCenterExecut
               <span>Owner</span>
               <strong>{item.owner}</strong>
             </div>
-            <button type="button" disabled aria-disabled="true" title="Route pending for this non-destructive action">
+            <button type="button" onClick={() => onCapabilitySelect(item.targetCapabilityId)}>
               {item.action}
             </button>
           </article>
         ))}
       </div>
+    </section>
+  );
+}
+
+function ExecutiveKpiRow({
+  metrics,
+  onCapabilitySelect,
+}: {
+  metrics: CommandCenterExecutiveMetrics;
+  onCapabilitySelect: (capabilityId: string) => void;
+}) {
+  const executiveKpis = [
+    {
+      title: 'Protection Posture',
+      value: metrics.posture,
+      trend: metrics.trend,
+      interpretation: 'Active exceptions require continued governance review.',
+      action: 'Review Risk Drivers',
+      targetCapabilityId: 'command-center',
+    },
+    {
+      title: 'Critical Exposure',
+      value: `${formatNumber(metrics.criticalExceptions)} Critical Exceptions`,
+      trend: 'Needs Review',
+      interpretation: 'Critical/P1 records remain active across the portfolio.',
+      action: 'Review Critical Exceptions',
+      targetCapabilityId: 'remediation-orchestration',
+    },
+    {
+      title: 'Action Backlog',
+      value: `${formatNumber(metrics.activeWorkQueue)} Active Work Items`,
+      trend: 'Under Governance',
+      interpretation: 'Active remediation queue requires ownership and SLA tracking.',
+      action: 'Open Work Queue',
+      targetCapabilityId: 'remediation-orchestration',
+    },
+    {
+      title: 'System Health',
+      value: `${formatNumber(metrics.panelTrouble)} Panel Trouble / ${formatNumber(metrics.activeSignals)} Active Signals`,
+      trend: 'Monitor',
+      interpretation: 'Device and signal health require technical validation.',
+      action: 'Review Device Health',
+      targetCapabilityId: 'fire-system-monitoring',
+    },
+  ];
+
+  return (
+    <section className="executive-kpi-grid" aria-label="Executive KPI row">
+      {executiveKpis.map((kpi) => (
+        <article className="executive-kpi-tile" key={kpi.title}>
+          <div className="kpi-topline">
+            <span>{kpi.title}</span>
+            <StatusPill label={kpi.trend} tone={kpi.trend === 'Needs Review' ? 'watch' : 'stable'} />
+          </div>
+          <strong>{kpi.value}</strong>
+          <p>{kpi.interpretation}</p>
+          <button type="button" onClick={() => onCapabilitySelect(kpi.targetCapabilityId)}>
+            {kpi.action}
+          </button>
+        </article>
+      ))}
     </section>
   );
 }
@@ -302,6 +368,23 @@ function ProgressCard({ pillar }: { pillar: Pillar }) {
         <span style={{ width: `${pillar.progress}%` }} />
       </div>
     </article>
+  );
+}
+
+function AdditionalProgramMetrics({ metrics }: { metrics: FpiDashboardMetrics }) {
+  return (
+    <details className="panel dashboard-more-metrics">
+      <summary>
+        <span>Additional program metrics</span>
+        <strong>Open supporting dashboard data</strong>
+      </summary>
+      <ExecutiveStatusStrip metrics={metrics} />
+      <section className="kpi-grid" aria-label="Supporting FPI indicators">
+        {metrics.kpis.map((kpi) => (
+          <KpiCard kpi={kpi} key={kpi.label} />
+        ))}
+      </section>
+    </details>
   );
 }
 
@@ -418,18 +501,45 @@ function ServiceAreaBuildout({ activeCapabilityId, onSelectCapability }: { activ
   );
 }
 
-function TopRiskFacilities({ facilities, onSelectFacility }: { facilities: FpiTopRiskFacility[]; onSelectFacility: (facilityId: string) => void }) {
+function FacilityRiskHeatMap({ facilities, onSelectFacility }: { facilities: FpiTopRiskFacility[]; onSelectFacility: (facilityId: string) => void }) {
   return (
-    <section className="panel top-risk-panel" aria-labelledby="top-risk-title">
-      <div className="card-heading"><div><p className="eyebrow">Facility posture</p><h2 id="top-risk-title">Top-risk facilities</h2></div><StatusPill label="LIVE" tone="watch" /></div>
-      <div className="top-risk-list">
+    <section className="panel top-risk-panel facility-risk-heatmap-panel" aria-labelledby="facility-risk-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Facility posture</p>
+          <h2 id="facility-risk-title">Facility Risk Heat Map</h2>
+        </div>
+        <StatusPill label="SYNTHETIC DATA" tone="watch" />
+      </div>
+      <div className="facility-risk-table" role="table" aria-label="Ranked facility risk table">
+        <div className="facility-risk-row facility-risk-header" role="row">
+          <span role="columnheader">Facility</span>
+          <span role="columnheader">Risk Tier</span>
+          <span role="columnheader">Critical Exceptions</span>
+          <span role="columnheader">Work Items</span>
+          <span role="columnheader">Active Signals</span>
+          <span role="columnheader">Panel Trouble</span>
+          <span role="columnheader">Primary Concern</span>
+          <span role="columnheader">Action</span>
+        </div>
         {facilities.map((facility) => (
-          <button className="top-risk-item" type="button" key={facility.facilityId} onClick={() => onSelectFacility(facility.facilityId)}>
-            <div><strong>{facility.facilityName}</strong><span>{facility.region} • {facility.market}</span></div>
-            <StatusPill label={facility.riskTier.toUpperCase()} tone={riskTierTone(facility.riskTier)} />
-            <p>{facility.activeSignals} active signals · {facility.criticalExceptions} critical exceptions · {facility.openWorkItems} open work items</p>
-            <small>Primary concern: {facility.primaryIssueType}</small>
-          </button>
+          <div className="facility-risk-row" role="row" key={facility.facilityId}>
+            <div role="cell" className="facility-risk-name">
+              <strong>{facility.facilityName}</strong>
+              <small>{facility.region} • {facility.market}</small>
+            </div>
+            <div role="cell"><StatusPill label={facility.riskTier.toUpperCase()} tone={riskTierTone(facility.riskTier)} /></div>
+            <span role="cell">{facility.criticalExceptions}</span>
+            <span role="cell">{facility.openWorkItems}</span>
+            <span role="cell">{facility.activeSignals}</span>
+            <span role="cell">{facility.panelTrouble}</span>
+            <span role="cell" className="facility-risk-concern">{facility.primaryIssueType}</span>
+            <div role="cell">
+              <button type="button" onClick={() => onSelectFacility(facility.facilityId)} aria-label={`Review ${facility.facilityName}`}>
+                Review
+              </button>
+            </div>
+          </div>
         ))}
       </div>
     </section>

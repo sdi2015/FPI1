@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
@@ -41,7 +41,7 @@ export function ThreatDetectionRiskScoringView({ fireSites, storeScope, onChange
         <div className="threat-mode"><span>MODE</span>CANONICAL + REFERENCE</div>
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       {threatState.loading ? <StatePanel title="Loading threat risk dataset" message="Preparing canonical facility risk, signal feed, SRM/FPP adapter placeholders, and best-practice references." /> : null}
       {threatState.error ? <StatePanel title="Threat risk dataset unavailable" message={threatState.error} danger /> : null}
 
@@ -74,12 +74,10 @@ function ThreatOverview({ data }: { data: ThreatRiskData }) {
   return (
     <>
       <section className="threat-kpi-grid" aria-label="Threat risk KPIs">
-        <Kpi label="Facilities scored" value={formatNumber(data.summary.facilities)} detail="Canonical facility_id scope" tone="blue" />
         <Kpi label="Critical risk" value={formatNumber(data.summary.criticalFacilities)} detail="Immediate leadership review" tone="critical" />
         <Kpi label="High risk" value={formatNumber(data.summary.highFacilities)} detail="Operational triage queue" tone="yellow" />
         <Kpi label="Threat signals" value={formatNumber(data.summary.threatSignals)} detail={`${formatNumber(data.summary.severeSignals)} severe`} tone="sky" />
         <Kpi label="Open threat tasks" value={formatNumber(data.summary.openThreatTasks)} detail="Critical/high protection work" tone="yellow" />
-        <Kpi label="Avg risk score" value={formatScore(data.summary.averageRiskScore)} detail="Normalized 0-100 model" tone="white" />
       </section>
 
       <section className="threat-focus-strip" aria-label="Threat detection operating flow">
@@ -93,7 +91,7 @@ function ThreatOverview({ data }: { data: ThreatRiskData }) {
         <section className="threat-card"><CardHeading eyebrow="Signal feed" title="Top threat signals" /><SignalList signals={topSignals} />
         </section>
         <section className="threat-card"><CardHeading eyebrow="Coordination candidates" title="External / vendor readiness" /><div className="threat-record-list">{coordinationCandidates.map((facility) => <article className="threat-record" key={facility.facilityId}><strong>Store {facility.facilityId} · {facility.riskTier}</strong><span>{facility.city}, {facility.state} · {facility.topDriver}</span><small>{facility.recommendedAction}</small></article>)}</div></section>
-        <section className="threat-card wide"><CardHeading eyebrow="Governance note" title="Risk scoring is a prioritization aid, not a formal threat determination" pill="CONTROLLED" tone="critical" /><p>{data.metadata.governanceNote}</p><div className="threat-metric-grid"><Metric label="Data mode" value={data.metadata.dataMode} helper={data.metadata.classification} /><Metric label="Scope key" value={data.metadata.scopeKey} helper="Shared across FPI data domains" /><Metric label="Source files" value={formatNumber(data.metadata.sourceFiles.length)} helper="Canonical generator inputs" /><Metric label="Generated" value={new Date(data.metadata.generatedAt).toLocaleDateString()} helper="Local demo JSON" /></div></section>
+        <section className="threat-card wide"><CardHeading eyebrow="Governance note" title="Risk scoring is a prioritization aid, not a formal threat determination" pill="CONTROLLED" tone="critical" /><p>{data.metadata.governanceNote}</p><div className="threat-metric-grid"><Metric label="Review queue" value={formatNumber(topFacilities.length)} helper="Highest-risk facilities surfaced first" /><Metric label="Coordination candidates" value={formatNumber(coordinationCandidates.length)} helper="External or vendor readiness review" /><Metric label="Data mode" value={data.metadata.dataMode} helper={data.metadata.classification} /><Metric label="Action posture" value="Review" helper="Use score as triage guidance" /></div></section>
       </section>
     </>
   );

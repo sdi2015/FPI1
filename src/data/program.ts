@@ -73,6 +73,7 @@ export const capabilities: Capability[] = [
   {
     id: 'fire-system-monitoring',
     title: 'Fire-System Monitoring & Assurance',
+    navLabel: 'Fire & Life Safety',
     eyebrow: 'Life safety',
     description: 'Assurance view for fire panels, suppression coverage, inspection cadence, and exceptions.',
     status: 'Watching',
@@ -82,6 +83,7 @@ export const capabilities: Capability[] = [
   {
     id: 'camera-technical-control',
     title: 'Camera & Technical Control Monitoring',
+    navLabel: 'Camera / Technical Controls',
     eyebrow: 'Technical controls',
     description: 'Monitors camera coverage, technical-control health, outage posture, AP-14 evidence readiness, and simulated service impact.',
     status: 'Ready',
@@ -91,6 +93,7 @@ export const capabilities: Capability[] = [
   {
     id: 'network-device-posture',
     title: 'Network & Security Device Posture',
+    navLabel: 'Device Posture',
     eyebrow: 'Device posture',
     description: 'Summarizes security-device hygiene, adapter freshness, network dependencies, lifecycle risk, and control gaps.',
     status: 'Ready',
@@ -100,6 +103,7 @@ export const capabilities: Capability[] = [
   {
     id: 'threat-risk-scoring',
     title: 'Threat Detection & Risk Scoring',
+    navLabel: 'Risk Intelligence',
     eyebrow: 'Risk intelligence',
     description: 'Prioritizes threats using explainable scoring across exposure, confidence, and business impact.',
     status: 'Ready',
@@ -118,6 +122,7 @@ export const capabilities: Capability[] = [
   {
     id: 'vendor-intelligence',
     title: 'Vendor Intelligence & Recommendations',
+    navLabel: 'Vendor Intelligence',
     eyebrow: 'Vendor insights',
     description: 'SENTRY-sponsored vendor intelligence for provider reporting, assessment requests, and issue-to-vendor recommendations.',
     status: 'Ready',
@@ -127,6 +132,7 @@ export const capabilities: Capability[] = [
   {
     id: 'external-coordination',
     title: 'Law Enforcement / Security Vendor Analysis / External Coordination',
+    navLabel: 'External Coordination',
     eyebrow: 'Coordination',
     description: 'Store-level law enforcement, DA/prosecutor, security vendor, and external coordination readiness for selected facilities.',
     status: 'Ready',

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { FireAlarmSiteDetailPanel } from '../FireAlarmSiteDetailPanel';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import { DonutChart } from '../charts/DonutChart';
 import { HorizontalBarChart } from '../charts/HorizontalBarChart';
 import { LineTrendChart } from '../charts/LineTrendChart';
@@ -59,7 +59,7 @@ export function FireSystemServiceView({ fireAlarmData, fireAlarmLoading, fireAla
         <div className="fire-ops-mode"><span>MODE</span>MOCK DEMO DATA</div>
       </header>
 
-      {fireAlarmData ? <LockedScopeSummary sites={fireAlarmData.sites} scope={storeScope} onChangeScope={onChangeScopeRequest} /> : null}
+      {fireAlarmData ? <ScopeContextChip sites={fireAlarmData.sites} scope={storeScope} onChangeScope={onChangeScopeRequest} /> : null}
       {fireAlarmLoading ? <StatePanel title="Loading fire alarm dataset" message="Preparing Fire Alarm Operations Intelligence." /> : null}
       {fireAlarmError ? <StatePanel title="Fire alarm dataset unavailable" message={fireAlarmError} danger /> : null}
       {fireAlarmData && hasEmptyStoreScope(storeScope) ? <StatePanel title="No fire-system stores selected" message="Open Settings to include stores or regions in the global dashboard scope." /> : null}
@@ -107,7 +107,8 @@ function ScopeToggle({ sites, activeSiteIds, onToggleSite, onShowOnlySite, onSho
 }
 
 function KpiGrid({ kpis }: { kpis: FireAlarmKpi[] }) {
-  return <section className="fire-ops-kpi-grid" aria-label="Fire alarm KPI cards">{kpis.map((kpi) => <article className={`fire-ops-kpi tone-${kpi.tone}`} key={kpi.label}><span>{kpi.label}</span><strong>{kpi.value}</strong>{kpi.actionLabel ? <small>{kpi.actionLabel}</small> : null}</article>)}</section>;
+  const primaryKpis = kpis.slice(0, 4);
+  return <section className="fire-ops-kpi-grid" aria-label="Fire alarm KPI cards">{primaryKpis.map((kpi) => <article className={`fire-ops-kpi tone-${kpi.tone}`} key={kpi.label}><span>{kpi.label}</span><strong>{kpi.value}</strong>{kpi.actionLabel ? <small>{kpi.actionLabel}</small> : null}</article>)}</section>;
 }
 
 function ChartGrid({ model }: { model: FireAlarmDashboardModel }) {

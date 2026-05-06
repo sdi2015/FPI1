@@ -1,4 +1,4 @@
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import { getScopedStoreIds, type StoreScopeState } from '../../data/storeScope';
@@ -31,7 +31,7 @@ export function PlaceholderServiceView({
         </div>
         <StatusPill label="BUILDOUT" tone="buildout" />
       </header>
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       <section className="panel placeholder-service-panel" aria-labelledby="placeholder-service-title">
         <div className="card-heading">
           <div>
@@ -40,7 +40,7 @@ export function PlaceholderServiceView({
           </div>
         </div>
         <p>
-          The locked store/region scope is preserved from Settings, and this page is ready for service-specific KPIs, exception lists,
+          The Settings scope is preserved, and this page is ready for service-specific KPIs, exception lists,
           work queues, partner intelligence, and operational evidence in a later build.
         </p>
         <div className="service-meta-grid service-live-metrics">

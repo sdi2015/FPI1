@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
@@ -41,7 +41,7 @@ export function ExternalCoordinationView({ fireSites, storeScope, onChangeScopeR
         <div className="external-mode"><span>MODE</span>VIEW ONLY</div>
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       {state.loading ? <StatePanel title="Loading external coordination data" message="Preparing law enforcement, prosecutor, and security partner contact cards for the current store scope." /> : null}
       {state.error ? <StatePanel title="External coordination data unavailable" message={state.error} danger /> : null}
 
@@ -66,12 +66,10 @@ function Overview({ data }: { data: ExternalCoordinationData }) {
   return (
     <>
       <section className="external-kpi-grid" aria-label="External coordination KPIs">
-        <Kpi label="Facilities" value={formatNumber(data.summary.facilities)} detail="In current scope" tone="blue" />
-        <Kpi label="Agency contacts" value={formatNumber(data.summary.agencyContacts)} detail="Police, sheriff, DA/prosecutor" tone="sky" />
-        <Kpi label="DA contacts" value={formatNumber(data.summary.prosecutorContacts)} detail="Jurisdiction cards" tone="yellow" />
-        <Kpi label="Vendor paths" value={formatNumber(data.summary.securityVendorPartners)} detail="Security partner categories" tone="white" />
         <Kpi label="Escalated" value={formatNumber(data.summary.escalatedFacilities)} detail="Critical coordination review" tone="yellow" />
         <Kpi label="Review" value={formatNumber(data.summary.reviewFacilities)} detail="Repeat/severe incident context" tone="blue" />
+        <Kpi label="Agency contacts" value={formatNumber(data.summary.agencyContacts)} detail="Police, sheriff, DA/prosecutor" tone="sky" />
+        <Kpi label="DA contacts" value={formatNumber(data.summary.prosecutorContacts)} detail="Jurisdiction cards" tone="yellow" />
       </section>
       <section className="external-grid">
         <section className="external-card wide"><CardHeading eyebrow="Selected stores" title="Coordination readiness by facility" pill="VIEW ONLY" tone="watch" /><FacilityReadinessList facilities={data.facilities} /></section>

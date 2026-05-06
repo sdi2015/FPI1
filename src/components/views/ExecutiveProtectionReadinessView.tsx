@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FpiFacility, StatusTone } from '../../data/fpiTypes';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StoreScopeState } from '../../data/storeScope';
@@ -23,7 +23,7 @@ const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
   { id: 'mitigation', label: 'Security Mitigation', eyebrow: 'Controls' },
   { id: 'tasks', label: 'Tasks & Governance', eyebrow: 'Action' },
-  { id: 'analysis', label: 'Source Analysis', eyebrow: 'Handoff' },
+  { id: 'analysis', label: 'Data Provenance', eyebrow: 'Admin' },
 ];
 
 export function ExecutiveProtectionReadinessView({
@@ -51,7 +51,7 @@ export function ExecutiveProtectionReadinessView({
         <StatusPill label={eprState.loading ? 'LOADING' : eprState.error ? 'DATA ISSUE' : 'DATA LOADED'} tone={eprState.error ? 'critical' : eprState.loading ? 'buildout' : 'ready'} />
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
 
       {eprState.loading ? <StatePanel title="Loading EPR data package" message="Preparing the analyzed executive protection, travel, hotel, incident, and mitigation data." /> : null}
       {eprState.error ? <StatePanel title="EPR data unavailable" message={eprState.error} tone="critical" /> : null}
@@ -67,7 +67,7 @@ export function ExecutiveProtectionReadinessView({
             ))}
           </nav>
 
-          {activeTab === 'overview' ? <OverviewTab data={eprData} scopedFacilityCount={facilities.length} topRiskFacilities={topRiskFacilities} /> : null}
+          {activeTab === 'overview' ? <OverviewTab data={eprData} topRiskFacilities={topRiskFacilities} /> : null}
           {activeTab === 'visits' ? <VisitPlannerTab data={eprData} /> : null}
           {activeTab === 'hotels' ? <HotelIntelligenceTab data={eprData} /> : null}
           {activeTab === 'incidents' ? <IncidentRiskTab data={eprData} /> : null}
@@ -80,29 +80,32 @@ export function ExecutiveProtectionReadinessView({
   );
 }
 
-function OverviewTab({ data, scopedFacilityCount, topRiskFacilities }: { data: EprData; scopedFacilityCount: number; topRiskFacilities: EprFacility[] }) {
+function OverviewTab({ data, topRiskFacilities }: { data: EprData; topRiskFacilities: EprFacility[] }) {
   const kpis = data.kpis;
+  const criticalTaskCount = data.tasks_governance.tasks.filter((task) => task.priority === 'Critical').length;
+  const highRiskFacilityCount = data.field_operations.facilities.filter((facility) => facility.risk_score >= 70).length;
+  const overdueFacilityCount = topRiskFacilities.filter((facility) => facility.overdue_task_count > 0).length;
+  const visitReadiness: StatusTone = criticalTaskCount > 0 || overdueFacilityCount > 0 ? 'watch' : 'ready';
+
   return (
     <>
-      <section className="executive-strip" aria-label="EPR source package summary">
-        <ExecutiveItem label="Files analyzed" value={data.metadata.file_count_analyzed} trend="Complete" tone="ready" />
-        <ExecutiveItem label="Incident records" value={kpis.incident_records} trend="Risk data" tone="watch" />
-        <ExecutiveItem label="Security incidents" value={kpis.security_incidents} trend="SMM source" tone="critical" />
-        <ExecutiveItem label="Route facilities" value={kpis.visit_facilities} trend="Visit planner" tone="stable" />
-        <ExecutiveItem label="Hotel options" value={kpis.hotel_recommendations} trend="Safety scored" tone="track" />
-        <ExecutiveItem label="Active UI scope" value={scopedFacilityCount} trend="Main FPI scope" tone="expanding" />
+      <section className="executive-strip" aria-label="EPR operating summary">
+        <ExecutiveItem label="Visit readiness" value={visitReadiness === 'watch' ? 'WATCH' : 'READY'} trend="Review routes" tone={visitReadiness} />
+        <ExecutiveItem label="High-risk visit facilities" value={highRiskFacilityCount} trend="Prioritized" tone="watch" />
+        <ExecutiveItem label="Safe hotel options" value={kpis.hotel_recommendations} trend="Safety scored" tone="track" />
+        <ExecutiveItem label="Open critical tasks" value={criticalTaskCount} trend="Needs owner" tone={criticalTaskCount > 0 ? 'critical' : 'ready'} />
       </section>
 
       <section className="dashboard-grid epr-grid" aria-label="EPR overview detail">
         <section className="panel selected-service-panel">
           <div className="card-heading service-heading">
             <div>
-              <p className="eyebrow">Implementation placement</p>
-              <h2>EPR now owns travel, visit planning, hotel safety, incident risk, and security mitigation workflows.</h2>
+              <p className="eyebrow">Operating picture</p>
+              <h2>Executive travel, facility visit, hotel safety, incident risk, and mitigation readiness.</h2>
             </div>
             <StatusPill label="IMPLEMENTED" tone="ready" />
           </div>
-          <p>{data.executive_summary.recommended_ui_home}</p>
+          <p>Use this workspace to identify visit-priority facilities, validate hotel safety options, review incident exposure, and keep mitigation tasks moving with clear ownership.</p>
           <div className="service-meta-grid service-live-metrics">
             {data.executive_summary.modules.map((module) => (
               <div key={module}><span>Module</span><strong>{module}</strong></div>
@@ -124,11 +127,10 @@ function OverviewTab({ data, scopedFacilityCount, topRiskFacilities }: { data: E
         </section>
 
         <section className="panel module-map-panel">
-          <div className="card-heading"><div><p className="eyebrow">Document analysis</p><h2>Source package coverage</h2></div><StatusPill label="ALL FILES" tone="ready" /></div>
-          <p>{data.metadata.analysis_status}</p>
+          <div className="card-heading"><div><p className="eyebrow">Readiness focus</p><h2>What leaders should review first</h2></div><StatusPill label="DECISION VIEW" tone="ready" /></div>
           <div className="module-map">
-            {['FastAPI routes', 'Jinja templates', 'SQLite incident data', 'Spotnana mock', 'Security recommender', 'Markdown handoffs'].map((item) => (
-              <div className="module-chip" key={item}><StatusPill label="MAPPED" tone="stable" /><strong>{item}</strong><small>Mapped into the EPR tab or planned service tabs.</small></div>
+            {['Visit route risk', 'Hotel safety options', 'Incident exposure', 'Open critical tasks', 'Mitigation options', 'Owner follow-up'].map((item) => (
+              <div className="module-chip" key={item}><StatusPill label="REVIEW" tone="stable" /><strong>{item}</strong><small>Default view emphasizes action and decision context instead of source-package detail.</small></div>
             ))}
           </div>
         </section>

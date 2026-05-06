@@ -1,5 +1,32 @@
 import type { StoreCameraHealth, TechnologyHealthData, TechnologyIssue } from './technologyHealthTypes';
 
+export type HealthThresholdTone = 'green' | 'yellow' | 'red';
+
+export function healthToneForPercent(value: number): HealthThresholdTone {
+  if (value >= 98) return 'green';
+  if (value >= 85) return 'yellow';
+  return 'red';
+}
+
+export function healthLabelForPercent(value: number): 'Healthy' | 'Warning' | 'Critical' {
+  const tone = healthToneForPercent(value);
+  if (tone === 'green') return 'Healthy';
+  if (tone === 'yellow') return 'Warning';
+  return 'Critical';
+}
+
+export function getHealthyStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return stores.filter((store) => healthToneForPercent(store.onlinePercent) === 'green');
+}
+
+export function getUnhealthyStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return sortStoresByTechnicalRisk(stores).filter((store) => healthToneForPercent(store.onlinePercent) !== 'green');
+}
+
+export function getOfflineCameraStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return sortStoresByTechnicalRisk(stores).filter((store) => store.offlineCameras > 0);
+}
+
 export function getCameraTechnologyIssues(data: TechnologyHealthData): TechnologyIssue[] {
   return data.technologyIssues.filter((issue) => issue.domain === 'Camera/VMS' || issue.domain === 'Recorder');
 }
