@@ -69,8 +69,9 @@ type EprMitigationDraft = {
   requestedResponse: string;
 };
 
+// 'overview' (Readiness) tab intentionally hidden from the EPR sub-nav per product request.
+// The OverviewTab component below is kept intact so it can be re-enabled by adding it back to this array.
 const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
-  { id: 'overview', label: 'Overview', eyebrow: 'Readiness' },
   { id: 'visits', label: 'Visit Planner', eyebrow: 'Travel' },
   { id: 'hotels', label: 'Hotel Intelligence', eyebrow: 'Safety' },
   { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
@@ -172,7 +173,6 @@ export function ExecutiveProtectionReadinessView({
             <button className="epr-reset-layout-button" type="button" onClick={resetEprResizableLayout}>Reset Layout</button>
           </div>
 
-          {activeTab === 'overview' ? <OverviewTab data={eprData} topRiskFacilities={topRiskFacilities} onTabSelect={setActiveTab} /> : null}
           {activeTab === 'visits' ? <VisitPlannerTab data={eprData} /> : null}
           {activeTab === 'hotels' ? <HotelIntelligenceTab data={eprData} /> : null}
           {activeTab === 'incidents' ? <IncidentRiskTab data={eprData} /> : null}

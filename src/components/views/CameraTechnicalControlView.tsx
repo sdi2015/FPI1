@@ -6,6 +6,7 @@ import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
 import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, storeHasOffline, storeOfflineTotal, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
+import { RetentionView } from './RetentionView';
 import type { NetworkPlacementFlagEntry, ProfileWarningEntry, StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
@@ -294,24 +295,6 @@ function ComplianceView({ data }: { data: TechnologyHealthData }) {
       <PostureModalContent activePosture={activePosture} data={data} analogOffline={analogOffline} />
     </DetailModal>
     </>
-  );
-}
-
-function RetentionView({ data }: { data: TechnologyHealthData }) {
-  const summary = data.regionSummary;
-  const stores = sortStoresByTechnicalRisk(data.storeHealth).filter((store) => store.missingProfileCount > 0 || store.issueCameraCount > 0).slice(0, 12);
-  return (
-    <section className="tech-grid">
-      <section className="tech-card wide"><CardHeading eyebrow="Retention / profiles" title="Evidence readiness and recording profile posture" pill="AP-14 ALIGNED" tone="stable" />
-        <div className="tech-metric-grid">
-          <Metric label="Profiles assigned" value={formatNumber(summary.recordingProfileAssigned)} helper="When available in sanitized source" />
-          <Metric label="Profiles missing" value={formatNumber(summary.recordingProfileMissing)} helper="Missing / not in source" />
-          <Metric label="Retention OK" value={formatNumber(summary.retentionOk)} helper="Configurable threshold" />
-          <Metric label="Retention unknown" value={formatNumber(summary.retentionUnknown)} helper="Needs source confidence" />
-        </div>
-      </section>
-      <section className="tech-card"><CardHeading eyebrow="Profile exception stores" title="Top review candidates" /><div className="tech-record-list">{stores.map((store) => <StoreMiniCard store={store} key={store.siteAlias} />)}</div></section>
-    </section>
   );
 }
 

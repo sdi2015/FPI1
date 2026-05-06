@@ -839,18 +839,58 @@
     },
     "hotels": [
       {
-        "hotel_id": "HOTEL-ASH-002",
-        "name": "Fairfield Inn & Suites Ashland",
+        "hotel_id": "HOTEL-CRYST-001",
+        "name": "Marriott Crystal City",
         "brand": "Marriott",
-        "address": "1100 US Route 60",
-        "city": "Ashland",
-        "state": "KY",
-        "zip_code": "41101",
-        "rating": 4.2,
-        "price_per_night": 109.65,
+        "address": "1700 Jefferson Davis Hwy",
+        "city": "Crystal City",
+        "state": "VA",
+        "zip_code": "22202",
+        "rating": 4.5,
+        "price_per_night": 249,
         "safety_score": {
-          "overall_score": 90,
-          "crime_index": 22,
+          "overall_score": 92,
+          "crime_index": 28,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking",
+          "Concierge",
+          "Business Center"
+        ],
+        "distance_from_airport": 0.7,
+        "nearest_airport": "DCA",
+        "latitude": 38.8559,
+        "longitude": -77.0522
+      },
+      {
+        "hotel_id": "HOTEL-CRYST-002",
+        "name": "Hampton Inn Crystal City",
+        "brand": "Hilton",
+        "address": "2350 Crystal Dr",
+        "city": "Crystal City",
+        "state": "VA",
+        "zip_code": "22202",
+        "rating": 4.2,
+        "price_per_night": 169,
+        "safety_score": {
+          "overall_score": 88,
+          "crime_index": 30,
           "store_incidents": 0,
           "news_sentiment": "positive",
           "safety_features": [
@@ -862,81 +902,782 @@
           "risk_factors": []
         },
         "walmart_preferred": true,
-        "image_url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 0.7,
+        "nearest_airport": "DCA",
+        "latitude": 38.8609,
+        "longitude": -77.0472
+      },
+      {
+        "hotel_id": "HOTEL-ARLIN-003",
+        "name": "Embassy Suites Arlington",
+        "brand": "Hilton",
+        "address": "1300 N Arlington Ridge Rd",
+        "city": "Arlington",
+        "state": "VA",
+        "zip_code": "22202",
+        "rating": 4.4,
+        "price_per_night": 289,
+        "safety_score": {
+          "overall_score": 91,
+          "crime_index": 26,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking",
+            "Concierge"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-4.jpg",
         "amenities": [
           "WiFi",
           "Breakfast",
           "Gym",
           "Pool",
-          "Parking"
+          "Parking",
+          "Concierge",
+          "Business Center"
         ],
-        "distance_from_airport": 3.2
+        "distance_from_airport": 3.4,
+        "nearest_airport": "DCA",
+        "latitude": 38.8891,
+        "longitude": -77.0835
       },
       {
-        "hotel_id": "HOTEL-ASH-001",
-        "name": "Hampton Inn Ashland",
-        "brand": "Hampton",
-        "address": "1000 US Route 60",
-        "city": "Ashland",
-        "state": "KY",
-        "zip_code": "41101",
-        "rating": 4.3,
-        "price_per_night": 101.15,
+        "hotel_id": "HOTEL-ARLIN-004",
+        "name": "Courtyard Arlington",
+        "brand": "Marriott",
+        "address": "1533 Clarendon Blvd",
+        "city": "Arlington",
+        "state": "VA",
+        "zip_code": "22202",
+        "rating": 4.2,
+        "price_per_night": 189,
         "safety_score": {
-          "overall_score": 88,
+          "overall_score": 86,
+          "crime_index": 32,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-1.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 3.4,
+        "nearest_airport": "DCA",
+        "latitude": 38.8741,
+        "longitude": -77.0985
+      },
+      {
+        "hotel_id": "HOTEL-ALEXA-005",
+        "name": "Residence Inn Alexandria",
+        "brand": "Marriott",
+        "address": "5821 Richmond Hwy",
+        "city": "Alexandria",
+        "state": "VA",
+        "zip_code": "22301",
+        "rating": 4.0,
+        "price_per_night": 179,
+        "safety_score": {
+          "overall_score": 84,
+          "crime_index": 35,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Bag Storage"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 3.2,
+        "nearest_airport": "DCA",
+        "latitude": 38.8023,
+        "longitude": -77.0494
+      },
+      {
+        "hotel_id": "HOTEL-ALEXA-006",
+        "name": "Hyatt Place Alexandria",
+        "brand": "Hyatt",
+        "address": "626 First St",
+        "city": "Alexandria",
+        "state": "VA",
+        "zip_code": "22301",
+        "rating": 4.2,
+        "price_per_night": 194,
+        "safety_score": {
+          "overall_score": 87,
+          "crime_index": 31,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Card Key Access",
+            "Bag Storage"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 3.2,
+        "nearest_airport": "DCA",
+        "latitude": 38.8073,
+        "longitude": -77.0444
+      },
+      {
+        "hotel_id": "HOTEL-RESTO-007",
+        "name": "Hilton Garden Inn Reston",
+        "brand": "Hilton",
+        "address": "11750 Sunrise Valley Dr",
+        "city": "Reston",
+        "state": "VA",
+        "zip_code": "20191",
+        "rating": 4.3,
+        "price_per_night": 184,
+        "safety_score": {
+          "overall_score": 89,
+          "crime_index": 24,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-4.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 5.4,
+        "nearest_airport": "IAD",
+        "latitude": 38.9661,
+        "longitude": -77.3495
+      },
+      {
+        "hotel_id": "HOTEL-RESTO-008",
+        "name": "Holiday Inn Express Reston",
+        "brand": "IHG",
+        "address": "13700 Coppermine Rd",
+        "city": "Reston",
+        "state": "VA",
+        "zip_code": "20191",
+        "rating": 3.9,
+        "price_per_night": 119,
+        "safety_score": {
+          "overall_score": 81,
+          "crime_index": 36,
+          "store_incidents": 2,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-1.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 5.4,
+        "nearest_airport": "IAD",
+        "latitude": 38.9511,
+        "longitude": -77.3645
+      },
+      {
+        "hotel_id": "HOTEL-TYSON-009",
+        "name": "Marriott Tysons",
+        "brand": "Marriott",
+        "address": "1960 Chain Bridge Rd",
+        "city": "Tysons",
+        "state": "VA",
+        "zip_code": "22102",
+        "rating": 4.5,
+        "price_per_night": 279,
+        "safety_score": {
+          "overall_score": 93,
+          "crime_index": 22,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking",
+          "Concierge",
+          "Business Center"
+        ],
+        "distance_from_airport": 12.3,
+        "nearest_airport": "IAD",
+        "latitude": 38.9162,
+        "longitude": -77.2336
+      },
+      {
+        "hotel_id": "HOTEL-BETHE-010",
+        "name": "Embassy Suites Bethesda",
+        "brand": "Hilton",
+        "address": "4300 Military Rd NW",
+        "city": "Bethesda",
+        "state": "MD",
+        "zip_code": "20814",
+        "rating": 4.5,
+        "price_per_night": 339,
+        "safety_score": {
+          "overall_score": 94,
+          "crime_index": 20,
+          "store_incidents": 0,
+          "news_sentiment": "positive",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking",
+            "Concierge"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking",
+          "Concierge",
+          "Business Center"
+        ],
+        "distance_from_airport": 9.7,
+        "nearest_airport": "DCA",
+        "latitude": 38.9872,
+        "longitude": -77.0922
+      },
+      {
+        "hotel_id": "HOTEL-BETHE-011",
+        "name": "Hyatt Place Bethesda",
+        "brand": "Hyatt",
+        "address": "7335 Wisconsin Ave",
+        "city": "Bethesda",
+        "state": "MD",
+        "zip_code": "20814",
+        "rating": 4.3,
+        "price_per_night": 214,
+        "safety_score": {
+          "overall_score": 90,
           "crime_index": 25,
           "store_incidents": 0,
           "news_sentiment": "positive",
           "safety_features": [
             "24hr Front Desk",
             "Security Cameras",
-            "Well-Lit Parking",
-            "Card Key Access"
+            "Card Key Access",
+            "Bag Storage"
           ],
           "risk_factors": []
         },
         "walmart_preferred": true,
-        "image_url": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
+        "image_url": "/images/hotels/hotel-photo-4.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 9.7,
+        "nearest_airport": "DCA",
+        "latitude": 38.9922,
+        "longitude": -77.0872
+      },
+      {
+        "hotel_id": "HOTEL-ROCKV-012",
+        "name": "Residence Inn Rockville",
+        "brand": "Marriott",
+        "address": "1775 Rockville Pike",
+        "city": "Rockville",
+        "state": "MD",
+        "zip_code": "20852",
+        "rating": 4.1,
+        "price_per_night": 189,
+        "safety_score": {
+          "overall_score": 85,
+          "crime_index": 33,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Bag Storage"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-1.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 17.2,
+        "nearest_airport": "DCA",
+        "latitude": 39.0765,
+        "longitude": -77.1603
+      },
+      {
+        "hotel_id": "HOTEL-SILVE-013",
+        "name": "Holiday Inn Express Silver Spring",
+        "brand": "IHG",
+        "address": "8500 16th St",
+        "city": "Silver Spring",
+        "state": "MD",
+        "zip_code": "20910",
+        "rating": 3.8,
+        "price_per_night": 124,
+        "safety_score": {
+          "overall_score": 78,
+          "crime_index": 42,
+          "store_incidents": 2,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 9.7,
+        "nearest_airport": "DCA",
+        "latitude": 38.9882,
+        "longitude": -77.0286
+      },
+      {
+        "hotel_id": "HOTEL-BALTI-014",
+        "name": "Marriott Baltimore",
+        "brand": "Marriott",
+        "address": "110 S Eutaw St",
+        "city": "Baltimore",
+        "state": "MD",
+        "zip_code": "21201",
+        "rating": 4.0,
+        "price_per_night": 229,
+        "safety_score": {
+          "overall_score": 82,
+          "crime_index": 41,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
         "amenities": [
           "WiFi",
           "Breakfast",
           "Gym",
           "Pool",
+          "Parking",
+          "Concierge",
           "Business Center"
         ],
-        "distance_from_airport": 5.2
+        "distance_from_airport": 8.5,
+        "nearest_airport": "BWI",
+        "latitude": 39.2929,
+        "longitude": -76.6097
       },
       {
-        "hotel_id": "HOTEL-ASH-003",
-        "name": "Holiday Inn Express Ashland",
-        "brand": "IHG",
-        "address": "1200 US Route 60",
-        "city": "Ashland",
-        "state": "KY",
-        "zip_code": "41101",
-        "rating": 4.0,
-        "price_per_night": 96.9,
+        "hotel_id": "HOTEL-BALTI-015",
+        "name": "Hampton Inn Baltimore",
+        "brand": "Hilton",
+        "address": "131 E Redwood St",
+        "city": "Baltimore",
+        "state": "MD",
+        "zip_code": "21201",
+        "rating": 3.8,
+        "price_per_night": 154,
         "safety_score": {
-          "overall_score": 84,
-          "crime_index": 28,
+          "overall_score": 79,
+          "crime_index": 44,
+          "store_incidents": 2,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-4.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 8.5,
+        "nearest_airport": "BWI",
+        "latitude": 39.2979,
+        "longitude": -76.6047
+      },
+      {
+        "hotel_id": "HOTEL-ANNAP-016",
+        "name": "Hilton Garden Inn Annapolis",
+        "brand": "Hilton",
+        "address": "126 West St",
+        "city": "Annapolis",
+        "state": "MD",
+        "zip_code": "21401",
+        "rating": 4.2,
+        "price_per_night": 194,
+        "safety_score": {
+          "overall_score": 87,
+          "crime_index": 29,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-1.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 16.6,
+        "nearest_airport": "BWI",
+        "latitude": 38.9709,
+        "longitude": -76.4997
+      },
+      {
+        "hotel_id": "HOTEL-FREDE-017",
+        "name": "Holiday Inn Express Frederick",
+        "brand": "IHG",
+        "address": "5579 Spectrum Dr",
+        "city": "Frederick",
+        "state": "MD",
+        "zip_code": "21703",
+        "rating": 4.0,
+        "price_per_night": 114,
+        "safety_score": {
+          "overall_score": 83,
+          "crime_index": 30,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 43.0,
+        "nearest_airport": "BWI",
+        "latitude": 39.4118,
+        "longitude": -77.413
+      },
+      {
+        "hotel_id": "HOTEL-HAGER-018",
+        "name": "Hampton Inn Hagerstown",
+        "brand": "Hilton",
+        "address": "1716 Dual Hwy",
+        "city": "Hagerstown",
+        "state": "MD",
+        "zip_code": "21740",
+        "rating": 3.9,
+        "price_per_night": 129,
+        "safety_score": {
+          "overall_score": 80,
+          "crime_index": 34,
+          "store_incidents": 2,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 64.7,
+        "nearest_airport": "BWI",
+        "latitude": 39.6443,
+        "longitude": -77.7175
+      },
+      {
+        "hotel_id": "HOTEL-RICHM-019",
+        "name": "Marriott Richmond",
+        "brand": "Marriott",
+        "address": "555 E Canal St",
+        "city": "Richmond",
+        "state": "VA",
+        "zip_code": "23219",
+        "rating": 4.1,
+        "price_per_night": 209,
+        "safety_score": {
+          "overall_score": 85,
+          "crime_index": 36,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-4.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking",
+          "Concierge",
+          "Business Center"
+        ],
+        "distance_from_airport": 6.8,
+        "nearest_airport": "RIC",
+        "latitude": 37.5482,
+        "longitude": -77.4285
+      },
+      {
+        "hotel_id": "HOTEL-RICHM-020",
+        "name": "Hyatt Place Richmond",
+        "brand": "Hyatt",
+        "address": "1013 E Cary St",
+        "city": "Richmond",
+        "state": "VA",
+        "zip_code": "23219",
+        "rating": 3.9,
+        "price_per_night": 164,
+        "safety_score": {
+          "overall_score": 81,
+          "crime_index": 38,
+          "store_incidents": 2,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Card Key Access",
+            "Bag Storage"
+          ],
+          "risk_factors": [
+            "Urban district"
+          ]
+        },
+        "walmart_preferred": false,
+        "image_url": "/images/hotels/hotel-photo-1.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Parking"
+        ],
+        "distance_from_airport": 6.8,
+        "nearest_airport": "RIC",
+        "latitude": 37.5332,
+        "longitude": -77.4435
+      },
+      {
+        "hotel_id": "HOTEL-NORFO-021",
+        "name": "Embassy Suites Norfolk",
+        "brand": "Hilton",
+        "address": "235 E Main St",
+        "city": "Norfolk",
+        "state": "VA",
+        "zip_code": "23510",
+        "rating": 4.2,
+        "price_per_night": 254,
+        "safety_score": {
+          "overall_score": 86,
+          "crime_index": 33,
+          "store_incidents": 1,
+          "news_sentiment": "neutral",
+          "safety_features": [
+            "24hr Front Desk",
+            "Security Cameras",
+            "Indoor Corridors",
+            "Card Key Access",
+            "Valet Parking",
+            "Concierge"
+          ],
+          "risk_factors": []
+        },
+        "walmart_preferred": true,
+        "image_url": "/images/hotels/hotel-photo-2.jpg",
+        "amenities": [
+          "WiFi",
+          "Breakfast",
+          "Gym",
+          "Pool",
+          "Parking",
+          "Concierge",
+          "Business Center"
+        ],
+        "distance_from_airport": 5.6,
+        "nearest_airport": "ORF",
+        "latitude": 36.8483,
+        "longitude": -76.2884
+      },
+      {
+        "hotel_id": "HOTEL-VIRGI-022",
+        "name": "Courtyard Virginia Beach",
+        "brand": "Marriott",
+        "address": "5700 Atlantic Ave",
+        "city": "Virginia Beach",
+        "state": "VA",
+        "zip_code": "23451",
+        "rating": 4.2,
+        "price_per_night": 209,
+        "safety_score": {
+          "overall_score": 88,
+          "crime_index": 27,
           "store_incidents": 0,
           "news_sentiment": "positive",
           "safety_features": [
             "24hr Front Desk",
             "Security Cameras",
-            "Well-Lit Parking"
+            "Indoor Corridors",
+            "Card Key Access"
           ],
           "risk_factors": []
         },
         "walmart_preferred": true,
-        "image_url": "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=800&h=600&fit=crop",
+        "image_url": "/images/hotels/hotel-photo-3.jpg",
         "amenities": [
           "WiFi",
           "Breakfast",
           "Gym",
-          "Business Center"
+          "Parking"
         ],
-        "distance_from_airport": 2.8
+        "distance_from_airport": 12.7,
+        "nearest_airport": "ORF",
+        "latitude": 36.8554,
+        "longitude": -75.9755
       }
     ]
   },
@@ -1297,7 +2038,7 @@
         "incident_time": "08:23:00",
         "incident_type": "Bomb Threat",
         "severity": 1,
-        "description": "Update (4/25/26, 10:07 AM CDT): Law enforcement was able to place the subject into custody and gave the all clear. Business operations resumed after approximately one and half hours. Management reported that an unknown individual locked themselves in the mother’s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "description": "Update (4/25/26, 10:07 AM CDT): Law enforcement was able to place the subject into custody and gave the all clear. Business operations resumed after approximately one and half hours. Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
         "city": "BALTIMORE",
         "state": "MD",
         "region": 75,
@@ -1311,7 +2052,7 @@
         "incident_time": "08:23:00",
         "incident_type": "Bomb Threat",
         "severity": 1,
-        "description": "Management reported that an unknown individual locked themselves in the mother’s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "description": "Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
         "city": "BALTIMORE",
         "state": "MD",
         "region": 75,
