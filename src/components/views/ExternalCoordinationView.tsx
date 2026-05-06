@@ -125,21 +125,230 @@ export function ExternalCoordinationView({ fireSites, storeScope, onChangeScopeR
 }
 
 function Overview({ data }: { data: ExternalCoordinationData }) {
+  const [items, setItems] = useState<CoordinationActionItem[]>(() => buildCoordinationItems(data));
+  const [filters, setFilters] = useState<CoordinationFilters>({
+    search: '',
+    store: 'all',
+    market: 'all',
+    priority: 'all',
+    status: 'all',
+    coordinationType: 'all',
+    externalParty: 'all',
+    owner: 'all',
+    legacyWorkflow: 'all',
+    overdueOnly: false,
+    evidenceNeededOnly: false,
+    escalatedOnly: false,
+  });
+  const [draft, setDraft] = useState<CoordinationActionItem | null>(null);
+
+  useEffect(() => {
+    setItems(buildCoordinationItems(data));
+    setDraft(null);
+  }, [data]);
+
+  const today = todayIso();
+  const filteredItems = useMemo(() => filterCoordinationItems(items, filters, today), [items, filters, today]);
+  const openItems = items.filter((item) => item.status !== 'Complete');
+  const overdueCount = openItems.filter((item) => item.dueDate < today).length;
+  const evidenceCount = openItems.filter((item) => item.evidenceRequested || item.evidenceNeeded.length > 0).length;
+  const escalatedCount = openItems.filter((item) => item.escalated || item.status === 'Escalated').length;
+
+  const filterOptions = useMemo(() => ({
+    stores: unique(items.map((item) => `${item.facilityName} (${item.facilityId})`)),
+    markets: unique(items.map((item) => item.marketRegion)),
+    coordinationTypes: unique(items.map((item) => item.coordinationType)),
+    externalParties: unique(items.map((item) => item.externalParty)),
+    owners: unique(items.map((item) => item.internalOwner)),
+  }), [items]);
+
+  function updateItem(id: string, patch: Partial<CoordinationActionItem>) {
+    setItems((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  }
+
   return (
     <>
       <section className="external-kpi-grid" aria-label="External coordination KPIs">
-        <Kpi label="Escalated" value={formatNumber(data.summary.escalatedFacilities)} detail="Critical coordination review" tone="yellow" />
-        <Kpi label="Review" value={formatNumber(data.summary.reviewFacilities)} detail="Repeat/severe incident context" tone="blue" />
-        <Kpi label="Agency contacts" value={formatNumber(data.summary.agencyContacts)} detail="Police, sheriff, DA/prosecutor" tone="sky" />
-        <Kpi label="Program feeds" value="3" detail="ELM, SRM, FPP context seams" tone="white" />
+        <Kpi label="Open Actions" value={formatNumber(openItems.length)} detail="Active FPI coordination records" tone="blue" />
+        <Kpi label="Escalated" value={formatNumber(escalatedCount)} detail="Leadership or legal attention" tone="yellow" />
+        <Kpi label="Evidence Needed" value={formatNumber(evidenceCount)} detail="Requests, packets, footage, reports" tone="sky" />
+        <Kpi label="Overdue" value={formatNumber(overdueCount)} detail="Past due and not complete" tone="white" />
       </section>
+
       <section className="external-grid">
-        <section className="external-card wide"><CardHeading eyebrow="Selected stores" title="Coordination readiness by facility" pill="VIEW ONLY" tone="watch" /><FacilityReadinessList facilities={data.facilities} /></section>
+        <section className="external-card wide external-program-hero">
+          <CardHeading eyebrow="FPI operating model" title="External Coordination Center" pill="ELM / FPP / SRM CONSOLIDATED" tone="ready" />
+          <p>
+            FPI centralizes external coordination into one workspace so associates can see legal/evidence actions from ELM,
+            protection-readiness actions from FPP, and security-risk actions from SRM without switching between disconnected queues.
+            This view remains scoped to selected stores and does not write to external systems.
+          </p>
+        </section>
+
+        <LegacyWorkflowConsolidation items={items} />
         <ProgramSourcePanel compact />
-        <section className="external-card"><CardHeading eyebrow="Playbooks" title="External handoff paths" />{data.playbooks.map((playbook) => <article className="external-record" key={playbook.id}><strong>{playbook.title}</strong><span>{playbook.recommendedPath}</span><small>Evidence: {playbook.evidenceNeeded.join(', ')}</small></article>)}</section>
-        <section className="external-card"><CardHeading eyebrow="Governance" title="Verify before operational use" pill="VERIFY" tone="critical" /><p>{data.metadata.governanceNote}</p><p>{data.metadata.lookupStatus}</p></section>
       </section>
+
+      <section className="external-card wide external-coordination-workspace" aria-labelledby="coordination-table-title">
+        <div className="external-directory-header">
+          <div>
+            <p className="external-eyebrow">Action tracking</p>
+            <h2 id="coordination-table-title">Main coordination queue</h2>
+          </div>
+          <strong>{filteredItems.length} of {items.length} records</strong>
+        </div>
+        <CoordinationFiltersPanel filters={filters} options={filterOptions} onChange={setFilters} />
+        <CoordinationTable items={filteredItems} onUpdate={updateItem} onPrepareDraft={setDraft} />
+      </section>
+
+      {draft ? <CoordinationDraftPanel item={draft} onClose={() => setDraft(null)} /> : null}
     </>
+  );
+}
+
+function LegacyWorkflowConsolidation({ items }: { items: CoordinationActionItem[] }) {
+  const openItems = items.filter((item) => item.status !== 'Complete');
+  const counts = legacyWorkflows.map((workflow) => ({
+    workflow,
+    count: openItems.filter((item) => item.legacyWorkflow === workflow || (workflow !== 'New FPI Workflow' && item.legacyWorkflow === 'Multiple')).length,
+  }));
+
+  return (
+    <section className="external-card external-legacy-panel">
+      <CardHeading eyebrow="Legacy Workflow Consolidation" title="FPI centralizes ELM, FPP, and SRM coordination" pill="ONE WORKSPACE" tone="watch" />
+      <p>Open actions are tracked in one FPI queue while preserving which legacy workflow is being replaced or consolidated.</p>
+      <div className="external-legacy-grid">
+        {counts.map((item) => (
+          <div key={item.workflow}>
+            <span>{item.workflow}</span>
+            <strong>{item.count}</strong>
+            <small>open actions</small>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CoordinationFiltersPanel({
+  filters,
+  options,
+  onChange,
+}: {
+  filters: CoordinationFilters;
+  options: { stores: string[]; markets: string[]; coordinationTypes: string[]; externalParties: string[]; owners: string[] };
+  onChange: (filters: CoordinationFilters) => void;
+}) {
+  const update = (patch: Partial<CoordinationFilters>) => onChange({ ...filters, ...patch });
+  return (
+    <div className="external-filter-panel" aria-label="External coordination filters">
+      <input type="search" value={filters.search} onChange={(event) => update({ search: event.target.value })} placeholder="Search store, market, issue, agency, owner, evidence, next step, notes..." />
+      <select value={filters.store} onChange={(event) => update({ store: event.target.value })} aria-label="Filter by store">
+        <option value="all">All stores</option>
+        {options.stores.map((store) => <option key={store} value={store}>{store}</option>)}
+      </select>
+      <select value={filters.market} onChange={(event) => update({ market: event.target.value })} aria-label="Filter by market or region">
+        <option value="all">All markets / regions</option>
+        {options.markets.map((market) => <option key={market} value={market}>{market}</option>)}
+      </select>
+      <select value={filters.priority} onChange={(event) => update({ priority: event.target.value })} aria-label="Filter by priority">
+        <option value="all">All priorities</option>
+        {coordinationPriorities.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
+      </select>
+      <select value={filters.status} onChange={(event) => update({ status: event.target.value })} aria-label="Filter by status">
+        <option value="all">All statuses</option>
+        {coordinationStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+      </select>
+      <select value={filters.coordinationType} onChange={(event) => update({ coordinationType: event.target.value })} aria-label="Filter by coordination type">
+        <option value="all">All coordination types</option>
+        {options.coordinationTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+      </select>
+      <select value={filters.externalParty} onChange={(event) => update({ externalParty: event.target.value })} aria-label="Filter by external party">
+        <option value="all">All external parties</option>
+        {options.externalParties.map((party) => <option key={party} value={party}>{party}</option>)}
+      </select>
+      <select value={filters.owner} onChange={(event) => update({ owner: event.target.value })} aria-label="Filter by owner">
+        <option value="all">All owners</option>
+        {unique([...coordinationOwners, ...options.owners]).map((owner) => <option key={owner} value={owner}>{owner}</option>)}
+      </select>
+      <select value={filters.legacyWorkflow} onChange={(event) => update({ legacyWorkflow: event.target.value })} aria-label="Filter by legacy workflow replaced">
+        <option value="all">All legacy workflows</option>
+        {legacyWorkflows.map((workflow) => <option key={workflow} value={workflow}>{workflow}</option>)}
+      </select>
+      <label><input type="checkbox" checked={filters.overdueOnly} onChange={(event) => update({ overdueOnly: event.target.checked })} /> Overdue only</label>
+      <label><input type="checkbox" checked={filters.evidenceNeededOnly} onChange={(event) => update({ evidenceNeededOnly: event.target.checked })} /> Evidence needed</label>
+      <label><input type="checkbox" checked={filters.escalatedOnly} onChange={(event) => update({ escalatedOnly: event.target.checked })} /> Escalated only</label>
+    </div>
+  );
+}
+
+function CoordinationTable({
+  items,
+  onUpdate,
+  onPrepareDraft,
+}: {
+  items: CoordinationActionItem[];
+  onUpdate: (id: string, patch: Partial<CoordinationActionItem>) => void;
+  onPrepareDraft: (item: CoordinationActionItem) => void;
+}) {
+  return (
+    <div className="external-table-wrap external-coordination-table-wrap">
+      <table className="external-table external-coordination-table">
+        <thead>
+          <tr>
+            <th>Priority</th><th>Store / Facility</th><th>Market / Region</th><th>Coordination Type</th><th>External Party</th><th>Internal Owner</th><th>Legacy Workflow Replaced</th><th>Related Incident / Signal</th><th>Evidence Needed</th><th>Status</th><th>Due Date</th><th>Last Contact</th><th>Next Step</th><th>Notes</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.length ? items.map((item) => (
+            <tr key={item.id} className={item.escalated || item.status === 'Escalated' ? 'external-row-escalated' : undefined}>
+              <td><StatusPill label={item.priority} tone={priorityTone(item.priority)} /></td>
+              <td><strong>{item.facilityName}</strong><small>{item.facilityId}</small></td>
+              <td>{item.marketRegion}</td>
+              <td>{item.coordinationType}</td>
+              <td>{item.externalParty}</td>
+              <td><select value={item.internalOwner} onChange={(event) => onUpdate(item.id, { internalOwner: event.target.value })}>{coordinationOwners.map((owner) => <option key={owner} value={owner}>{owner}</option>)}</select></td>
+              <td><StatusPill label={item.legacyWorkflow} tone={item.legacyWorkflow === 'Multiple' ? 'critical' : 'watch'} /></td>
+              <td>{item.relatedIncidentSignal}</td>
+              <td><label className="external-inline-check"><input type="checkbox" checked={item.evidenceRequested} onChange={(event) => onUpdate(item.id, { evidenceRequested: event.target.checked, status: event.target.checked ? 'Evidence Requested' : item.status })} /> {item.evidenceNeeded}</label></td>
+              <td><select value={item.status} onChange={(event) => onUpdate(item.id, { status: event.target.value as CoordinationStatus, escalated: event.target.value === 'Escalated' ? true : item.escalated })}>{coordinationStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select></td>
+              <td><input type="date" value={item.dueDate} onChange={(event) => onUpdate(item.id, { dueDate: event.target.value })} /></td>
+              <td><input type="date" value={item.lastContactDate} onChange={(event) => onUpdate(item.id, { lastContactDate: event.target.value })} /></td>
+              <td><textarea value={item.nextStep} onChange={(event) => onUpdate(item.id, { nextStep: event.target.value })} rows={3} /></td>
+              <td><textarea value={item.notes} onChange={(event) => onUpdate(item.id, { notes: event.target.value })} placeholder="Add annotation..." rows={3} /></td>
+              <td>
+                <div className="external-row-actions">
+                  <button type="button" onClick={() => onPrepareDraft(item)}>Prepare Coordination Draft</button>
+                  <button type="button" onClick={() => onUpdate(item.id, { escalated: true, status: 'Escalated' })}>Escalate</button>
+                  <button type="button" onClick={() => onUpdate(item.id, { status: item.status === 'Complete' ? 'Open' : 'Complete' })}>{item.status === 'Complete' ? 'Reopen' : 'Complete'}</button>
+                </div>
+              </td>
+            </tr>
+          )) : <tr><td colSpan={15}>No matching coordination records found.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CoordinationDraftPanel({ item, onClose }: { item: CoordinationActionItem; onClose: () => void }) {
+  return (
+    <section className="external-card wide external-draft-panel" aria-labelledby="coordination-draft-title">
+      <div className="external-directory-header">
+        <div><p className="external-eyebrow">Coordination brief</p><h2 id="coordination-draft-title">Prepared Coordination Draft</h2></div>
+        <button type="button" onClick={onClose}>Close</button>
+      </div>
+      <div className="external-draft-grid">
+        <Metric label="Store" value={`${item.facilityName} (${item.facilityId})`} helper={item.marketRegion} />
+        <Metric label="Issue Summary" value={item.relatedIncidentSignal} helper={item.coordinationType} />
+        <Metric label="External Party" value={item.externalParty} helper="Verify contact before outreach" />
+        <Metric label="Internal Owner" value={item.internalOwner} helper="Accountable FPI owner" />
+        <Metric label="Evidence Needed" value={item.evidenceNeeded} helper={item.evidenceRequested ? 'Evidence requested' : 'Request not yet marked'} />
+        <Metric label="Recommended Next Step" value={item.nextStep} helper="Editable in the queue" />
+        <Metric label="Due Date" value={item.dueDate} helper="Coordination target" />
+        <Metric label="Legacy Workflow Replaced" value={item.legacyWorkflow} helper="ELM / FPP / SRM consolidation field" />
+      </div>
+    </section>
   );
 }
 
@@ -204,6 +413,144 @@ function SecurityVendors({ facilities }: { facilities: ExternalCoordinationFacil
 
 function LiveLookupAdapter({ data }: { data: ExternalCoordinationData }) {
   return <section className="external-grid"><section className="external-card wide"><CardHeading eyebrow="Approved live lookup seam" title="Code Puppy/internal geospatial public-safety lookup adapter" pill="NOT CONNECTED" tone="critical" /><p>{data.metadata.lookupStatus}</p><div className="external-metric-grid"><Metric label="Desired adapter" value={data.metadata.desiredLiveAdapter} helper="Awaiting approved endpoint/tool details" /><Metric label="Scope key" value={data.metadata.scopeKey} helper="Use canonical store facility_id" /><Metric label="Mode" value={data.metadata.dataMode} helper="Seeded public reference plus adapter-ready fields" /><Metric label="Generated" value={new Date(data.metadata.generatedAt).toLocaleDateString()} helper="Local JSON build" /></div></section><section className="external-card"><CardHeading eyebrow="Required response fields" title="What the live tool should return" /><ul className="external-note-list"><li>Agency name, type, jurisdiction, address, public phone, website.</li><li>DA/prosecutor office name, type, address, public phone, website.</li><li>Distance from selected store and source freshness timestamp.</li><li>Confidence level and source attribution.</li><li>Do not expose sensitive/personal contacts unless source and role access are approved.</li></ul></section></section>;
+}
+
+function buildCoordinationItems(data: ExternalCoordinationData): CoordinationActionItem[] {
+  const requestsByFacility = new Map(data.coordinationRequests.map((request) => [request.facilityId, request]));
+  return data.facilities.map((facility, index) => {
+    const request = requestsByFacility.get(facility.facilityId);
+    const coordinationType = normalizeCoordinationType(request?.type, facility);
+    const legacyWorkflow = legacyWorkflowFor(coordinationType, request?.summary ?? facility.escalationReason);
+    const evidenceNeeded = evidenceFor(coordinationType);
+    const priority = priorityFor(facility, request?.priority);
+    const lastContactDate = addDaysIso(-1 * ((index % 5) + 1));
+    return {
+      id: request?.requestId ?? `FPI-EXT-${facility.facilityId}`,
+      priority,
+      facilityId: facility.facilityId,
+      facilityName: facility.facilityName,
+      marketRegion: `${facility.county} · ${facility.region}`,
+      coordinationType,
+      externalParty: externalPartyFor(coordinationType, facility),
+      internalOwner: ownerFor(coordinationType),
+      legacyWorkflow,
+      relatedIncidentSignal: request?.summary ?? facility.escalationReason,
+      evidenceNeeded,
+      status: statusFor(facility.coordinationReadiness, request?.status),
+      dueDate: addDaysIso(priority === 'P1' ? 1 : priority === 'P2' ? 3 : 7),
+      lastContactDate,
+      nextStep: nextStepFor(coordinationType, facility.recommendedNextStep),
+      notes: `Seeded from ${legacyWorkflow} context. ${facility.escalationReason}`,
+      escalated: facility.coordinationReadiness === 'Escalated' || request?.priority === 'High',
+      evidenceRequested: false,
+    };
+  });
+}
+
+function filterCoordinationItems(items: CoordinationActionItem[], filters: CoordinationFilters, today: string): CoordinationActionItem[] {
+  const term = filters.search.trim().toLowerCase();
+  return items.filter((item) => {
+    const storeLabel = `${item.facilityName} (${item.facilityId})`;
+    const searchable = [item.priority, item.facilityId, item.facilityName, item.marketRegion, item.coordinationType, item.externalParty, item.internalOwner, item.legacyWorkflow, item.relatedIncidentSignal, item.evidenceNeeded, item.status, item.dueDate, item.lastContactDate, item.nextStep, item.notes].join(' ').toLowerCase();
+    return (!term || searchable.includes(term))
+      && (filters.store === 'all' || filters.store === storeLabel)
+      && (filters.market === 'all' || filters.market === item.marketRegion)
+      && (filters.priority === 'all' || filters.priority === item.priority)
+      && (filters.status === 'all' || filters.status === item.status)
+      && (filters.coordinationType === 'all' || filters.coordinationType === item.coordinationType)
+      && (filters.externalParty === 'all' || filters.externalParty === item.externalParty)
+      && (filters.owner === 'all' || filters.owner === item.internalOwner)
+      && (filters.legacyWorkflow === 'all' || filters.legacyWorkflow === item.legacyWorkflow)
+      && (!filters.overdueOnly || (item.status !== 'Complete' && item.dueDate < today))
+      && (!filters.evidenceNeededOnly || item.evidenceRequested || item.evidenceNeeded.length > 0)
+      && (!filters.escalatedOnly || item.escalated || item.status === 'Escalated');
+  });
+}
+
+function normalizeCoordinationType(type: string | undefined, facility: ExternalCoordinationFacility): string {
+  const text = `${type ?? ''} ${facility.escalationReason} ${facility.recommendedNextStep}`.toLowerCase();
+  if (text.includes('parking')) return 'Parking Lot Safety / Patrol Coordination';
+  if (text.includes('theft') || text.includes('orc') || text.includes('repeat')) return 'Repeat Theft / ORC Coordination';
+  if (text.includes('camera') || text.includes('alarm') || text.includes('technical') || text.includes('control')) return 'Technical Control Failure';
+  if (text.includes('evidence') || text.includes('prosecutor') || text.includes('da')) return 'Evidence / Prosecutor Handoff';
+  if (facility.coordinationReadiness === 'Escalated') return 'Escalated External Coordination';
+  return type ?? 'External Agency Coordination';
+}
+
+function nextStepFor(coordinationType: string, fallback: string): string {
+  const type = coordinationType.toLowerCase();
+  if (type.includes('parking')) return 'Recommend guard patrol, drones, mobile surveillance, lighting review, and law enforcement coordination.';
+  if (type.includes('theft') || type.includes('orc')) return 'Recommend AP/FPI leadership review, law enforcement liaison, evidence package, provider camera review, and incident intelligence summary.';
+  if (type.includes('technical')) return 'Recommend provider service ticket, controls governance follow-up, and evidence request.';
+  return fallback;
+}
+
+function evidenceFor(coordinationType: string): string {
+  const type = coordinationType.toLowerCase();
+  if (type.includes('parking')) return 'Parking lot incident summary, patrol logs, camera clips, lighting photos';
+  if (type.includes('theft') || type.includes('orc')) return 'Incident intelligence summary, case numbers, footage, AP narrative, suspect pattern';
+  if (type.includes('technical')) return 'Service ticket, device health screenshot, outage timeline, vendor notes';
+  if (type.includes('prosecutor') || type.includes('evidence')) return 'Evidence package, preservation status, case reference, legal request';
+  return 'Incident summary, store contact, evidence checklist, recommended outreach path';
+}
+
+function legacyWorkflowFor(coordinationType: string, summary: string): LegacyWorkflow {
+  const text = `${coordinationType} ${summary}`.toLowerCase();
+  if ((text.includes('technical') || text.includes('control')) && (text.includes('evidence') || text.includes('incident'))) return 'Multiple';
+  if (text.includes('prosecutor') || text.includes('evidence') || text.includes('legal')) return 'ELM';
+  if (text.includes('technical') || text.includes('camera') || text.includes('alarm') || text.includes('parking')) return 'FPP';
+  if (text.includes('orc') || text.includes('theft') || text.includes('risk') || text.includes('incident')) return 'SRM';
+  return 'New FPI Workflow';
+}
+
+function ownerFor(coordinationType: string): string {
+  const type = coordinationType.toLowerCase();
+  if (type.includes('technical')) return 'Technical Controls';
+  if (type.includes('prosecutor') || type.includes('evidence')) return 'Legal / ELM Liaison';
+  if (type.includes('theft') || type.includes('orc')) return 'Security Operations';
+  if (type.includes('parking')) return 'AP Market Manager';
+  return 'FPI Operations';
+}
+
+function externalPartyFor(coordinationType: string, facility: ExternalCoordinationFacility): string {
+  const type = coordinationType.toLowerCase();
+  if (type.includes('prosecutor') || type.includes('evidence')) return facility.prosecutor.name;
+  if (type.includes('technical')) return facility.securityVendorPartners[0]?.name ?? 'Security / technical provider';
+  if (type.includes('parking') || type.includes('theft') || type.includes('orc')) return facility.primaryAgency.name;
+  return facility.primaryAgency.name;
+}
+
+function priorityFor(facility: ExternalCoordinationFacility, requestPriority?: 'High' | 'Medium' | 'Low'): CoordinationPriority {
+  if (requestPriority === 'High' || facility.coordinationReadiness === 'Escalated' || facility.riskTier === 'Critical') return 'P1';
+  if (requestPriority === 'Medium' || facility.coordinationReadiness === 'Review' || facility.riskTier === 'High') return 'P2';
+  return 'P3';
+}
+
+function statusFor(readiness: ExternalCoordinationFacility['coordinationReadiness'], requestStatus?: string): CoordinationStatus {
+  if (readiness === 'Escalated') return 'Escalated';
+  if (requestStatus?.toLowerCase().includes('evidence')) return 'Evidence Requested';
+  if (requestStatus?.toLowerCase().includes('progress') || readiness === 'Review') return 'In Progress';
+  return 'Open';
+}
+
+function priorityTone(priority: CoordinationPriority): StatusTone {
+  if (priority === 'P1') return 'critical';
+  if (priority === 'P2') return 'watch';
+  return 'stable';
+}
+
+function unique(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
+}
+
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function addDaysIso(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
 }
 
 function FacilityReadinessList({ facilities }: { facilities: ExternalCoordinationFacility[] }) {
