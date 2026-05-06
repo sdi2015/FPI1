@@ -351,12 +351,14 @@
 [data-theme='dark'] .threat-page .locked-scope-panel,
 [data-theme='dark'] .vendor-page .locked-scope-panel,
 [data-theme='dark'] .external-page .locked-scope-panel,
+[data-theme='dark'] .epr-page .locked-scope-panel,
 [data-theme='dark'] .tech-page .scope-context-chip,
 [data-theme='dark'] .fire-ops-page .scope-context-chip,
 [data-theme='dark'] .remediation-page .scope-context-chip,
 [data-theme='dark'] .threat-page .scope-context-chip,
 [data-theme='dark'] .vendor-page .scope-context-chip,
-[data-theme='dark'] .external-page .scope-context-chip {
+[data-theme='dark'] .external-page .scope-context-chip,
+[data-theme='dark'] .epr-page .scope-context-chip {
   color: var(--text-primary);
   border-color: var(--border-subtle);
   background: var(--surface-panel-raised);
@@ -369,12 +371,14 @@
 [data-theme='dark'] .threat-page .locked-scope-panel p,
 [data-theme='dark'] .vendor-page .locked-scope-panel p,
 [data-theme='dark'] .external-page .locked-scope-panel p,
+[data-theme='dark'] .epr-page .locked-scope-panel p,
 [data-theme='dark'] .tech-page .scope-context-chip small,
 [data-theme='dark'] .fire-ops-page .scope-context-chip small,
 [data-theme='dark'] .remediation-page .scope-context-chip small,
 [data-theme='dark'] .threat-page .scope-context-chip small,
 [data-theme='dark'] .vendor-page .scope-context-chip small,
-[data-theme='dark'] .external-page .scope-context-chip small {
+[data-theme='dark'] .external-page .scope-context-chip small,
+[data-theme='dark'] .epr-page .scope-context-chip small {
   color: var(--text-secondary);
 }
 
@@ -383,7 +387,8 @@
 [data-theme='dark'] .remediation-page .scope-context-chip strong,
 [data-theme='dark'] .threat-page .scope-context-chip strong,
 [data-theme='dark'] .vendor-page .scope-context-chip strong,
-[data-theme='dark'] .external-page .scope-context-chip strong {
+[data-theme='dark'] .external-page .scope-context-chip strong,
+[data-theme='dark'] .epr-page .scope-context-chip strong {
   color: var(--text-primary);
 }
 
@@ -393,6 +398,7 @@
 [data-theme='dark'] .threat-page .scope-chip.selected,
 [data-theme='dark'] .vendor-page .scope-chip.selected,
 [data-theme='dark'] .external-page .scope-chip.selected,
+[data-theme='dark'] .epr-page .scope-chip.selected,
 [data-theme='dark'] .vendor-tags span,
 [data-theme='dark'] .threat-tags span,
 [data-theme='dark'] .masked-ip code {

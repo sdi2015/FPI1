@@ -18,7 +18,7 @@ export function ScopeContextChip({ sites, scope, onChangeScope }: ScopeContextCh
         <strong>{summary}</strong>
         <small>{included} stores in view · {getStoreScopeModeLabel(scope)}</small>
       </div>
-      <button type="button" onClick={onChangeScope}>Change</button>
+      <button type="button" onClick={onChangeScope}>Change Scope</button>
     </section>
   );
 }

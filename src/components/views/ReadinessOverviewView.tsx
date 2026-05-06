@@ -71,6 +71,7 @@ export function ReadinessOverviewView({
       <LeadershipAttentionRequired metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
       <ExecutiveKpiRow metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
       <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <CommandCenterGuidancePanel onChangeScope={onChangeScopeRequest} />
 
       <section className="progress-grid" aria-label="FPI operational readiness indicators">
         {pillars.map((pillar) => (
@@ -82,8 +83,9 @@ export function ReadinessOverviewView({
       <section className="dashboard-grid" aria-label="Dashboard operational detail">
         <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
         <ReadinessDistribution metrics={dashboardMetrics} />
+        <DataConfidencePanel metrics={executiveMetrics} />
         <TopDriversOfWatchPosture metrics={executiveMetrics} />
-        <ProgramSignals metrics={dashboardMetrics} />
+        <RecentExceptionsActivity metrics={dashboardMetrics} />
         <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
         <ServiceAreaBuildout activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
       </section>
@@ -263,6 +265,91 @@ function ExecutiveKpiRow({
           </button>
         </article>
       ))}
+    </section>
+  );
+}
+
+function CommandCenterGuidancePanel({ onChangeScope }: { onChangeScope: () => void }) {
+  const operatingSteps = [
+    {
+      step: '1',
+      title: 'Confirm scope',
+      detail: 'Validate the store or region scope before making leadership decisions.',
+    },
+    {
+      step: '2',
+      title: 'Review posture',
+      detail: 'Use the WATCH posture, KPI row, and risk drivers to understand exposure.',
+    },
+    {
+      step: '3',
+      title: 'Assign action',
+      detail: 'Open the attention items and route work to the accountable service owner.',
+    },
+    {
+      step: '4',
+      title: 'Track movement',
+      detail: 'Revisit exceptions, work queue, and facility risk until risk moves down.',
+    },
+  ];
+
+  return (
+    <section className="panel command-guidance-panel" aria-labelledby="command-guidance-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">How to use this dashboard</p>
+          <h2 id="command-guidance-title">Executive operating rhythm</h2>
+        </div>
+        <StatusPill label="GUIDED VIEW" tone="stable" />
+      </div>
+      <div className="command-guidance-grid">
+        {operatingSteps.map((item) => (
+          <article key={item.step}>
+            <span>{item.step}</span>
+            <strong>{item.title}</strong>
+            <p>{item.detail}</p>
+          </article>
+        ))}
+      </div>
+      <div className="command-guidance-actions" aria-label="Executive dashboard actions">
+        <button type="button" onClick={onChangeScope}>Change Scope</button>
+        <button type="button" disabled>Generate Executive Brief — Coming Soon</button>
+        <button type="button" disabled>Export Dashboard — Coming Soon</button>
+      </div>
+    </section>
+  );
+}
+
+function DataConfidencePanel({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
+  const confidenceItems = [
+    { label: 'Data Mode', value: metrics.dataMode },
+    { label: 'Facilities Profiled', value: formatNumber(metrics.facilitiesProfiled) },
+    { label: 'Data Readiness', value: `${metrics.dataReadiness}%` },
+    { label: 'Profile Completeness', value: `${metrics.profileCompleteness}%` },
+    { label: 'Governance Confidence', value: `${metrics.governanceConfidence}%` },
+  ];
+
+  return (
+    <section className="panel data-confidence-panel" aria-labelledby="data-confidence-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Trust layer</p>
+          <h2 id="data-confidence-title">Data Confidence & Coverage</h2>
+        </div>
+        <StatusPill label="SYNTHETIC DATA" tone="watch" />
+      </div>
+      <p>
+        This dashboard is safe for leadership review as a synthetic operating picture. Confidence is strongest where
+        normalized signals, facility profiles, and evidence records are available in the current scope.
+      </p>
+      <div className="data-confidence-grid">
+        {confidenceItems.map((item) => (
+          <div key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -467,13 +554,53 @@ function ReadinessDistribution({ metrics }: { metrics: FpiDashboardMetrics }) {
   );
 }
 
-function ProgramSignals({ metrics }: { metrics: FpiDashboardMetrics }) {
+function RecentExceptionsActivity({ metrics }: { metrics: FpiDashboardMetrics }) {
+  const activityCategories = [
+    {
+      title: 'Recent High-Severity Signals',
+      status: metrics.activeSignals > 0 ? `${formatNumber(metrics.activeSignals)} active signals` : 'No active signals',
+      detail: metrics.latestSignals[0] ?? 'No recent high-severity signals available in the current scope.',
+      tone: metrics.activeSignals > 0 ? 'watch' : 'ready',
+    },
+    {
+      title: 'Open Critical Exceptions',
+      status: `${formatNumber(metrics.criticalExceptions)} active`,
+      detail: 'Critical exception records remain visible for leadership review and remediation governance.',
+      tone: metrics.criticalExceptions > 0 ? 'critical' : 'ready',
+    },
+    {
+      title: 'Recently Updated Work Items',
+      status: `${formatNumber(metrics.activeWorkQueue)} in queue`,
+      detail: metrics.latestSignals[1] ?? 'No recently updated work items available in the current synthetic data scope.',
+      tone: metrics.activeWorkQueue > 0 ? 'watch' : 'ready',
+    },
+    {
+      title: 'Panel / Device Health Events',
+      status: `${formatNumber(metrics.panelTrouble)} panel trouble`,
+      detail: metrics.latestSignals[2] ?? 'No linked device health events found for the current scope.',
+      tone: metrics.panelTrouble > 0 ? 'watch' : 'ready',
+    },
+  ] as const;
+
   return (
-    <section className="panel activity-panel" aria-labelledby="signals-title">
-      <div className="card-heading"><div><p className="eyebrow">Operating cadence</p><h2 id="signals-title">Latest program signals</h2></div></div>
-      <ol className="activity-list">
-        {metrics.latestSignals.map((item) => <li key={item}>{item}</li>)}
-      </ol>
+    <section className="panel activity-panel" aria-labelledby="activity-title">
+      <div className="card-heading">
+        <div>
+          <p className="eyebrow">Operating cadence</p>
+          <h2 id="activity-title">Recent Exceptions & Activity</h2>
+        </div>
+      </div>
+      <div className="activity-category-grid">
+        {activityCategories.map((item) => (
+          <article key={item.title}>
+            <div>
+              <strong>{item.title}</strong>
+              <StatusPill label={item.status} tone={item.tone} />
+            </div>
+            <p>{item.detail}</p>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }

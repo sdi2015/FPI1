@@ -258,6 +258,16 @@ h1, h2, h3, p { margin-top: 0; }
 .status-cluster-item strong { display: block; margin-top: 4px; color: var(--text-primary); font-size: 0.92rem; line-height: 1.25; }
 .mode-pill { min-width: 128px; padding: 9px 12px; border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; background: rgba(255,194,32,0.09); color: var(--yellow); font-size: 0.82rem; font-weight: 900; text-align: right; }
 .mode-pill span { display: block; color: var(--text-muted); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.command-guidance-panel { margin-bottom: 14px; }
+.command-guidance-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.command-guidance-grid article { display: grid; gap: 7px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.command-guidance-grid span { display: grid; width: 30px; height: 30px; place-items: center; color: var(--yellow); border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; background: rgba(255,194,32,0.08); font-weight: 950; }
+.command-guidance-grid strong { color: var(--text-primary); font-size: 0.95rem; }
+.command-guidance-grid p { margin: 0; color: var(--text-secondary); font-size: 0.84rem; line-height: 1.4; }
+.command-guidance-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.command-guidance-actions button { min-height: 40px; padding: 9px 13px; color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(255,255,255,0.055); font-weight: 850; }
+.command-guidance-actions button:not(:disabled):hover { border-color: rgba(255,194,32,0.42); background: rgba(0,83,226,0.16); }
+.command-guidance-actions button:disabled { cursor: not-allowed; opacity: 0.56; }
 .leadership-attention-panel { margin-bottom: 14px; }
 .leadership-attention-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .leadership-attention-item { display: flex; min-height: 220px; flex-direction: column; gap: 12px; padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: rgba(255,255,255,0.045); }
@@ -274,6 +284,11 @@ h1, h2, h3, p { margin-top: 0; }
 .executive-kpi-tile strong { display: block; margin-top: 2px; font-size: clamp(1.45rem, 2.5vw, 2.45rem); line-height: 1; letter-spacing: -0.06em; }
 .executive-kpi-tile p { margin: 0; color: var(--text-secondary); line-height: 1.45; }
 .executive-kpi-tile button { margin-top: auto; }
+.data-confidence-panel { grid-column: span 4; }
+.data-confidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.data-confidence-grid div { padding: 11px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.data-confidence-grid span { display: block; color: var(--text-muted); font-size: 0.65rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.data-confidence-grid strong { display: block; margin-top: 5px; color: var(--text-primary); }
 .risk-drivers-panel { grid-column: span 5; }
 .risk-driver-list { display: grid; gap: 9px; }
 .risk-driver-item { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
@@ -331,6 +346,11 @@ h1, h2, h3, p { margin-top: 0; }
 .selected-service-panel { grid-column: span 7; }
 .readiness-panel { grid-column: span 5; }
 .activity-panel { grid-column: span 4; }
+.activity-category-grid { display: grid; gap: 10px; }
+.activity-category-grid article { padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.035); }
+.activity-category-grid article > div { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.activity-category-grid strong { color: var(--text-primary); font-size: 0.92rem; line-height: 1.25; }
+.activity-category-grid p { margin: 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.45; }
 .spatial-preview { grid-column: span 3; }
 .top-risk-panel { grid-column: span 8; }
 .module-map-panel { grid-column: span 4; }
@@ -478,8 +498,8 @@ button.scope-chip { cursor: pointer; }
   .dashboard-shell { grid-template-columns: 248px minmax(0, 1fr); }
   .executive-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi-grid, .progress-grid, .executive-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .leadership-attention-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .selected-service-panel, .readiness-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: span 6; }
+  .leadership-attention-grid, .command-guidance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .selected-service-panel, .readiness-panel, .data-confidence-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: span 6; }
 }
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -493,15 +513,15 @@ button.scope-chip { cursor: pointer; }
   .mode-pill { text-align: left; }
   .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-status-cluster { width: 100%; }
-  .selected-service-panel, .readiness-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: 1 / -1; }
-  .service-meta-grid, .service-live-metrics, .module-map, .leadership-attention-grid, .facility-summary-grid, .facility-detail-grid, .scope-summary-grid, .facility-checkbox-list, .store-region-grid { grid-template-columns: 1fr; }
+  .selected-service-panel, .readiness-panel, .data-confidence-panel, .risk-drivers-panel, .activity-panel, .spatial-preview, .top-risk-panel, .module-map-panel, .fire-panel-health-panel, .fire-signals-panel, .fire-exceptions-panel, .fire-facilities-panel, .fire-workqueue-panel, .fire-remediation-panel, .placeholder-service-panel, .fire-chart-panel { grid-column: 1 / -1; }
+  .service-meta-grid, .service-live-metrics, .module-map, .leadership-attention-grid, .command-guidance-grid, .data-confidence-grid, .facility-summary-grid, .facility-detail-grid, .scope-summary-grid, .facility-checkbox-list, .store-region-grid { grid-template-columns: 1fr; }
   .facility-detail-header, .facility-scope-heading, .locked-scope-panel { flex-direction: column; align-items: stretch; }
   .locked-scope-actions { justify-items: start; }
 }
 @media (max-width: 620px) {
   .landing-shell, .dashboard-content { padding: 12px; }
   .hero-panel { min-height: auto; padding: 24px; border-radius: 24px; }
-  .hero-panel, .pillar-grid, .preview-grid, .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid, .leadership-attention-grid { grid-template-columns: 1fr; }
+  .hero-panel, .pillar-grid, .preview-grid, .executive-strip, .progress-grid, .kpi-grid, .executive-kpi-grid, .leadership-attention-grid, .command-guidance-grid, .data-confidence-grid { grid-template-columns: 1fr; }
   .hero-content > .eyebrow { margin-top: 42px; }
   .hero-visual { min-height: 410px; }
   .orbital-card { position: static; width: 100%; margin: 10px 0; }
