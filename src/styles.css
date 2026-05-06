@@ -849,3 +849,56 @@ button.scope-chip { cursor: pointer; }
 
 .fire-ops-page .scope-context-chip strong { color: #f8fbff; }
 .fire-ops-page .scope-context-chip { color: #e5f4ff; }
+
+/* FPI cinematic landing */
+.fpi-landing-shell {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 40%, #0d2148 0%, #071126 35%, #02050c 70%, #01030a 100%);
+}
+
+.landing-top-controls { position: absolute; top: 18px; right: 18px; z-index: 6; }
+.fpi-landing-hero { width: min(920px, 100%); min-height: 80vh; position: relative; border-radius: 30px; border: 1px solid rgba(160, 191, 255, 0.2); background: rgba(3, 11, 29, 0.65); backdrop-filter: blur(8px); box-shadow: 0 24px 80px rgba(0,0,0,.45); display: grid; place-items: center; padding: 56px 24px; }
+.space-bg { position:absolute; inset:0; pointer-events:none; }
+.stars-layer { position:absolute; inset:0; background-repeat:repeat; opacity:.36; }
+.layer-one { background-image: radial-gradient(circle, rgba(255,255,255,.85) 1px, transparent 1px); background-size: 110px 110px; animation: drift 36s linear infinite; }
+.layer-two { background-image: radial-gradient(circle, rgba(164,199,255,.45) 1.1px, transparent 1.2px); background-size: 160px 160px; animation: drift 52s linear infinite reverse; }
+.layer-three { background-image: radial-gradient(circle, rgba(128,165,255,.28) 1px, transparent 1px); background-size: 240px 240px; animation: drift 74s linear infinite; }
+.nebula-glow { position:absolute; inset:12% 24%; border-radius:50%; background: radial-gradient(circle, rgba(85,137,255,.22) 0%, rgba(85,137,255,0) 70%); filter: blur(20px); }
+
+.fpi-landing-content { position: relative; z-index: 2; text-align:center; display:grid; gap: 20px; justify-items:center; }
+.spark-flight-wrapper { min-height: 180px; display:grid; place-items:center; }
+.spark-flight { width: clamp(98px, 17vw, 190px); filter: drop-shadow(0 0 24px rgba(255, 205, 59, .52)); animation: spark-arrival 3.8s cubic-bezier(.16,.8,.24,1) forwards, spark-pulse 3s ease-in-out 3.8s infinite; }
+.landing-copy { opacity: 0; transform: translateY(8px); animation: reveal-copy .9s ease 2.8s forwards; }
+.landing-copy h1 { margin: 0; font-size: clamp(2rem, 4.6vw, 3.8rem); line-height: 1.08; color: #edf3ff; text-shadow: 0 0 18px rgba(114,161,255,.3); }
+.landing-copy p { margin: 10px 0 0; color: #b6c5de; font-size: clamp(.96rem, 2vw, 1.18rem); }
+.landing-actions { opacity:0; display:flex; gap: 14px; animation: reveal-copy .7s ease 3.4s forwards; }
+.landing-enter-button { background: linear-gradient(135deg, #1f6bff, #5b9dff); color: #fff; border: 1px solid rgba(126,173,255,.8); box-shadow: 0 0 20px rgba(64,132,255,.35); }
+.landing-exit-button { border-color: rgba(146,172,213,.6); background: rgba(255,255,255,.05); }
+.landing-cancelled { margin: 0; color: #ffd7c7; background: rgba(77, 20, 1, .46); border: 1px solid rgba(241, 136, 98, .55); border-radius: 10px; padding: 10px 12px; max-width: 560px; }
+.landing-security-note { color: #9db0d1; font-size: .88rem; opacity: 0; animation: reveal-copy .7s ease 3.8s forwards; }
+.landing-brand-footer--floating { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 6; background: rgba(0,0,0,.3); }
+
+@keyframes drift { from { transform: translateY(0); } to { transform: translateY(24px); } }
+@keyframes spark-arrival {
+  0% { transform: scale(.2) translateZ(0); opacity: .08; filter: blur(4px) drop-shadow(0 0 0 rgba(255,205,59,.2)); }
+  65% { transform: scale(1.12); opacity: 1; filter: blur(0) drop-shadow(0 0 30px rgba(255,205,59,.66)); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0) drop-shadow(0 0 22px rgba(255,205,59,.52)); }
+}
+@keyframes spark-pulse { 0%,100% { filter: drop-shadow(0 0 16px rgba(255,205,59,.42)); } 50% { filter: drop-shadow(0 0 28px rgba(255,205,59,.7)); } }
+@keyframes reveal-copy { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 700px) {
+  .landing-actions { flex-direction: column; width: min(320px, 100%); }
+  .landing-actions button { width: 100%; }
+  .fpi-landing-hero { min-height: 74vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars-layer, .spark-flight, .landing-copy, .landing-actions, .landing-security-note { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .spark-flight { transform: scale(1); filter: drop-shadow(0 0 16px rgba(255,205,59,.45)); }
+}

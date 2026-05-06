@@ -31,6 +31,7 @@ type Screen = 'landing' | 'dashboard';
 
 const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
 const STORE_SCOPE_STORAGE_KEY = 'fpi-store-scope';
+const LANDING_SESSION_KEY = 'fpiLandingEntered';
 const validServiceIds = Object.values(SERVICE_IDS) as ServiceId[];
 
 function getServiceIdFromHash(): ServiceId | null {
@@ -85,7 +86,9 @@ function isValidStoreScope(value: Partial<StoreScopeState>): value is StoreScope
 function App() {
   const initialThemePreference = getInitialThemePreference();
   const initialServiceFromHash = getServiceIdFromHash();
-  const [screen, setScreen] = useState<Screen>(initialServiceFromHash ? 'dashboard' : 'landing');
+  const initialLandingEntered =
+    typeof window !== 'undefined' && window.sessionStorage.getItem(LANDING_SESSION_KEY) === 'true';
+  const [screen, setScreen] = useState<Screen>(initialServiceFromHash || initialLandingEntered ? 'dashboard' : 'landing');
   const [selectedService, setSelectedService] = useState<ServiceId>(initialServiceFromHash ?? defaultServiceId);
   const [themePreference, setThemePreference] = useState<ThemePreference>(initialThemePreference);
   const [theme, setTheme] = useState<'dark' | 'light'>(resolveTheme(initialThemePreference));
@@ -144,11 +147,13 @@ function App() {
   }
 
   function handleEnterDashboard() {
+    window.sessionStorage.setItem(LANDING_SESSION_KEY, 'true');
     setScreen('dashboard');
     updateServiceHash(selectedService);
   }
 
   function handleBackToLanding() {
+    window.sessionStorage.removeItem(LANDING_SESSION_KEY);
     setScreen('landing');
     clearServiceHash();
   }
@@ -194,133 +199,58 @@ function Landing({
   theme: 'dark' | 'light';
   onThemeToggle: () => void;
 }) {
+  const [accessCancelled, setAccessCancelled] = useState(false);
+
+  function handleExit() {
+    setAccessCancelled(true);
+    if (window.history.length > 1) {
+      window.history.back();
+    }
+  }
+
   return (
-    <main className="landing-shell">
-      <div className="top-controls">
+    <main className="fpi-landing-shell">
+      <div className="top-controls landing-top-controls">
         <ThemeToggle theme={theme} onToggle={onThemeToggle} />
       </div>
-      <section className="hero-panel">
-        <div className="hero-content">
-          <div className="brand-row" aria-label="FPI program brand">
-            <img className="brand-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
-            <span>Facility Protection Intelligence</span>
+      <section className="fpi-landing-hero" aria-label="Facility Protection Intelligence pre-entry screen">
+        <div className="space-bg" aria-hidden="true">
+          <span className="stars-layer layer-one" />
+          <span className="stars-layer layer-two" />
+          <span className="stars-layer layer-three" />
+          <span className="nebula-glow" />
+        </div>
+
+        <div className="fpi-landing-content">
+          <div className="spark-flight-wrapper">
+            <img className="spark-flight" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
+          </div>
+          <div className="landing-copy">
+            <h1>Facility Protection Intelligence</h1>
+            <p>Region 75 Security Intelligence &amp; Risk Operations Platform</p>
           </div>
 
-          <p className="eyebrow">FPI Program Command Center • Synthetic shell UI</p>
-          <h1>Protection intelligence built for fast leadership decisions.</h1>
-          <p className="hero-copy">
-            A command-center experience for ingesting protection signals, profiling facility posture, governing evidence,
-            and coordinating the work that moves critical risk down.
-          </p>
-
-          <div className="hero-actions">
-            <button className="primary-button" type="button" onClick={onEnter}>
-              Enter dashboard
+          <div className="landing-actions" role="group" aria-label="FPI entry actions">
+            <button className="primary-button landing-enter-button" type="button" onClick={onEnter} aria-label="Enter Facility Protection Intelligence dashboard">
+              Enter FPI
             </button>
-            <a className="ghost-button" href="#program-pillars">
-              Explore program model
-            </a>
+            <button className="ghost-button landing-exit-button" type="button" onClick={handleExit} aria-label="Exit pre-entry screen">
+              Exit
+            </button>
           </div>
-
-          <div className="trust-strip" aria-label="Program highlights">
-            <span>Mock data only</span>
-            <span>FPI-ready shell</span>
-            <span>Governance-first</span>
-          </div>
-
-          <div className="hero-metrics" aria-label="FPI operating snapshot">
-            <div>
-              <span>INTAKE</span>
-              <strong>86%</strong>
-              <small>normalized</small>
-            </div>
-            <div>
-              <span>POSTURE</span>
-              <strong>1.2K</strong>
-              <small>profiles</small>
-            </div>
-            <div>
-              <span>ACTION</span>
-              <strong>91%</strong>
-              <small>SLA track</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="hero-visual" aria-label="FPI readiness overview">
-          <div className="orbital-card top-card">
-            <span>Risk score</span>
-            <strong>812</strong>
-            <small>elevated watch</small>
-          </div>
-          <div className="radar-core">
-            <div className="radar-ring ring-one" />
-            <div className="radar-ring ring-two" />
-            <div className="radar-ring ring-three" />
-            <div className="radar-dot dot-one" />
-            <div className="radar-dot dot-two" />
-            <div className="radar-dot dot-three" />
-            <span>FPI</span>
-          </div>
-          <div className="orbital-card bottom-card">
-            <span>Readiness</span>
-            <strong>94%</strong>
-            <small>executive view</small>
+          {accessCancelled ? (
+            <p className="landing-cancelled" role="status">
+              Access cancelled. You may close this window or return to login.
+            </p>
+          ) : null}
+          <div className="landing-security-note" aria-label="Security notice">
+            Authorized users only. Activity may be monitored in accordance with company policy.
           </div>
         </div>
       </section>
-
-      <section className="pillars-section" id="program-pillars">
-        <div className="section-heading">
-          <p className="eyebrow">Operating model</p>
-          <h2>Three foundations for the FPI program.</h2>
-          <p>
-            The first build establishes the experience architecture so each service area can receive richer workflows,
-            evidence views, and integrations over time.
-          </p>
-        </div>
-        <div className="pillar-grid">
-          {pillars.map((pillar) => (
-            <article className="pillar-card" key={pillar.id}>
-              <div>
-                <p className="eyebrow">{pillar.signal}</p>
-                <h3>{pillar.title}</h3>
-                <p>{pillar.description}</p>
-              </div>
-              <div
-                className="progress-track"
-                role="progressbar"
-                aria-valuenow={pillar.progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={`${pillar.title} ${pillar.progress}%`}
-              >
-                <span style={{ width: `${pillar.progress}%` }} />
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="capability-preview">
-        <div className="section-heading compact">
-          <p className="eyebrow">Service coverage</p>
-          <h2>Initial shell covers every FPI service touchpoint.</h2>
-        </div>
-        <div className="preview-grid">
-          {capabilities.map((capability) => (
-            <article className="preview-card" key={capability.id}>
-              <span>{capability.eyebrow}</span>
-              <h3>{capability.title}</h3>
-              <p>{capability.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <footer className="landing-brand-footer" aria-label="Walmart brand footer">
+      <footer className="landing-brand-footer landing-brand-footer--floating" aria-label="Walmart brand footer">
         <img className="walmart-wordmark" src={theme === 'dark' ? '/brand/walmart/wordmark/WMT-Wordmark-Standard-White-RGB.svg' : '/brand/walmart/wordmark/WMT-Wordmark-Standard-TrueBlue-RGB.svg'} alt="Walmart" />
-        <span>Facility Protection Intelligence internal prototype</span>
+        <span>Facility Protection Intelligence · Authorized Users Only</span>
       </footer>
     </main>
   );
