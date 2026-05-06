@@ -434,7 +434,7 @@ function PostureCard({ title, value, tone, details, onClick }: { title: string; 
 }
 
 function TechnologyEventGrid({ cards }: { cards: TechnologyEventCard[] }) {
-  return <div className="tech-warning-grid">{cards.map((card) => <article className={`tech-warning-card severity-${card.severity.toLowerCase()}`} key={card.title}><div><span>{card.category}</span><strong>{card.title}</strong></div><StatusPill label={card.severity.toUpperCase()} tone={card.severity === 'Critical' ? 'critical' : card.severity === 'High' ? 'watch' : 'stable'} /><p>{card.description}</p><small>{card.recorderName}</small><ul>{card.examples.map((example) => <li key={example}>{example}</li>)}</ul></article>)}</div>;
+  return <div className="tech-warning-grid">{cards.map((card) => <article className={`tech-warning-card severity-${card.severity.toLowerCase()}`} key={card.title}><div><span>{card.category}</span><strong>{card.title}</strong></div><StatusPill label={card.severity.toUpperCase()} tone={card.severity === 'Critical' || card.severity === 'High' ? 'critical' : card.severity === 'Medium' ? 'watch' : 'stable'} /><p>{card.description}</p><small>{card.recorderName}</small><ul>{card.examples.map((example) => <li key={example}>{example}</li>)}</ul></article>)}</div>;
 }
 
 function StoresMonitoredTable({ data }: { data: TechnologyHealthData }) {

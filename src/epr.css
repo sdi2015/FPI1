@@ -58,6 +58,20 @@
 .epr-store-incidents-table small { display: block; margin-top: 4px; color: var(--text-muted); font-size: 0.72rem; line-height: 1.4; }
 .epr-store-incidents-table tfoot td { border-top: 2px solid var(--border-subtle); background: rgba(255,194,32,0.08); color: var(--white); font-size: 0.92rem; }
 .epr-store-picker-panel { grid-column: 1 / -1; }
+.epr-suggestions-panel { grid-column: 1 / -1; }
+.epr-picker-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+.epr-picker-kpi { padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: rgba(0,30,96,0.45); }
+.epr-picker-kpi .eyebrow { margin: 0 0 6px; color: var(--sky-blue); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.epr-picker-kpi strong { display: block; color: var(--white); font-size: 1.6rem; font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.epr-picker-kpi small { display: block; margin-top: 6px; color: var(--text-muted); font-size: 0.75rem; line-height: 1.4; }
+.epr-kpi-cost { border-color: rgba(234,17,0,0.55); background: rgba(234,17,0,0.10); }
+.epr-kpi-cost strong { color: #ff6b5b; }
+.epr-kpi-spend { border-color: rgba(0,83,226,0.55); background: rgba(0,83,226,0.10); }
+.epr-kpi-spend strong { color: #6aa6ff; }
+.epr-kpi-impact-positive { border-color: rgba(42,135,3,0.7); background: rgba(42,135,3,0.12); }
+.epr-kpi-impact-positive strong { color: #6cdc4a; }
+.epr-kpi-impact-negative { border-color: rgba(255,194,32,0.7); background: rgba(255,194,32,0.12); }
+.epr-kpi-impact-negative strong { color: #ffd560; }
 .epr-suggestions-block { display: grid; gap: 12px; margin-top: 16px; }
 .epr-suggestions-internal, .epr-suggestions-vendor { padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
 .epr-suggestions-internal { background: rgba(0,131,98,0.12); border-color: rgba(0,131,98,0.45); }
@@ -69,6 +83,18 @@
 .epr-vendor-pointer { margin: 8px 0 0; color: var(--text-muted); font-size: 0.78rem; font-style: italic; }
 .epr-solution-card.recommended { border-color: rgba(0,131,98,0.7); box-shadow: 0 0 0 1px rgba(0,131,98,0.45) inset, 0 8px 18px rgba(0,131,98,0.18); position: relative; }
 .epr-recommended-badge { position: absolute; top: 8px; right: 8px; padding: 3px 8px; border-radius: 999px; background: rgba(0,131,98,0.85); color: #ffffff; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.epr-plan-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.epr-plan-actions .epr-action-button { padding: 8px 14px; }
+.epr-plan-actions .epr-action-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.epr-plan-hint { color: var(--text-muted); font-size: 0.78rem; font-style: italic; flex: 1 1 220px; }
+.epr-action-button-secondary { background: transparent !important; border: 1px solid var(--border-subtle) !important; color: var(--text-secondary) !important; }
+.epr-action-button-secondary:hover { background: rgba(255,255,255,0.06) !important; color: var(--white) !important; }
+.epr-action-button-in-plan { background: rgba(42,135,3,0.85) !important; color: #ffffff !important; border-color: rgba(42,135,3,0.9) !important; }
+.epr-action-button-in-plan:hover { background: rgba(42,135,3,1) !important; }
+.epr-card-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.epr-card-actions .epr-card-action { flex: 1 1 auto; }
+.epr-solution-card.in-plan { background: rgba(42,135,3,0.10); }
+.epr-solution-card.in-plan strong { color: #6cdc4a; }
 .epr-action-button { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; padding: 7px 11px; color: var(--bentonville-blue); border: 1px solid rgba(255,194,32,0.65); border-radius: 999px; background: var(--yellow); font-size: 0.74rem; font-weight: 950; line-height: 1.1; cursor: pointer; white-space: nowrap; }
 .epr-action-button.secondary { color: var(--text-primary); border-color: rgba(169,221,247,0.28); background: rgba(255,255,255,0.08); }
 .epr-action-button:disabled { color: var(--text-muted); border-color: var(--border-subtle); background: rgba(148,163,184,0.18); cursor: not-allowed; opacity: 0.82; }

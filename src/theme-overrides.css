@@ -496,14 +496,17 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme='dark'] .tech-warning-card.severity-critical {
+[data-theme='dark'] .tech-warning-card.severity-critical,
+[data-theme='dark'] .tech-warning-card.severity-high {
   border-color: rgba(248, 113, 113, 0.55);
+  border-left-color: #ef4444;
   background: linear-gradient(180deg, rgba(127, 29, 29, 0.28), rgba(255, 255, 255, 0.055));
 }
 
-[data-theme='dark'] .tech-warning-card.severity-high {
-  border-color: rgba(245, 158, 11, 0.58);
-  background: linear-gradient(180deg, rgba(146, 64, 14, 0.24), rgba(255, 255, 255, 0.055));
+[data-theme='dark'] .tech-warning-card.severity-medium {
+  border-color: rgba(245, 158, 11, 0.45);
+  border-left-color: #f59e0b;
+  background: linear-gradient(180deg, rgba(146, 64, 14, 0.22), rgba(255, 255, 255, 0.055));
 }
 
 [data-theme='dark'] .tech-warning-card span,
