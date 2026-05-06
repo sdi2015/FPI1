@@ -57,6 +57,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     linear-gradient(rgba(169, 221, 247, 0.022) 1px, transparent 1px),
     linear-gradient(90deg, rgba(169, 221, 247, 0.022) 1px, transparent 1px),
@@ -228,7 +229,7 @@ h1, h2, h3, p { margin-top: 0; }
 .nav-item.active, .nav-item:hover { border-color: rgba(169,221,247,0.28); background: rgba(0,83,226,0.17); }
 .nav-item.active { box-shadow: inset 3px 0 0 var(--yellow); }
 .nav-item:hover { transform: translateX(2px); }
-.dashboard-content { width: min(100%, 1540px); padding: 20px; }
+.dashboard-content { width: 100%; max-width: 1540px; padding: 20px; }
 .dashboard-header {
   position: relative;
   display: flex;
@@ -247,7 +248,7 @@ h1, h2, h3, p { margin-top: 0; }
 .mode-pill { min-width: 128px; padding: 9px 12px; border: 1px solid rgba(255,194,32,0.32); border-radius: 999px; background: rgba(255,194,32,0.09); color: var(--yellow); font-size: 0.82rem; font-weight: 900; text-align: right; }
 .mode-pill span { display: block; color: var(--text-muted); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .executive-strip, .progress-grid, .kpi-grid, .dashboard-grid { display: grid; gap: 14px; }
-.executive-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px; }
+.executive-strip { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 14px; }
 .executive-item, .progress-card, .kpi-card, .panel {
   border: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, var(--surface-panel-raised), rgba(255,255,255,0.04));
