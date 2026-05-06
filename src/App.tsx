@@ -716,8 +716,6 @@ function DashboardStatePanel({ title, message, tone = 'stable' }: { title: strin
   );
 }
 
-<<<<<<< HEAD
-=======
 function HeroSummary({ metrics }: { metrics: FpiDashboardMetrics }) {
   return (
     <header className="dashboard-header">
@@ -983,7 +981,6 @@ function TopRiskFacilities({
   );
 }
 
->>>>>>> 41bd7160f4b0c9696107ceb24f058a28cb9aaab7
 function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
   return <span className={`status-pill status-${tone}`}>{label}</span>;
 }

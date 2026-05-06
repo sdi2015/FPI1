@@ -913,3 +913,9 @@ canvas {
   .remediation-kanban { grid-template-columns: 1fr; overflow-x: hidden; }
   .nova-side-stack { grid-template-columns: 1fr; }
 }
+
+/* ── Dark mode: colored chart rows ── */
+[data-theme='dark'] .tech-chart-row strong { color: #e2e8f0; }
+[data-theme='dark'] .tech-chart-row strong em { color: #64748b; }
+[data-theme='dark'] .tech-chart-row > div:first-child span { color: #94a3b8; }
+/* ── End colored chart rows ── */
