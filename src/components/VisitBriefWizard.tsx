@@ -623,8 +623,228 @@ function BriefStep({
   }
 
   function handleConfirmSend() {
+    // Build and download the .eml file for Outlook
+    downloadBriefAsEmail();
     setSent(true);
     setComposing(false);
+  }
+
+  // Generate and download the visit brief as a .eml file that opens in Outlook with full HTML formatting
+  function downloadBriefAsEmail() {
+    const toAddresses = `${VISIT_BRIEF_RECIPIENTS.executive.name} <${VISIT_BRIEF_RECIPIENTS.executive.email}>, ${VISIT_BRIEF_RECIPIENTS.epLead.name} <${VISIT_BRIEF_RECIPIENTS.epLead.email}>`;
+    const ccAddresses = `${VISIT_BRIEF_RECIPIENTS.epTeam.name} <${VISIT_BRIEF_RECIPIENTS.epTeam.email}>, ${VISIT_BRIEF_RECIPIENTS.apRegion.name} <${VISIT_BRIEF_RECIPIENTS.apRegion.email}>`;
+    const fromAddress = `${VISIT_BRIEF_RECIPIENTS.fpiOps.name} <${VISIT_BRIEF_RECIPIENTS.fpiOps.email}>`;
+
+    // Build the email HTML (reusing the existing email markup)
+    const emailHtml = buildEmailHtml();
+
+    // Create .eml file content (RFC 2822 format)
+    const emlContent = [
+      `From: ${fromAddress}`,
+      `To: ${toAddresses}`,
+      `Cc: ${ccAddresses}`,
+      `Subject: ${subject}`,
+      `Date: ${new Date().toUTCString()}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset="UTF-8"`,
+      `X-Mailer: FPI Foundry Pack`,
+      ``,
+      emailHtml,
+    ].join('\r\n');
+
+    // Create blob and trigger download
+    const blob = new Blob([emlContent], { type: 'message/rfc822' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Visit-Brief-Region-75-${today.toISOString().split('T')[0]}.eml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Build the complete HTML email body
+  function buildEmailHtml(): string {
+    const incidentsHtml = briefs.map((brief, idx) => {
+      const tier = brief.facility.risk_tier ?? (brief.facility.risk_score >= 80 ? 'Critical' : brief.facility.risk_score >= 50 ? 'High' : brief.facility.risk_score >= 25 ? 'Moderate' : 'Low');
+      const recentIncidentsHtml = brief.recentIncidents.length > 0 ? `
+        <div style="margin-top: 12px;">
+          <p style="font-weight: 600; color: #1a1a1a; margin: 0 0 8px 0;">Recent incidents (${brief.recentIncidents.length})</p>
+          <ul style="margin: 0; padding-left: 20px; list-style: disc;">
+            ${brief.recentIncidents.map(inc => `
+              <li style="margin-bottom: 6px;">
+                <strong>${inc.incident_type}</strong>
+                ${inc.severity != null ? `<span style="display: inline-block; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px;">sev ${inc.severity}</span>` : ''}
+                ${inc.incident_date ? `<span style="color: #6b7280; margin-left: 6px;">· ${inc.incident_date}</span>` : ''}
+                ${inc.description ? `<p style="color: #4b5563; margin: 4px 0 0 0; font-size: 13px;">${inc.description}</p>` : ''}
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      const tasksHtml = (brief.openTasks.length + brief.overdueTasks.length) > 0 ? `
+        <div style="margin-top: 12px;">
+          <p style="font-weight: 600; color: #1a1a1a; margin: 0 0 8px 0;">Top open tasks</p>
+          <ul style="margin: 0; padding-left: 20px; list-style: disc;">
+            ${brief.openTasks.slice(0, 3).map(t => `
+              <li style="margin-bottom: 6px;">
+                <strong>${t.title}</strong>
+                ${t.priority ? `<span style="display: inline-block; background: ${t.priority === 'Critical' ? '#fee2e2' : '#fef3c7'}; color: ${t.priority === 'Critical' ? '#991b1b' : '#92400e'}; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px;">${t.priority}</span>` : ''}
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      const topicsHtml = brief.topics.length > 0 ? `
+        <div style="margin-top: 12px;">
+          <p style="font-weight: 600; color: #1a1a1a; margin: 0 0 8px 0;">Recommended discussion topics</p>
+          <ul style="margin: 0; padding-left: 20px; list-style: disc;">
+            ${brief.topics.map(topic => `<li style="margin-bottom: 4px; color: #374151;">${topic}</li>`).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      return `
+        <div style="margin: 24px 0; padding: 20px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #0071ce; color: white; border-radius: 50%; font-weight: 700;">${idx + 1}</span>
+            <div style="flex: 1;">
+              <p style="font-size: 16px; font-weight: 700; color: #1a1a1a; margin: 0;">${brief.facility.facility_name}</p>
+              <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">${brief.facility.city}, ${brief.facility.state} · ${brief.facility.market}</p>
+            </div>
+            <span style="padding: 4px 12px; background: ${brief.facility.risk_score >= 80 ? '#fee2e2' : brief.facility.risk_score >= 50 ? '#fef3c7' : '#dbeafe'}; color: ${brief.facility.risk_score >= 80 ? '#991b1b' : brief.facility.risk_score >= 50 ? '#92400e' : '#1e40af'}; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap;">Risk ${Math.round(brief.facility.risk_score)} · ${tier}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 12px 0; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;">
+            <div><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Open tasks</span><strong style="font-size: 18px; color: #1a1a1a;">${brief.facility.open_task_count}</strong></div>
+            <div><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Overdue</span><strong style="font-size: 18px; color: #1a1a1a;">${brief.facility.overdue_task_count}</strong></div>
+            <div><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Critical</span><strong style="font-size: 18px; color: #1a1a1a;">${brief.facility.critical_task_count}</strong></div>
+            <div><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Avg remediation</span><strong style="font-size: 18px; color: #1a1a1a;">${brief.facility.avg_remediation_hours.toFixed(0)}h</strong></div>
+          </div>
+          ${recentIncidentsHtml}
+          ${tasksHtml}
+          ${topicsHtml}
+        </div>
+      `;
+    }).join('');
+
+    const hotelHtml = selectedHotel ? `
+      <div style="margin: 20px 0; padding: 16px; background: #f9fafb; border-radius: 8px; display: flex; gap: 16px;">
+        <div style="flex: 1;">
+          <p style="font-size: 15px; font-weight: 700; color: #1a1a1a; margin: 0 0 4px 0;">${selectedHotel.name}</p>
+          <p style="font-size: 13px; color: #6b7280; margin: 0 0 4px 0;">
+            ${selectedHotel.brand} · ${selectedHotel.rating.toFixed(1)}★ · $${selectedHotel.price_per_night.toFixed(0)}/night
+            ${selectedHotel.walmart_preferred ? ' · Walmart preferred' : ''}
+            ${selectedHotel.safety_score ? ` · Safety ${selectedHotel.safety_score.overall_score}/100` : ''}
+          </p>
+          <p style="font-size: 13px; color: #6b7280; margin: 0;">${selectedHotel.address}</p>
+        </div>
+      </div>
+    ` : '';
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Visit Brief — Region 75</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <div style="max-width: 680px; margin: 0 auto; background: #ffffff;">
+    <!-- Brand Banner -->
+    <div style="background: linear-gradient(135deg, #0071ce 0%, #004c91 100%); padding: 24px; color: white;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">Walmart</div>
+          <div style="font-size: 12px; opacity: 0.9;">Global Security · Foundry Pack Initiative</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">Executive Protection</div>
+          <div style="font-size: 14px; font-weight: 600;">Region 75 · Mid-Atlantic</div>
+        </div>
+      </div>
+      <div style="height: 4px; background: #ffc220; margin-top: 16px; border-radius: 2px;"></div>
+    </div>
+
+    <!-- Classification -->
+    <div style="background: #fef3c7; padding: 12px 24px; font-size: 12px; color: #92400e; border-bottom: 1px solid #fde68a;">
+      <span style="display: inline-block; width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; margin-right: 8px;"></span>
+      Walmart Internal · Executive Protection · Confidential — do not forward outside the EP / AP distribution.
+    </div>
+
+    <!-- Email Content -->
+    <div style="padding: 32px 24px;">
+      <!-- Hero -->
+      <div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #e5e7eb;">
+        <p style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0; font-weight: 600;">Executive Visit Brief</p>
+        <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 12px 0;">Region 75 Mid-Atlantic Tour</h1>
+        <p style="font-size: 14px; color: #6b7280; margin: 0;">Prepared for ${VISIT_BRIEF_RECIPIENTS.executive.name}, ${VISIT_BRIEF_RECIPIENTS.executive.title} · ${today.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+      </div>
+
+      <!-- Body -->
+      <p style="font-size: 15px; line-height: 1.6; color: #374151; margin: 0 0 16px 0;">${VISIT_BRIEF_RECIPIENTS.executive.name},</p>
+      <p style="font-size: 15px; line-height: 1.6; color: #374151; margin: 0 0 24px 0;">
+        Below is the draft visit brief for your upcoming Region 75 (Mid-Atlantic) tour starting from <strong>${airport.iata} — ${airport.name}</strong>.
+        The route is sequenced for shortest drive (<strong>${totalMiles.toFixed(0)} mi</strong> total, great-circle estimate).
+        Each stop section includes a risk snapshot and recommended discussion topics so you can engage site teams effectively.
+      </p>
+
+      <!-- Summary Stats -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 20px; background: #f9fafb; border-radius: 8px; margin-bottom: 24px;">
+        <div style="text-align: center;"><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px;">Stops</span><strong style="font-size: 24px; color: #0071ce;">${route.length}</strong></div>
+        <div style="text-align: center;"><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px;">Recent incidents</span><strong style="font-size: 24px; color: #0071ce;">${totalIncidents}</strong></div>
+        <div style="text-align: center;"><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px;">Critical tasks open</span><strong style="font-size: 24px; color: #0071ce;">${totalCritical}</strong></div>
+        <div style="text-align: center;"><span style="display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px;">Overdue tasks</span><strong style="font-size: 24px; color: #0071ce;">${totalOverdue}</strong></div>
+      </div>
+
+      <!-- Travel -->
+      <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a; margin: 32px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb;">Travel</h2>
+      <ul style="margin: 0 0 16px 0; padding-left: 24px; line-height: 1.8; color: #374151;">
+        <li><strong>Arrival:</strong> ${airport.iata} — ${airport.name} (${airport.city}, ${airport.state})</li>
+        <li><strong>Hotel anchor:</strong> ${hotelChoice === 'airport' ? `Near ${airport.iata}` : hotelChoice === 'lastStop' && lastStop ? `Near last stop (${lastStop.city}, ${lastStop.state})` : '—'}</li>
+        ${selectedHotel ? `<li><strong>Lodging:</strong> ${selectedHotel.name} — ${selectedHotel.address} (${selectedHotel.brand}, ${selectedHotel.rating.toFixed(1)}★, $${selectedHotel.price_per_night.toFixed(0)}/night)</li>` : ''}
+      </ul>
+      ${hotelHtml}
+
+      <!-- Stop-by-stop briefing -->
+      <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a; margin: 32px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb;">Stop-by-stop risk briefing</h2>
+      ${incidentsHtml}
+
+      <!-- Signoff -->
+      <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #e5e7eb; color: #374151; line-height: 1.6;">
+        <p style="margin: 0 0 16px 0;">Please review and reply with any preferred adjustments. Field teams have been notified to prepare site walks aligned to the discussion topics above. EP On-Call will sweep each stop the morning of arrival.</p>
+        <p style="margin: 0;">With respect,<br><strong>FPI Operations</strong> — Walmart Global Security<br><span style="font-size: 13px; color: #6b7280;">Foundry Pack Initiative · Region 75 Cell</span></p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="background: #f9fafb; padding: 24px; border-top: 1px solid #e5e7eb;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 16px;">
+        <div>
+          <p style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin: 0 0 8px 0;">Walmart Inc.</p>
+          <p style="font-size: 12px; color: #6b7280; margin: 0 0 4px 0;">702 SW 8th Street · Bentonville, AR 72716</p>
+          <p style="font-size: 12px; color: #6b7280; margin: 0;">Global Security · Executive Protection</p>
+        </div>
+        <div>
+          <p style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin: 0 0 8px 0;">Need to reach EP urgently?</p>
+          <p style="font-size: 12px; color: #6b7280; margin: 0 0 4px 0;">EP On-Call (24/7): <strong>1-800-WMT-EPRO</strong></p>
+          <p style="font-size: 12px; color: #6b7280; margin: 0;">Global Security Operations Center: <strong>gsoc@walmart.com</strong></p>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: #9ca3af; line-height: 1.5; margin: 0; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+        This message and any attachments are confidential and intended solely for the named recipients.
+        If you received this in error, please notify the sender and delete all copies.
+        <br>Save the planet. Don't print this email unless absolutely necessary.
+        · © ${today.getFullYear()} Walmart Inc. All rights reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
   }
 
   return (

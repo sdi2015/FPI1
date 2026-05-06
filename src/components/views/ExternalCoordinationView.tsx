@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
@@ -15,6 +15,51 @@ export type ExternalCoordinationViewProps = {
 };
 
 type CoordinationTab = 'overview' | 'programs' | 'contacts' | 'da' | 'matrix' | 'vendors' | 'adapter';
+
+type LegacyWorkflow = 'ELM' | 'FPP' | 'SRM' | 'Multiple' | 'New FPI Workflow';
+type CoordinationStatus = 'Open' | 'In Progress' | 'Evidence Requested' | 'Escalated' | 'Complete';
+type CoordinationPriority = 'P1' | 'P2' | 'P3';
+
+type CoordinationActionItem = {
+  id: string;
+  priority: CoordinationPriority;
+  facilityId: string;
+  facilityName: string;
+  marketRegion: string;
+  coordinationType: string;
+  externalParty: string;
+  internalOwner: string;
+  legacyWorkflow: LegacyWorkflow;
+  relatedIncidentSignal: string;
+  evidenceNeeded: string;
+  status: CoordinationStatus;
+  dueDate: string;
+  lastContactDate: string;
+  nextStep: string;
+  notes: string;
+  escalated: boolean;
+  evidenceRequested: boolean;
+};
+
+type CoordinationFilters = {
+  search: string;
+  store: string;
+  market: string;
+  priority: string;
+  status: string;
+  coordinationType: string;
+  externalParty: string;
+  owner: string;
+  legacyWorkflow: string;
+  overdueOnly: boolean;
+  evidenceNeededOnly: boolean;
+  escalatedOnly: boolean;
+};
+
+const coordinationOwners = ['FPI Operations', 'AP Market Manager', 'Technical Controls', 'Legal / ELM Liaison', 'Security Operations', 'Vendor Manager'];
+const legacyWorkflows: LegacyWorkflow[] = ['ELM', 'FPP', 'SRM', 'Multiple', 'New FPI Workflow'];
+const coordinationStatuses: CoordinationStatus[] = ['Open', 'In Progress', 'Evidence Requested', 'Escalated', 'Complete'];
+const coordinationPriorities: CoordinationPriority[] = ['P1', 'P2', 'P3'];
 
 type ProgramSource = {
   id: 'ELM' | 'SRM' | 'FPP';
@@ -51,10 +96,10 @@ export function ExternalCoordinationView({ fireSites, storeScope, onChangeScopeR
       <header className="external-header">
         <div>
           <p className="external-eyebrow">Law enforcement, DA, and security partner readiness</p>
-          <h1>External Coordination Intelligence</h1>
-          <p>Associate resource for law enforcement, sheriff, prosecutor/DA information, security vendor coordination, evidence handoff readiness, and adapter-ready program context from ELM, SRM, and FPP for selected facilities.</p>
+          <h1>External Coordination Center</h1>
+          <p>FPI workspace for consolidating external coordination workflows historically handled across ELM, FPP, and SRM. Track law enforcement, prosecutor/DA, vendor, evidence, technical-control, and incident-intelligence actions for the selected facility scope.</p>
         </div>
-        <div className="external-mode"><span>MODE</span>VIEW ONLY</div>
+        <div className="external-mode"><span>MODE</span>FPI WORKSPACE</div>
       </header>
 
       <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
