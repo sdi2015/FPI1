@@ -139,6 +139,16 @@ export const capabilities: Capability[] = [
     metric: 'LE / DA',
     owner: 'External Affairs',
   },
+  {
+    id: 'nova-agent',
+    title: 'NOVA Operational AI Agent',
+    navLabel: 'NOVA',
+    eyebrow: 'AI agent',
+    description: 'Embedded command-center intelligence agent for explanations, store risk briefs, remediation planning, vendor recommendations, executive summaries, and approval-gated task execution.',
+    status: 'Buildout',
+    metric: 'Guarded demo',
+    owner: 'FPI Operations',
+  },
 ];
 
 export const kpis: Kpi[] = [

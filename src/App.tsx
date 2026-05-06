@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
+import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
 import { ExternalCoordinationView } from './components/views/ExternalCoordinationView';
 import { FireSystemServiceView } from './components/views/FireSystemServiceView';
 import { NetworkDevicePostureView } from './components/views/NetworkDevicePostureView';
+import { NovaAgentView } from './components/views/NovaAgentView';
 import { PlaceholderServiceView } from './components/views/PlaceholderServiceView';
 import { ReadinessOverviewView } from './components/views/ReadinessOverviewView';
 import { RemediationOrchestrationView } from './components/views/RemediationOrchestrationView';
@@ -13,6 +15,7 @@ import { ThreatDetectionRiskScoringView } from './components/views/ThreatDetecti
 import { VendorIntelligenceRecommendationsView } from './components/views/VendorIntelligenceRecommendationsView';
 import { getFacilityDetailModel } from './data/fpiSelectors';
 import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
+import { buildNovaContext } from './data/novaContextBuilder';
 import { applyStoreScopeToFpiProgram } from './data/fpiStoreScope';
 import { createAllStoresScope, getStoreScopeSummary, hasEmptyStoreScope, type StoreScopeMode, type StoreScopeState } from './data/storeScope';
 import { getServiceMetrics } from './data/fpiServiceMetrics';
@@ -323,6 +326,8 @@ function DashboardShell({
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [storeScope, setStoreScope] = useState<StoreScopeState>(loadStoredStoreScope());
+  const [novaDrawerOpen, setNovaDrawerOpen] = useState(false);
+  const [isNovaWidgetDismissed, setIsNovaWidgetDismissed] = useState<boolean>(typeof window !== 'undefined' && window.localStorage.getItem('fpi_nova_floating_button_dismissed') === 'true');
   const fireAlarmState = useFireAlarmData();
   const globalMetrics = fpiState.data?.dashboardMetrics;
   const programData = fpiState.data?.programData;
@@ -345,10 +350,33 @@ function DashboardShell({
     [scopedProgramData, activeCapability.id, activeCapability.title],
   );
   const scopeSummary = useMemo(() => getStoreScopeSummary(storeScope, fireSites), [storeScope, fireSites]);
+  const novaContext = useMemo(
+    () => buildNovaContext({ activeCapability, metrics, programData: scopedProgramData ?? undefined, fireAlarmData: fireAlarmState.data, scopeSummary, storeScope }),
+    [activeCapability, metrics, scopedProgramData, fireAlarmState.data, scopeSummary, storeScope],
+  );
 
   useEffect(() => {
     window.localStorage.setItem(STORE_SCOPE_STORAGE_KEY, JSON.stringify(storeScope));
   }, [storeScope]);
+
+  useEffect(() => {
+    function closeNovaOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setNovaDrawerOpen(false);
+    }
+    window.addEventListener('keydown', closeNovaOnEscape);
+    return () => window.removeEventListener('keydown', closeNovaOnEscape);
+  }, []);
+
+  function dismissNovaWidget() {
+    setIsNovaWidgetDismissed(true);
+    setNovaDrawerOpen(false);
+    window.localStorage.setItem('fpi_nova_floating_button_dismissed', 'true');
+  }
+
+  function restoreNovaWidget() {
+    setIsNovaWidgetDismissed(false);
+    window.localStorage.removeItem('fpi_nova_floating_button_dismissed');
+  }
 
   useEffect(() => {
     if (!selectedFacilityId || !scopedProgramData) return;
@@ -393,7 +421,9 @@ function DashboardShell({
 
         {metrics && programData && scopedProgramData ? (
           <>
-            {selectedService === SERVICE_IDS.SETTINGS ? (
+            {selectedService === SERVICE_IDS.NOVA ? (
+              <NovaAgentView context={novaContext} onRestoreFloatingButton={restoreNovaWidget} />
+            ) : selectedService === SERVICE_IDS.SETTINGS ? (
               <SettingsView
                 fireSites={fireSites}
                 fireAlarmLoading={fireAlarmState.loading}
@@ -495,6 +525,16 @@ function DashboardShell({
             )}
             <FacilityDetailPanel facility={selectedFacility} onClose={() => setSelectedFacilityId(null)} />
           </>
+        ) : null}
+        {selectedService !== SERVICE_IDS.NOVA ? (
+          <FloatingNovaAssistant
+            context={novaContext}
+            open={novaDrawerOpen}
+            dismissed={isNovaWidgetDismissed}
+            onOpen={() => setNovaDrawerOpen(true)}
+            onClose={() => setNovaDrawerOpen(false)}
+            onDismiss={dismissNovaWidget}
+          />
         ) : null}
       </main>
     </div>

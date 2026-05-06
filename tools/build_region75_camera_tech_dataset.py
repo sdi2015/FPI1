@@ -178,7 +178,7 @@ def build_dataset() -> None:
                     'storeName': store.get('name') or f'Store {store_number}',
                     'cameraName': item['cameraName'],
                     'recorderAssigned': recorder_alias,
-                    'severity': 'High' if status_label in {'Offline', 'Unknown'} else 'Medium',
+                    'severity': 'Medium',
                     'warningType': 'No Recording Profile',
                 }
             )

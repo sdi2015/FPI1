@@ -19,6 +19,7 @@ export type CameraTechnicalControlViewProps = {
 type CameraTab = 'overview' | 'region' | 'inventory' | 'compliance' | 'retention' | 'warranty' | 'predictive' | 'workqueue';
 
 type StoreFilter = 'all' | 'Healthy' | 'Warning' | 'Critical';
+type QuickFilter = 'all' | 'healthy' | 'unhealthy' | 'offline';
 type OverviewModal = 'regionHealth' | 'healthyStores' | 'unhealthyStores' | 'offlineCameras' | 'storesMonitored' | 'fleetHealth' | null;
 
 type OfflineCameraRow = {
@@ -115,7 +116,7 @@ function CameraOverview({ data }: { data: TechnologyHealthData }) {
         <Kpi label="Region online health" value={formatPercent(summary.onlinePercent)} detail={`${formatNumber(summary.onlineCameras)} online / ${formatNumber(summary.totalCameras)} cameras`} tone="blue" healthTone={healthToneForPercent(summary.onlinePercent)} onClick={() => setActiveModal('regionHealth')} />
         <Kpi label="Healthy stores" value={formatNumber(healthyStores.length)} detail="98%+ camera online health" tone="sky" healthTone="green" onClick={() => setActiveModal('healthyStores')} />
         <Kpi label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or operationally degraded" tone="yellow" healthTone="yellow" onClick={() => setActiveModal('unhealthyStores')} />
-        <Kpi label="Offline cameras" value={formatNumber(summary.offlineCameras)} detail={`${formatNumber(summary.issueCameras)} issue cameras`} tone="yellow" healthTone={summary.offlineCameras > 0 ? 'yellow' : 'green'} onClick={() => setActiveModal('offlineCameras')} />
+        <Kpi label="Offline cameras" value={formatNumber(summary.offlineCameras)} detail={`${formatNumber(summary.issueCameras)} issue cameras`} tone="yellow" healthTone={summary.offlineCameras > 0 ? 'red' : 'green'} onClick={() => setActiveModal('offlineCameras')} />
         <Kpi label="Stores monitored" value={formatNumber(summary.stores)} detail={`${formatNumber(summary.recorders)} VSRV server recorders`} tone="white" healthTone="green" onClick={() => setActiveModal('storesMonitored')} />
         <Kpi label="Fleet health" value={formatPercent(data.fleetSummary.onlinePercent)} detail={`${formatNumber(data.fleetSummary.storeCount)} stores in snapshot`} tone="blue" healthTone={healthToneForPercent(data.fleetSummary.onlinePercent)} onClick={() => setActiveModal('fleetHealth')} />
       </section>
@@ -167,29 +168,55 @@ function ServiceFocusStrip() {
 function RegionHealth({ data }: { data: TechnologyHealthData }) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<StoreFilter>('all');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('all');
   const healthyStores = useMemo(() => getHealthyStores(data.storeHealth), [data.storeHealth]);
   const unhealthyStores = useMemo(() => getUnhealthyStores(data.storeHealth), [data.storeHealth]);
   const offlineCameraRows = useMemo(() => buildOfflineCameraRows(data), [data]);
+  const offlineStoreCount = useMemo(() => data.storeHealth.filter((s) => s.offlineCameras > 0).length, [data.storeHealth]);
+
+  function handleTileClick(tile: QuickFilter) {
+    setQuickFilter((prev) => (prev === tile ? 'all' : tile));
+    setFilter('all');
+  }
+
+  function handleDropdownChange(e: { target: { value: string } }) {
+    setFilter(e.target.value as StoreFilter);
+    setQuickFilter('all');
+  }
+
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
     return sortStoresByTechnicalRisk(data.storeHealth)
-      .filter((store) => filter === 'all' || store.healthStatus === filter)
+      .filter((store) => {
+        if (quickFilter === 'healthy') return healthToneForPercent(store.onlinePercent) === 'green';
+        if (quickFilter === 'unhealthy') return healthToneForPercent(store.onlinePercent) !== 'green';
+        if (quickFilter === 'offline') return store.offlineCameras > 0;
+        return filter === 'all' || store.healthStatus === filter;
+      })
       .filter((store) => !term || [store.siteAlias, store.region, store.facilityType, store.vmsPlatform, store.healthStatus].join(' ').toLowerCase().includes(term));
-  }, [data.storeHealth, search, filter]);
+  }, [data.storeHealth, search, filter, quickFilter]);
+
+  const activeLabel = quickFilter === 'healthy' ? 'Healthy stores' : quickFilter === 'unhealthy' ? 'Unhealthy stores' : quickFilter === 'offline' ? 'Stores with offline cameras' : null;
 
   return (
     <section className="tech-grid">
       <section className="tech-card wide">
-        <div className="tech-directory-header"><div><p className="tech-eyebrow">Region 75 store health</p><h2>Region 75 CCTV/VMS posture</h2></div><strong>{rows.length} stores</strong></div>
-        <div className="tech-region-summary-grid" aria-label="Region online health summary">
-          <SummaryTile label="Healthy stores" value={formatNumber(healthyStores.length)} detail="98%+ online health" tone="green" />
-          <SummaryTile label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or flagged by source" tone="yellow" />
-          <SummaryTile label="Offline cameras" value={formatNumber(data.regionSummary.offlineCameras)} detail="Offline device count" tone={data.regionSummary.offlineCameras > 0 ? 'yellow' : 'green'} />
-          <SummaryTile label="Region health" value={formatPercent(data.regionSummary.onlinePercent)} detail={healthLabelForPercent(data.regionSummary.onlinePercent)} tone={healthToneForPercent(data.regionSummary.onlinePercent)} />
+        <div className="tech-directory-header">
+          <div><p className="tech-eyebrow">Region 75 store health</p><h2>Region 75 CCTV/VMS posture</h2></div>
+          <div className="tech-directory-header-right">
+            {activeLabel ? <span className="tech-active-filter-chip" role="status">{activeLabel} <button type="button" onClick={() => setQuickFilter('all')} aria-label="Clear filter">✕</button></span> : null}
+            <strong>{rows.length} store{rows.length !== 1 ? 's' : ''}</strong>
+          </div>
+        </div>
+        <div className="tech-region-summary-grid" aria-label="Region online health summary — click a card to filter the table">
+          <SummaryTile label="Healthy stores" value={formatNumber(healthyStores.length)} detail="98%+ online health" tone="green" active={quickFilter === 'healthy'} onClick={() => handleTileClick('healthy')} />
+          <SummaryTile label="Unhealthy stores" value={formatNumber(unhealthyStores.length)} detail="Below 98% or flagged by source" tone="yellow" active={quickFilter === 'unhealthy'} onClick={() => handleTileClick('unhealthy')} />
+          <SummaryTile label="Offline cameras" value={formatNumber(data.regionSummary.offlineCameras)} detail={`${offlineStoreCount} stores affected`} tone={data.regionSummary.offlineCameras > 0 ? 'red' : 'green'} active={quickFilter === 'offline'} onClick={() => handleTileClick('offline')} />
+          <SummaryTile label="Region health" value={formatPercent(data.regionSummary.onlinePercent)} detail={healthLabelForPercent(data.regionSummary.onlinePercent)} tone={healthToneForPercent(data.regionSummary.onlinePercent)} active={quickFilter === 'all' && filter === 'all'} onClick={() => { setQuickFilter('all'); setFilter('all'); }} />
         </div>
         <div className="tech-filters">
           <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search store alias, platform, status, region, store number" />
-          <select value={filter} onChange={(event) => setFilter(event.target.value as StoreFilter)}><option value="all">All health states</option><option value="Healthy">Healthy</option><option value="Warning">Warning</option><option value="Critical">Critical</option></select>
+          <select value={filter} onChange={handleDropdownChange}><option value="all">All health states</option><option value="Healthy">Healthy</option><option value="Warning">Warning</option><option value="Critical">Critical</option></select>
         </div>
         <StoreHealthTable stores={rows} />
       </section>
@@ -296,7 +323,7 @@ function DetailModal({ open, eyebrow, title, children, onClose }: { open: boolea
           </div>
           <button type="button" onClick={onClose} aria-label="Close camera health detail">×</button>
         </header>
-        <div className="tech-modal-body">{children}</div>
+        <div className="tech-modal-body">{children as any}</div>
       </section>
     </div>
   );
@@ -316,12 +343,43 @@ function OverviewModalContent({ modal, data, healthyStores, unhealthyStores, off
   return null;
 }
 
+function IpCamerasModalContent({ data }: { data: TechnologyHealthData }) {
+  const s = data.regionSummary;
+  const [search, setSearch] = useState('');
+  const stores = useMemo(() => { const t = search.trim().toLowerCase(); return [...data.storeHealth].filter((st) => st.ipTotal > 0 && (!t || st.siteAlias.toLowerCase().includes(t))).sort((a, b) => b.ipTotal - a.ipTotal); }, [data.storeHealth, search]);
+  return <div className="tech-modal-section"><div className="tech-region-summary-grid"><SummaryTile label="IP cameras" value={formatNumber(s.ipCameras)} detail={`${percent(s.ipCameras, s.totalCameras)}% of region`} tone={healthToneForPercent(s.onlinePercent)} /><SummaryTile label="Online" value={formatNumber(s.onlineCameras)} detail="Currently reporting online" tone="green" /><SummaryTile label="Offline" value={formatNumber(s.offlineCameras)} detail="Require triage by store" tone={s.offlineCameras > 0 ? 'red' : 'green'} /><SummaryTile label="Issue cameras" value={formatNumber(s.issueCameras)} detail="Fault and degraded states" tone={s.issueCameras > 0 ? 'yellow' : 'green'} /></div><p className="tech-modal-note">Online state is governed at store level by the Intellicene VMS. Each Windows-based VSRV recorder reports camera status independently. Fault counts roll into the issue camera total.</p><input className="tech-modal-search" type="search" placeholder="Search stores…" value={search} onChange={(e) => setSearch(e.target.value)} /><StoreHealthTable stores={stores} /></div>;
+}
+
+function AnalogCamerasModalContent({ data, analogOffline }: { data: TechnologyHealthData; analogOffline: number }) {
+  const s = data.regionSummary;
+  const [search, setSearch] = useState('');
+  const stores = useMemo(() => { const t = search.trim().toLowerCase(); return [...data.storeHealth].filter((st) => st.analogTotal > 0 && (!t || st.siteAlias.toLowerCase().includes(t))).sort((a, b) => b.analogTotal - a.analogTotal); }, [data.storeHealth, search]);
+  return <div className="tech-modal-section"><div className="tech-region-summary-grid"><SummaryTile label="Analog cameras" value={formatNumber(s.analogCameras)} detail={`${percent(s.analogCameras, s.totalCameras)}% of region`} tone={analogOffline > 0 ? 'yellow' : 'green'} /><SummaryTile label="Offline analog" value={formatNumber(analogOffline)} detail="Migration and service review candidates" tone={analogOffline > 0 ? 'yellow' : 'green'} /><SummaryTile label="Stores with analog" value={formatNumber(stores.length)} detail="At least one analog device present" tone="yellow" /></div><p className="tech-modal-note">Analog cameras are tracked for IP migration readiness. Migration warnings require governance review. Offline analog devices carry a higher evidence-readiness risk than offline IP cameras.</p><input className="tech-modal-search" type="search" placeholder="Search stores…" value={search} onChange={(e) => setSearch(e.target.value)} /><StoreHealthTable stores={stores} /></div>;
+}
+
+function ProfileWarningsModalContent({ data }: { data: TechnologyHealthData }) {
+  const warnings = useMemo(() => data.profileWarnings ?? [], [data.profileWarnings]);
+  const [search, setSearch] = useState('');
+  const visible = useMemo(() => { const t = search.trim().toLowerCase(); return t ? warnings.filter((w) => [w.storeNumber, w.storeName, w.cameraName, w.recorderAssigned].join(' ').toLowerCase().includes(t)) : warnings; }, [warnings, search]);
+  const affectedStores = useMemo(() => new Set(warnings.map((w) => w.storeNumber)).size, [warnings]);
+  const affectedRecorders = useMemo(() => new Set(warnings.map((w) => w.recorderAssigned)).size, [warnings]);
+  return <div className="tech-modal-section"><div className="tech-region-summary-grid"><SummaryTile label="Profile warnings" value={formatNumber(warnings.length)} detail="No recording profiles set" tone="yellow" /><SummaryTile label="Affected stores" value={formatNumber(affectedStores)} detail="Stores with at least one gap" tone="yellow" /><SummaryTile label="Affected recorders" value={formatNumber(affectedRecorders)} detail="VSRVs with missing profile config" tone="yellow" /></div><p className="tech-modal-note">Cameras with no recording profile will not archive footage to the Intellicene VSRV recorder. This is a VMS configuration gap — not a camera outage. Resolution requires recorder-level profile assignment in the Intellicene management console.</p><input className="tech-modal-search" type="search" placeholder="Search store, camera, or recorder…" value={search} onChange={(e) => setSearch(e.target.value)} /><ProfileWarningsTable rows={visible.slice(0, 300)} /></div>;
+}
+
+function NetworkFlagsModalContent({ data }: { data: TechnologyHealthData }) {
+  const flags = useMemo(() => data.networkPlacementFlags ?? [], [data.networkPlacementFlags]);
+  const [search, setSearch] = useState('');
+  const visible = useMemo(() => { const t = search.trim().toLowerCase(); return t ? flags.filter((f) => [f.storeNumber, f.storeName, f.cameraName, f.ipAddress, f.flagType, f.detail].join(' ').toLowerCase().includes(t)) : flags; }, [flags, search]);
+  const affectedStores = useMemo(() => new Set(flags.map((f) => f.storeNumber)).size, [flags]);
+  const highCount = useMemo(() => flags.filter((f) => f.severity === 'High').length, [flags]);
+  return <div className="tech-modal-section"><div className="tech-region-summary-grid"><SummaryTile label="Placement flags" value={formatNumber(flags.length)} detail="Network placement issues" tone="yellow" /><SummaryTile label="Affected stores" value={formatNumber(affectedStores)} detail="Stores with at least one flag" tone="yellow" /><SummaryTile label="High severity" value={formatNumber(highCount)} detail="Subnet / duplicate IP priority" tone={highCount > 0 ? 'yellow' : 'green'} /></div><p className="tech-modal-note">Flags cover incorrect subnet placements, VLAN misconfigurations, misconfigured gateways, duplicate IPs, and invalid network segments. High severity flags indicate cameras on the wrong store network segment and should be remediated in coordination with network infrastructure.</p><input className="tech-modal-search" type="search" placeholder="Search store, camera, IP, or flag type…" value={search} onChange={(e) => setSearch(e.target.value)} /><NetworkPlacementFlagsTable rows={visible.slice(0, 300)} /></div>;
+}
+
 function PostureModalContent({ activePosture, data, analogOffline }: { activePosture: string | null; data: TechnologyHealthData; analogOffline: number }) {
-  const summary = data.regionSummary;
-  if (activePosture === 'IP Cameras') return <div className="tech-modal-section"><p>IP camera posture reflects the Region 75 Intellicene inventory by store.</p><div className="tech-region-summary-grid"><SummaryTile label="IP cameras" value={formatNumber(summary.ipCameras)} detail={`${percent(summary.ipCameras, summary.totalCameras)}% of region`} tone={healthToneForPercent(summary.onlinePercent)} /><SummaryTile label="Issue cameras" value={formatNumber(summary.issueCameras)} detail="Faults and degraded camera states" tone={summary.issueCameras > 0 ? 'yellow' : 'green'} /></div></div>;
-  if (activePosture === 'Analog Cameras') return <div className="tech-modal-section"><p>Analog camera posture tracks migration warnings, offline analog devices, and recorder assignment review.</p><div className="tech-region-summary-grid"><SummaryTile label="Analog cameras" value={formatNumber(summary.analogCameras)} detail={`${percent(summary.analogCameras, summary.totalCameras)}% of region`} tone={analogOffline > 0 ? 'yellow' : 'green'} /><SummaryTile label="Offline analog" value={formatNumber(analogOffline)} detail="Migration and service review candidates" tone={analogOffline > 0 ? 'yellow' : 'green'} /></div></div>;
-  if (activePosture === 'Profile Warnings') return <div className="tech-modal-section"><p>Profile warnings list cameras with no recording profiles, including store and assigned recorder.</p><ProfileWarningsTable rows={(data.profileWarnings ?? []).slice(0, 250)} /></div>;
-  if (activePosture === 'Network Placement Flags') return <div className="tech-modal-section"><p>Network placement flags include incorrect subnets, duplicate IPs, and invalid network segments.</p><NetworkPlacementFlagsTable rows={(data.networkPlacementFlags ?? []).slice(0, 250)} /></div>;
+  if (activePosture === 'IP Cameras') return <IpCamerasModalContent data={data} />;
+  if (activePosture === 'Analog Cameras') return <AnalogCamerasModalContent data={data} analogOffline={analogOffline} />;
+  if (activePosture === 'Profile Warnings') return <ProfileWarningsModalContent data={data} />;
+  if (activePosture === 'Network Placement Flags') return <NetworkFlagsModalContent data={data} />;
   return null;
 }
 
@@ -351,8 +409,17 @@ function OfflineCameraTable({ rows, compact = false }: { rows: OfflineCameraRow[
   );
 }
 
-function SummaryTile({ label, value, detail, tone }: { label: string; value: string; detail: string; tone: HealthThresholdTone }) {
-  return <article className={`tech-summary-tile health-${tone}`}><span>{label}</span><strong>{value}</strong><small>{detail}</small></article>;
+function SummaryTile({ label, value, detail, tone, onClick, active = false }: { label: string; value: string; detail: string; tone: HealthThresholdTone; onClick?: () => void; active?: boolean }) {
+  const cls = `tech-summary-tile health-${tone}${onClick ? ' interactive' : ''}${active ? ' active' : ''}`;
+  if (onClick) {
+    return (
+      <button type="button" className={cls} onClick={onClick} aria-pressed={active} aria-label={`Filter table: ${label}`}>
+        <span>{label}</span><strong>{value}</strong><small>{detail}</small>
+        <span className="tech-tile-filter-hint">{active ? '✕ Clear filter' : 'Click to filter ↓'}</span>
+      </button>
+    );
+  }
+  return <article className={cls}><span>{label}</span><strong>{value}</strong><small>{detail}</small></article>;
 }
 
 function PostureCard({ title, value, tone, details, onClick }: { title: string; value: string; tone: HealthThresholdTone; details: string[]; onClick: () => void }) {
@@ -376,7 +443,7 @@ function UnhealthyStoreTable({ stores }: { stores: StoreCameraHealth[] }) {
 
 function ProfileWarningsTable({ rows }: { rows: ProfileWarningEntry[] }) {
   if (rows.length === 0) return <p className="tech-empty">No profile warnings in current scope.</p>;
-  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Camera</th><th>Recorder Assigned</th><th>Severity</th><th>Warning</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong><small>{row.storeName}</small></td><td>{row.cameraName}</td><td>{row.recorderAssigned}</td><td><StatusPill label={row.severity.toUpperCase()} tone={row.severity === 'High' ? 'watch' : 'stable'} /></td><td>{row.warningType}</td></tr>)}</tbody></table></div>;
+  return <div className="tech-table-wrap"><table className="tech-table"><thead><tr><th>Store</th><th>Camera</th><th>Recorder Assigned</th><th>Severity</th><th>Warning</th></tr></thead><tbody>{rows.map((row) => <tr key={`${row.storeNumber}-${row.cameraName}`}><td><strong>{row.storeNumber}</strong><small>{row.storeName}</small></td><td>{row.cameraName}</td><td>{row.recorderAssigned}</td><td><StatusPill label="WARNING" tone="stable" /></td><td>{row.warningType}</td></tr>)}</tbody></table></div>;
 }
 
 function NetworkPlacementFlagsTable({ rows }: { rows: NetworkPlacementFlagEntry[] }) {
