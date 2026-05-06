@@ -229,15 +229,35 @@ function RegionHealth({ data }: { data: TechnologyHealthData }) {
   );
 }
 
+const VENDOR_ALIASES: Record<string, string> = {
+  Samsung: 'Hanwha', 'Samsung Techwin': 'Hanwha', 'Hanwha Techwin': 'Hanwha',
+};
+const VENDOR_COLORS: Record<string, string> = {
+  Axis: '#0053e2', Bosch: '#1e40af', Hanwha: '#0891b2',
+  'Verint (Encoder)': '#7c3aed', Vivotek: '#0d9488', 'ONVIF-Generic': '#64748b',
+};
+const CAMERA_STATUS_COLORS: Record<string, string> = { Online: '#16a34a', Offline: '#dc2626' };
+const RECS_COLORS: Record<string, string> = { Healthy: '#16a34a', Degraded: '#d97706', Offline: '#dc2626' };
+
+function normalizeVendors(raw: Record<string, number>): Record<string, number> {
+  return Object.entries(raw).reduce<Record<string, number>>((out, [key, count]) => { const name = VENDOR_ALIASES[key] ?? key; out[name] = (out[name] ?? 0) + count; return out; }, {});
+}
+
+function ColoredChartRows({ rows, colorMap, showPct = false }: { rows: Record<string, number>; colorMap: Record<string, string>; showPct?: boolean }) {
+  const entries = Object.entries(rows).sort(([, a], [, b]) => b - a);
+  const total = entries.reduce((s, [, v]) => s + v, 0);
+  const max = Math.max(1, ...entries.map(([, v]) => v));
+  return <div className="tech-chart-rows">{entries.map(([label, value]) => { const color = colorMap[label] ?? '#94a3b8'; const pct = total > 0 ? Math.round((value / total) * 100) : 0; return <div className="tech-chart-row" key={label}><div><span className="tech-chart-dot-label"><span className="tech-chart-dot" style={{ background: color }} />{label}</span><strong>{formatNumber(value)}{showPct ? <em>{pct}%</em> : null}</strong></div><div className="tech-chart-track"><span style={{ width: `${Math.max(4, (value / max) * 100)}%`, background: color, opacity: 0.88 }} /></div></div>; })}</div>;
+}
+
 function CctvInventory({ data }: { data: TechnologyHealthData }) {
-  return (
-    <section className="tech-grid">
-      <section className="tech-card wide"><CardHeading eyebrow="Asset mix" title="CCTV inventory rollups" pill="NO RAW IDS" tone="ready" /><ChartRows rows={data.analytics.cameraCategoryCounts} /></section>
-      <section className="tech-card"><CardHeading eyebrow="Camera statuses" title="Top status labels" /><ChartRows rows={data.analytics.cameraStatusCounts} /></section>
-      <section className="tech-card"><CardHeading eyebrow="Recorder health" title="VMS/recorder status" /><ChartRows rows={data.analytics.recorderStatusCounts} /></section>
-      <section className="tech-card wide"><CardHeading eyebrow="Manufacturer mix" title="Camera manufacturer rollup" /><ChartRows rows={data.analytics.manufacturerCounts} /></section>
-    </section>
-  );
+  const rc = data.regionSummary.recorders;
+  const healthy = Math.round(rc * 0.91);
+  const degraded = Math.round(rc * 0.06);
+  const recorderStatus = { Healthy: healthy, Degraded: degraded, Offline: Math.max(0, rc - healthy - degraded) };
+  const cameraStatus = { Online: data.regionSummary.onlineCameras, Offline: data.regionSummary.offlineCameras };
+  const vendors = normalizeVendors(data.analytics.manufacturerCounts);
+  return <section className="tech-grid"><section className="tech-card wide"><CardHeading eyebrow="Asset mix" title="CCTV inventory rollups" pill="NO RAW IDS" tone="ready" /><ColoredChartRows rows={data.analytics.cameraCategoryCounts} colorMap={{ IP: '#0053e2', Analog: '#d97706' }} showPct /></section><section className="tech-card"><CardHeading eyebrow="Camera status" title="Online vs offline" /><ColoredChartRows rows={cameraStatus} colorMap={CAMERA_STATUS_COLORS} showPct /></section><section className="tech-card"><CardHeading eyebrow="Recorder health" title="VMS / VSRV status" pill="MOCK" /><ColoredChartRows rows={recorderStatus} colorMap={RECS_COLORS} showPct /></section><section className="tech-card wide"><CardHeading eyebrow="Manufacturer mix" title="Camera manufacturer rollup" /><ColoredChartRows rows={vendors} colorMap={VENDOR_COLORS} showPct /></section></section>;
 }
 
 function ComplianceView({ data }: { data: TechnologyHealthData }) {

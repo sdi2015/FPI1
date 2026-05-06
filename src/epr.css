@@ -334,6 +334,247 @@
   color: #5b6b80;
 }
 
+
+
+/* ===== HandoffModal styles (hm-*) ========================================
+   Reuses .vb-modal / .vb-modal-card / .vb-actions for the outer chrome,
+   then layers handoff-specific layout on top. */
+.hm-card { width: min(1100px, 100%); }
+.hm-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.hm-actions { padding: 14px 24px; }
+
+.hm-section {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(169, 221, 247, 0.14);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+.hm-section h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  color: #e8f0ff;
+  letter-spacing: 0.02em;
+}
+.hm-help {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: rgba(232, 240, 255, 0.65);
+}
+.hm-help code {
+  background: rgba(255, 194, 32, 0.12);
+  color: #ffd97a;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+/* --- Message editor --- */
+.hm-textarea {
+  width: 100%;
+  min-height: 180px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #f4f8ff;
+  border: 1px solid rgba(169, 221, 247, 0.22);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font: inherit;
+  font-family: 'Consolas', 'Menlo', monospace;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+.hm-textarea:focus {
+  outline: 2px solid #ffc220;
+  outline-offset: 2px;
+}
+.hm-preview {
+  margin-top: 10px;
+}
+.hm-preview > summary {
+  cursor: pointer;
+  color: #a9ddf7;
+  font-size: 0.85rem;
+  padding: 4px 0;
+}
+.hm-preview > pre {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-size: 0.82rem;
+  color: #d8e4ff;
+  line-height: 1.55;
+}
+
+/* --- Attachments grid --- */
+.hm-attachments {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.hm-attachment {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(169, 221, 247, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.hm-attachment:hover { background: rgba(255, 255, 255, 0.07); }
+.hm-attachment--on {
+  background: rgba(0, 83, 226, 0.18);
+  border-color: rgba(169, 221, 247, 0.45);
+}
+.hm-attachment input[type="checkbox"] { accent-color: #ffc220; }
+.hm-attachment-format {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(255, 194, 32, 0.18);
+  color: #ffd97a;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.hm-attachment-label {
+  font-size: 0.85rem;
+  color: #f4f8ff;
+}
+.hm-attachment-size {
+  font-size: 0.75rem;
+  color: rgba(232, 240, 255, 0.55);
+}
+
+/* --- Recipients table --- */
+.hm-recipients,
+.hm-delivery {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+.hm-recipients th,
+.hm-delivery th {
+  text-align: left;
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(232, 240, 255, 0.55);
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(169, 221, 247, 0.18);
+}
+.hm-recipients td,
+.hm-delivery td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(169, 221, 247, 0.08);
+  color: #f4f8ff;
+  vertical-align: middle;
+}
+.hm-recipients td strong,
+.hm-delivery td strong { display: block; }
+.hm-recipients td small,
+.hm-delivery td small {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(232, 240, 255, 0.55);
+}
+.hm-scope {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 83, 226, 0.22);
+  color: #cfe1ff;
+  font-size: 0.74rem;
+}
+
+/* --- Channel toggle pills --- */
+.hm-channel-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 6px;
+  cursor: pointer;
+}
+.hm-channel-toggle input { display: none; }
+.hm-channel {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 221, 247, 0.28);
+  font-size: 0.74rem;
+  color: rgba(232, 240, 255, 0.65);
+  background: transparent;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.hm-channel-toggle.on .hm-channel {
+  background: #0053e2;       /* walmart blue.100 */
+  color: #ffffff;
+  border-color: #0053e2;
+}
+.hm-channel-toggle:hover .hm-channel {
+  border-color: #ffc220;
+}
+
+/* --- Delivery confirmation phase --- */
+.hm-confirm-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.hm-confirm-head code {
+  background: rgba(255, 194, 32, 0.16);
+  color: #ffd97a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+.hm-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #ffc220;
+  border-radius: 50%;
+  animation: hmSpin 700ms linear infinite;
+  margin-top: 6px;
+}
+@keyframes hmSpin { to { transform: rotate(360deg); } }
+
+.hm-delivery-cell { text-align: center; }
+.hm-pip {
+  display: inline-block;
+  min-width: 28px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.hm-pip--pending   { color: rgba(255, 255, 255, 0.35); animation: hmPulse 1.2s ease-in-out infinite; }
+.hm-pip--sent      { color: #a9ddf7; }
+.hm-pip--delivered { color: #2a8703; }   /* walmart green.100 */
+.hm-pip--read      { color: #54a8ff; }
+.hm-skip { color: rgba(255, 255, 255, 0.18); }
+@keyframes hmPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+.hm-sent-banner {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(42, 135, 3, 0.18);
+  border: 1px solid rgba(42, 135, 3, 0.5);
+  border-radius: 8px;
+  color: #d4f5c2;
+  font-size: 0.86rem;
+}
+
 /* ===== PRINT / Save-as-PDF stylesheet =====
    Strategy: handleSaveAsPdf() clones the .vb-email into a fresh
    top-level <div id="vb-print-host"> appended to <body>, then adds the

@@ -101,10 +101,14 @@ button.tech-kpi:hover, button.tech-kpi:focus-visible { transform: translateY(-3p
 .tech-record { padding: 11px; border: 1px solid #e2e8f0; border-radius: 14px; background: #f8fafc; }
 .tech-record strong { display: block; color: #0f172a; line-height: 1.25; }
 .tech-record span, .tech-record small { display: block; margin-top: 4px; font-size: 0.8rem; }
-.tech-chart-rows { display: grid; gap: 10px; }
-.tech-chart-row > div:first-child { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 5px; color: #475569; font-size: 0.82rem; }
-.tech-chart-track { height: 10px; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
-.tech-chart-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #0053e2, #4dbdf5); }
+.tech-chart-rows { display: grid; gap: 12px; }
+.tech-chart-row > div:first-child { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; color: #475569; font-size: 0.82rem; }
+.tech-chart-row strong { display: flex; align-items: center; gap: 6px; color: #0f172a; font-size: 0.88rem; white-space: nowrap; }
+.tech-chart-row strong em { font-style: normal; font-size: 0.72rem; font-weight: 600; color: #94a3b8; letter-spacing: 0.03em; }
+.tech-chart-dot-label { display: flex; align-items: center; gap: 7px; }
+.tech-chart-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tech-chart-track { height: 12px; overflow: hidden; border-radius: 999px; background: #f1f5f9; }
+.tech-chart-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #0053e2, #4dbdf5); transition: width 400ms ease; }
 .tech-ordered-list, .tech-note-list { display: grid; gap: 10px; margin: 0; padding-left: 20px; }
 .tech-predictive-grid, .tech-governance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .tech-predictive-card, .tech-governance-grid article { position: relative; padding: 14px; border: 1px solid #e2e8f0; border-radius: 16px; background: #f8fafc; }

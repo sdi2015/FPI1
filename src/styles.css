@@ -271,7 +271,11 @@ h1, h2, h3, p { margin-top: 0; }
 .nav-item.active, .nav-item:hover { border-color: rgba(169,221,247,0.28); background: rgba(0,83,226,0.17); }
 .nav-item.active { box-shadow: inset 3px 0 0 var(--yellow); }
 .nav-item:hover { transform: translateX(2px); }
+<<<<<<< HEAD
 .dashboard-content { width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; overflow-y: auto; padding: clamp(12px, 1.4vw, 18px); }
+=======
+.dashboard-content { width: 100%; max-width: 1540px; padding: 20px; }
+>>>>>>> 41bd7160f4b0c9696107ceb24f058a28cb9aaab7
 .dashboard-header {
   position: relative;
   display: flex;
@@ -336,7 +340,7 @@ h1, h2, h3, p { margin-top: 0; }
 .risk-driver-item p { margin: 3px 0 0; font-size: 0.82rem; line-height: 1.35; }
 .risk-driver-count { color: var(--sky-blue); font-weight: 950; text-align: right; white-space: nowrap; }
 .executive-strip, .progress-grid, .kpi-grid, .dashboard-grid { display: grid; gap: 14px; }
-.executive-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px; }
+.executive-strip { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 14px; }
 .executive-item, .progress-card, .kpi-card, .panel {
   border: 1px solid var(--border-subtle);
   background: linear-gradient(180deg, var(--surface-panel-raised), rgba(255,255,255,0.04));
