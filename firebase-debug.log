@@ -55,3 +55,12 @@ You're about to initialize a Firebase project in this directory:
 [info] +  Wrote functions/requirements.txt 
 [info] +  Wrote functions/.gitignore 
 [info] +  Wrote functions/main.py 
+[debug] [2026-05-05T22:16:12.595Z] Running command with virtualenv: command="C:\Users\j0w16ja\OneDrive - Walmart Inc\FPI - D Team\02_Foundry_Pack\foundry_pack\02_Active_Build\FPI_202605\functions\venv\Scripts\activate.bat", args=["","&&","pip3","install","--upgrade","pip"]
+[debug] [2026-05-05T22:16:24.819Z] Running command with virtualenv: command="C:\Users\j0w16ja\OneDrive - Walmart Inc\FPI - D Team\02_Foundry_Pack\foundry_pack\02_Active_Build\FPI_202605\functions\venv\Scripts\activate.bat", args=["","&&","python.exe","-m","pip","install","-r","requirements.txt"]
+[debug] [2026-05-05T22:16:38.024Z] Error: spawn "C:\Users\j0w16ja\OneDrive - Walmart Inc\FPI - D Team\02_Foundry_Pack\foundry_pack\02_Active_Build\FPI_202605\functions\venv\Scripts\activate.bat" ENOENT
+    at notFoundError (C:\Users\j0w16ja\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\cross-spawn\lib\enoent.js:6:26)
+    at verifyENOENT (C:\Users\j0w16ja\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\cross-spawn\lib\enoent.js:40:16)
+    at cp.emit (C:\Users\j0w16ja\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\cross-spawn\lib\enoent.js:27:25)
+    at ChildProcess._handle.onexit (node:internal/child_process:294:12)
+[error] 
+[error] Error: An unexpected error has occurred.
