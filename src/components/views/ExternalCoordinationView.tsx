@@ -125,7 +125,7 @@ export function ExternalCoordinationView({ fireSites, storeScope, onChangeScopeR
 }
 
 function Overview({ data }: { data: ExternalCoordinationData }) {
-  const [items, setItems] = useState<CoordinationActionItem[]>(() => buildCoordinationItems(data));
+  const [items, setItems] = useState<CoordinationActionItem[]>(buildCoordinationItems(data));
   const [filters, setFilters] = useState<CoordinationFilters>({
     search: '',
     store: 'all',
