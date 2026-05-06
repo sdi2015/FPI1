@@ -73,15 +73,26 @@ function PolicyCard({ label, required, warn, desc, color, accent, values }: {
   const total  = applicable.length;
   const pct    = total > 0 ? Math.round((green / total) * 100) : 100;
   return (
-    <article className="ret-policy-card" style={{ borderTopColor: color, background: `linear-gradient(160deg, ${accent}55, #fff 60%)` }}>
-      <div className="ret-policy-header"><strong style={{ color }}>{label}</strong><em className="ret-policy-req">{required}d required</em></div>
-      <p className="ret-policy-desc">{desc}</p>
-      <div className="ret-policy-bar-wrap"><div className="ret-policy-bar"><span style={{ width: `${pct}%`, background: color }} /></div><span className="ret-policy-pct" style={{ color }}>{pct}%</span></div>
-      <div className="ret-policy-counts">
-        <span className="ret-count-chip" style={{ background: '#dcfce7', color: '#15803d' }}>✓ {green} compliant</span>
-        {yellow > 0 && <span className="ret-count-chip" style={{ background: '#fef9c3', color: '#92400e' }}>⚠ {yellow} warning</span>}
-        {red    > 0 && <span className="ret-count-chip" style={{ background: '#fee2e2', color: '#991b1b' }}>✕ {red} non-compliant</span>}
+    <article className="ret-policy-card">
+      {/* ── Colored header ── */}
+      <div className="ret-policy-head" style={{ background: color }}>
+        <div className="ret-policy-title-row">
+          <strong className="ret-policy-label">{label}</strong>
+          <span className="ret-policy-req-pill">{required}d required</span>
+        </div>
+        <p className="ret-policy-desc">{desc}</p>
+        <div className="ret-policy-bar-wrap">
+          <div className="ret-policy-bar"><span style={{ width: `${pct}%`, background: 'rgba(255,255,255,0.95)' }} /></div>
+          <span className="ret-policy-pct">{pct}%</span>
+        </div>
+      </div>
+      {/* ── Count chips body ── */}
+      <div className="ret-policy-body">
+        <span className="ret-count-chip" style={{ background: '#dcfce7', color: '#15803d', borderColor: '#86efac' }}>✓ {green} compliant</span>
+        {yellow > 0 && <span className="ret-count-chip" style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}>⚠ {yellow} warning</span>}
+        {red    > 0 && <span className="ret-count-chip" style={{ background: '#fee2e2', color: '#991b1b', borderColor: '#fca5a5' }}>✕ {red} non-compliant</span>}
         {total  === 0 && <span className="ret-na">No applicable stores in scope</span>}
+        <span className="ret-policy-total">{total} stores</span>
       </div>
     </article>
   );

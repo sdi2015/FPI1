@@ -921,14 +921,14 @@ canvas {
 /* ── End colored chart rows ── */
 
 /* ── Dark mode: retention view ── */
-[data-theme='dark'] .ret-policy-card { background: linear-gradient(160deg, rgba(30,41,59,0.9), rgba(15,23,42,0.7) 60%); }
+[data-theme='dark'] .ret-policy-card { box-shadow: 0 2px 12px rgba(0,0,0,0.35); }
+[data-theme='dark'] .ret-policy-body { background: #1e293b; }
 [data-theme='dark'] .ret-banner-heading h2,
 [data-theme='dark'] .ret-table-header h2 { color: #e2e8f0; }
 [data-theme='dark'] .ret-kpi small,
-[data-theme='dark'] .ret-policy-req,
-[data-theme='dark'] .ret-policy-desc,
+[data-theme='dark'] .ret-policy-total,
 [data-theme='dark'] .ret-footer-note { color: #64748b; }
-[data-theme='dark'] .ret-policy-bar { background: rgba(255,255,255,0.1); }
+[data-theme='dark'] .ret-policy-bar { background: rgba(255,255,255,0.15); }
 [data-theme='dark'] .ret-table .ret-th:hover { background: rgba(255,255,255,0.06); }
 [data-theme='dark'] .ret-table .ret-th.active { color: #60a5fa; }
 /* ── End retention dark overrides ── */

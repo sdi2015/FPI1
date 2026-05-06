@@ -69,15 +69,14 @@ type EprMitigationDraft = {
   requestedResponse: string;
 };
 
-// 'overview' (Readiness) tab intentionally hidden from the EPR sub-nav per product request.
-// The OverviewTab component below is kept intact so it can be re-enabled by adding it back to this array.
+// 'overview' (Readiness), 'tasks' (Tasks & Governance), and 'analysis' (Data Provenance) tabs
+// are intentionally hidden from the EPR sub-nav per product request.
+// The matching components below are kept intact so they can be re-enabled by adding them back to this array.
 const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'visits', label: 'Visit Planner', eyebrow: 'Travel' },
   { id: 'hotels', label: 'Hotel Intelligence', eyebrow: 'Safety' },
   { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
   { id: 'mitigation', label: 'Security Mitigation', eyebrow: 'Controls' },
-  { id: 'tasks', label: 'Tasks & Governance', eyebrow: 'Action' },
-  { id: 'analysis', label: 'Data Provenance', eyebrow: 'Admin' },
 ];
 
 const EPR_PANEL_LAYOUT_STORAGE_KEY = 'fpi-epr-panel-layout-v1';
@@ -177,8 +176,6 @@ export function ExecutiveProtectionReadinessView({
           {activeTab === 'hotels' ? <HotelIntelligenceTab data={eprData} /> : null}
           {activeTab === 'incidents' ? <IncidentRiskTab data={eprData} /> : null}
           {activeTab === 'mitigation' ? <MitigationTab data={eprData} /> : null}
-          {activeTab === 'tasks' ? <TasksGovernanceTab data={eprData} /> : null}
-          {activeTab === 'analysis' ? <SourceAnalysisTab data={eprData} /> : null}
         </>
       ) : null}
     </section>
@@ -289,22 +286,17 @@ function VisitPlannerTab({ data }: { data: EprData }) {
 }
 
 function HotelIntelligenceTab({ data }: { data: EprData }) {
-  const [cityFilter, setCityFilter] = useState('all');
-  const [preferredFilter, setPreferredFilter] = useState('all');
-  const [minimumSafety, setMinimumSafety] = useState('0');
-  const [sortBy, setSortBy] = useState('safety');
   const [selectedHotel, setSelectedHotel] = useState<EprHotel | null>(null);
   const scoring = data.hotel_intelligence.safety_scoring;
   const weights = scoring.weights && typeof scoring.weights === 'object' ? Object.entries(scoring.weights as Record<string, number>) : [];
-  const cities = Array.from(new Set(data.hotel_intelligence.hotels.map((hotel) => hotel.city))).sort();
-  const hotels = useMemo(() => {
-    const minSafety = Number(minimumSafety);
-    return [...data.hotel_intelligence.hotels]
-      .filter((hotel) => cityFilter === 'all' || hotel.city === cityFilter)
-      .filter((hotel) => preferredFilter === 'all' || (preferredFilter === 'preferred' ? hotel.walmart_preferred : !hotel.walmart_preferred))
-      .filter((hotel) => hotelSafetyScore(hotel) >= minSafety)
-      .sort((a, b) => sortBy === 'price' ? a.price_per_night - b.price_per_night : sortBy === 'rating' ? b.rating - a.rating : hotelSafetyScore(b) - hotelSafetyScore(a));
-  }, [cityFilter, data.hotel_intelligence.hotels, minimumSafety, preferredFilter, sortBy]);
+  // Filters intentionally hidden per product request — show all hotels, ranked by safety then preferred status then price.
+  const hotels = useMemo(() => [...data.hotel_intelligence.hotels].sort((a, b) => {
+    const safetyDelta = hotelSafetyScore(b) - hotelSafetyScore(a);
+    if (safetyDelta !== 0) return safetyDelta;
+    const preferredDelta = Number(b.walmart_preferred) - Number(a.walmart_preferred);
+    if (preferredDelta !== 0) return preferredDelta;
+    return a.price_per_night - b.price_per_night;
+  }), [data.hotel_intelligence.hotels]);
   const selectedDraft = selectedHotel ? createHotelDraft(selectedHotel) : null;
 
   return (
@@ -316,16 +308,12 @@ function HotelIntelligenceTab({ data }: { data: EprData }) {
           {weights.map(([label, weight]) => <div key={label}><span>{formatLabel(label)}</span><strong>{Math.round(Number(weight) * 100)}%</strong></div>)}
         </div>
       </section>
-      <section className="panel epr-hotel-controls-panel">
-        <div className="card-heading"><div><p className="eyebrow">Hotel shortlist</p><h2>Filter and rank travel safety options</h2></div><StatusPill label={`${hotels.length} MATCHES`} tone="stable" /></div>
-        <div className="epr-controls epr-hotel-controls"><select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}><option value="all">All cities</option>{cities.map((city) => <option value={city} key={city}>{city}</option>)}</select><select value={preferredFilter} onChange={(event) => setPreferredFilter(event.target.value)}><option value="all">All hotel types</option><option value="preferred">Walmart preferred</option><option value="non-preferred">Non-preferred</option></select><select value={minimumSafety} onChange={(event) => setMinimumSafety(event.target.value)}><option value="0">Any safety score</option><option value="70">Safety 70+</option><option value="80">Safety 80+</option><option value="90">Safety 90+</option></select><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="safety">Sort by safety</option><option value="price">Sort by price</option><option value="rating">Sort by rating</option></select></div>
-      </section>
-      <section className="epr-hotel-grid epr-resizable-panel" data-resizable-panel="hotel-results" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
-        {hotels.map((hotel) => <HotelCard hotel={hotel} key={hotel.hotel_id} onShortlist={setSelectedHotel} selected={selectedHotel?.hotel_id === hotel.hotel_id} />)}
-      </section>
       <section className="panel epr-hotel-draft-panel epr-resizable-panel" data-resizable-panel="hotel-draft" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Mock workflow</p><h2>Travel recommendation draft</h2></div><StatusPill label="DRAFT ONLY" tone="track" /></div>
         <HotelDraftPanel draft={selectedDraft} onClear={() => setSelectedHotel(null)} />
+      </section>
+      <section className="epr-hotel-grid epr-resizable-panel" data-resizable-panel="hotel-results" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
+        {hotels.map((hotel) => <HotelCard hotel={hotel} key={hotel.hotel_id} onShortlist={setSelectedHotel} selected={selectedHotel?.hotel_id === hotel.hotel_id} />)}
       </section>
     </section>
   );
