@@ -3,8 +3,8 @@ import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import { getScopedStoreIds, type StoreScopeState } from '../../data/storeScope';
-import { filterVendors, formatNumber, formatScore, getCapabilityOptions, getTopVendorSolutions, getVendorScoreBand, scorePercent } from '../../data/vendorIntelligenceSelectors';
-import type { ProviderReportDraft, SentryAssessmentRequest, VendorIntelligenceData, VendorSolution } from '../../data/vendorIntelligenceTypes';
+import { compareVendorRecommendations, filterVendors, formatNumber, formatScore, getCapabilityOptions, getTopVendorSolutions, getVendorScoreBand, scorePercent } from '../../data/vendorIntelligenceSelectors';
+import type { ProviderReportDraft, SentryAssessmentRequest, VendorCandidate, VendorIntelligenceData, VendorSolution } from '../../data/vendorIntelligenceTypes';
 import { useVendorIntelligenceData } from '../../data/useVendorIntelligenceData';
 
 export type VendorIntelligenceRecommendationsViewProps = {
@@ -14,6 +14,8 @@ export type VendorIntelligenceRecommendationsViewProps = {
 };
 
 type VendorTab = 'overview' | 'recommendations' | 'reports' | 'assessments' | 'directory' | 'governance';
+
+type ScoreBreakdownItem = { label: string; value: number; max: number };
 
 const tabs: Array<{ id: VendorTab; label: string; eyebrow: string }> = [
   { id: 'overview', label: 'Overview', eyebrow: 'SENTRY' },

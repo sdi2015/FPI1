@@ -3,7 +3,6 @@ import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
-import { SecurityMitigationManagerView } from './components/views/SecurityMitigationManagerView';
 import { ExternalCoordinationView } from './components/views/ExternalCoordinationView';
 import { FireSystemServiceView } from './components/views/FireSystemServiceView';
 import { NetworkDevicePostureView } from './components/views/NetworkDevicePostureView';
@@ -480,13 +479,6 @@ function DashboardShell({
               />
             ) : selectedService === SERVICE_IDS.EPR ? (
               <ExecutiveProtectionReadinessView
-                facilities={scopedProgramData.facilities}
-                fireSites={fireSites}
-                storeScope={storeScope}
-                onChangeScopeRequest={handleChangeStoreScopeRequest}
-              />
-            ) : selectedService === SERVICE_IDS.SECURITY_MITIGATION ? (
-              <SecurityMitigationManagerView
                 facilities={scopedProgramData.facilities}
                 fireSites={fireSites}
                 storeScope={storeScope}

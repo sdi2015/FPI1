@@ -2,7 +2,7 @@
  * WorkQueueView — CCTV service work queue with simulated ticket dispatch
  * NO WRITEBACK — all actions are simulated; no external system is called.
  */
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import type { CameraWorkQueueItem, TechnologyHealthData } from '../../data/technologyHealthTypes';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -94,14 +94,14 @@ function TicketModal({ draft, onClose }: { draft: TicketDraft; onClose: () => vo
 export function WorkQueueView({ data }: { data: TechnologyHealthData }) {
   const [draft, setDraft] = useState<TicketDraft | null>(null);
 
-  const fire = useCallback((item: CameraWorkQueueItem) => {
+  function fire(item: CameraWorkQueueItem) {
     const steps = buildSteps(item);
     setDraft({ item, steps, ticketId: mockTicketId(item), done: false });
     steps.forEach((_, i) => {
       setTimeout(() => setDraft(p => p && { ...p, steps: p.steps.map((s, j) => j === i ? { ...s, status: 'running' as StepStatus } : s) }), i * 750);
       setTimeout(() => setDraft(p => p && { ...p, steps: p.steps.map((s, j) => j === i ? { ...s, status: 'done' as StepStatus } : s), done: i === steps.length - 1 }), i * 750 + 580);
     });
-  }, []);
+  }
 
   return (
     <>

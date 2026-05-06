@@ -1,0 +1,144 @@
+/*
+ * FPI theme foundation.
+ * This file centralizes light/dark product tokens and maps legacy module tokens
+ * to the same palette so existing module CSS stays visually consistent.
+ */
+:root {
+  color-scheme: light;
+
+  --color-bg-app: #f5f7fb;
+  --color-bg-app-rgb: 245, 247, 251;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-rgb: 255, 255, 255;
+  --color-bg-surface-muted: #f1f5f9;
+  --color-bg-elevated: #ffffff;
+  --color-bg-elevated-rgb: 255, 255, 255;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #ffffff;
+
+  --color-border-subtle: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-brand-primary: #0071ce;
+  --color-brand-primary-hover: #005ea8;
+  --color-brand-accent: #ffc220;
+  --color-brand-command: #001e60;
+  --color-brand-sky: #a9ddf7;
+
+  --color-status-critical-bg: #fee2e2;
+  --color-status-critical-text: #991b1b;
+  --color-status-critical-border: #fecaca;
+  --color-status-warning-bg: #fef3c7;
+  --color-status-warning-text: #92400e;
+  --color-status-warning-border: #fde68a;
+  --color-status-ready-bg: #dcfce7;
+  --color-status-ready-text: #166534;
+  --color-status-ready-border: #bbf7d0;
+  --color-status-info-bg: #dbeafe;
+  --color-status-info-text: #1e40af;
+  --color-status-info-border: #bfdbfe;
+  --color-status-muted-bg: #f1f5f9;
+  --color-status-muted-text: #475569;
+  --color-status-muted-border: #cbd5e1;
+  --color-status-buildout-bg: #ede9fe;
+  --color-status-buildout-text: #5b21b6;
+  --color-status-buildout-border: #ddd6fe;
+
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 16px 42px rgba(15, 23, 42, 0.14);
+  --shadow-modal: 0 24px 80px rgba(15, 23, 42, 0.28);
+  --focus-ring: 0 0 0 3px rgba(0, 113, 206, 0.28), 0 0 0 5px rgba(255, 194, 32, 0.32);
+
+  /* Legacy aliases used throughout existing modules. */
+  --true-blue: var(--color-brand-primary);
+  --white: var(--color-text-inverse);
+  --yellow: var(--color-brand-accent);
+  --sky-blue: var(--color-brand-sky);
+  --everyday-blue: #4dbdf5;
+  --bentonville-blue: var(--color-brand-command);
+  --blue-900: var(--color-brand-command);
+
+  --surface-base: var(--color-bg-app);
+  --surface-panel: var(--color-bg-surface);
+  --surface-panel-raised: var(--color-bg-elevated);
+  --surface-panel-muted: var(--color-bg-surface-muted);
+  --border-subtle: var(--color-border-subtle);
+  --border-strong: var(--color-border-strong);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --accent-primary: var(--color-brand-primary);
+  --accent-secondary: var(--color-brand-sky);
+  --status-ready: var(--color-status-ready-text);
+  --status-watch: var(--color-status-warning-text);
+  --status-buildout: var(--color-status-buildout-text);
+  --status-critical: var(--color-status-critical-text);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg-app: #020617;
+  --color-bg-app-rgb: 2, 6, 23;
+  --color-bg-surface: #0f172a;
+  --color-bg-surface-rgb: 15, 23, 42;
+  --color-bg-surface-muted: #111827;
+  --color-bg-elevated: #1e293b;
+  --color-bg-elevated-rgb: 30, 41, 59;
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #020617;
+
+  --color-border-subtle: #1e293b;
+  --color-border-strong: #334155;
+
+  --color-brand-primary: #38bdf8;
+  --color-brand-primary-hover: #7dd3fc;
+  --color-brand-accent: #ffc220;
+  --color-brand-command: #001e60;
+  --color-brand-sky: #a9ddf7;
+
+  --color-status-critical-bg: rgba(127, 29, 29, 0.35);
+  --color-status-critical-text: #fecaca;
+  --color-status-critical-border: rgba(248, 113, 113, 0.45);
+  --color-status-warning-bg: rgba(120, 53, 15, 0.35);
+  --color-status-warning-text: #fde68a;
+  --color-status-warning-border: rgba(251, 191, 36, 0.45);
+  --color-status-ready-bg: rgba(20, 83, 45, 0.35);
+  --color-status-ready-text: #bbf7d0;
+  --color-status-ready-border: rgba(74, 222, 128, 0.45);
+  --color-status-info-bg: rgba(30, 64, 175, 0.35);
+  --color-status-info-text: #bfdbfe;
+  --color-status-info-border: rgba(96, 165, 250, 0.45);
+  --color-status-muted-bg: rgba(51, 65, 85, 0.42);
+  --color-status-muted-text: #cbd5e1;
+  --color-status-muted-border: rgba(148, 163, 184, 0.35);
+  --color-status-buildout-bg: rgba(76, 29, 149, 0.34);
+  --color-status-buildout-text: #ddd6fe;
+  --color-status-buildout-border: rgba(167, 139, 250, 0.45);
+
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 18px 54px rgba(0, 0, 0, 0.46);
+  --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 3px rgba(56, 189, 248, 0.32), 0 0 0 5px rgba(255, 194, 32, 0.3);
+
+  --white: #ffffff;
+  --surface-base: var(--color-bg-app);
+  --surface-panel: rgba(var(--color-bg-surface-rgb), 0.92);
+  --surface-panel-raised: rgba(var(--color-bg-elevated-rgb), 0.92);
+  --surface-panel-muted: rgba(169, 221, 247, 0.08);
+  --border-subtle: rgba(148, 163, 184, 0.2);
+  --border-strong: rgba(169, 221, 247, 0.34);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --status-ready: var(--color-status-ready-text);
+  --status-watch: var(--color-status-warning-text);
+  --status-buildout: var(--color-status-buildout-text);
+  --status-critical: var(--color-status-critical-text);
+}

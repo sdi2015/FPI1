@@ -62,6 +62,16 @@ export const capabilities: Capability[] = [
     owner: 'FPI Leadership',
   },
   {
+    id: 'security-mitigation',
+    title: 'Security Mitigation Manager',
+    navLabel: 'Security Mitigation',
+    eyebrow: 'Controls',
+    description: 'Score recommended security controls per store, build a deployment plan with live ROI math, and generate an install-request email to AP and FPP leadership.',
+    status: 'Ready',
+    metric: 'Plan + email',
+    owner: 'AP / FPP',
+  },
+  {
     id: 'command-center',
     title: 'Command Center',
     eyebrow: 'Operations',

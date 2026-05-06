@@ -116,28 +116,10 @@ function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
           control issues, and life-safety/device health signals requiring governance review.
         </p>
       </div>
-      <div className="hero-status-cluster" aria-label="Executive command center status">
-        <StatusClusterItem label="Current Posture" value={metrics.posture} />
-        <StatusClusterItem label="Trend" value={metrics.trend} />
-        <StatusClusterItem label="Executive Attention Required" value="Yes" />
-        <StatusClusterItem label="Highest Risk Domain" value="Remediation / Technical Controls" />
-        <div className="mode-pill" aria-label={`Mode ${metrics.dataMode}`}>
-          <span>MODE</span>
-          {metrics.dataMode}
-        </div>
-      </div>
     </header>
   );
 }
 
-function StatusClusterItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="status-cluster-item">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
 
 function LeadershipAttentionRequired({
   metrics,

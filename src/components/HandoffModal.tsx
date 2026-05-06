@@ -180,7 +180,7 @@ const StatusPip = ({ status }: { status: DeliveryStatus }) => {
 // ===========================================================================
 export function HandoffModal({ route, onClose }: Props) {
   const [phase, setPhase] = useState<Phase>('compose');
-  const [recipients, setRecipients] = useState<Recipient[]>(() => buildRoster(route));
+  const [recipients, setRecipients] = useState<Recipient[]>(buildRoster(route));
   const [attachments, setAttachments] = useState<Attachment[]>(DEFAULT_ATTACHMENTS);
   const handoffId = useMemo(
     () => `HANDOFF-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 99999)).padStart(5, '0')}`,

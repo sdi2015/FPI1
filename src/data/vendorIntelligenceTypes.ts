@@ -1,3 +1,12 @@
+export type VendorScoreBreakdown = {
+  strategicRelevance?: number;
+  maturityReadiness?: number;
+  evidenceQuality?: number;
+  capabilityCoverage?: number;
+  freshness?: number;
+  governanceRisk?: number;
+};
+
 export type VendorCandidate = {
   vendorId: string;
   company: string;
@@ -7,6 +16,10 @@ export type VendorCandidate = {
   maturityLevel: string;
   assessmentStatus: string;
   capabilityTags: string[];
+  scoreBreakdown?: VendorScoreBreakdown;
+  evidenceLevel?: string;
+  strategicFitRationale?: string;
+  dateTracked?: string;
   rationale: string;
 };
 
@@ -30,6 +43,9 @@ export type VendorSolution = {
   capabilityTags: string[];
   riskDomains: string[];
   recommendationScore: number;
+  scoreBreakdown?: VendorScoreBreakdown;
+  evidenceLevel?: string;
+  strategicFitRationale?: string;
 };
 
 export type VendorSolutionPlay = {

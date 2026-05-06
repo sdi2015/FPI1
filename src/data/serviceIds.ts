@@ -1,5 +1,6 @@
 export const SERVICE_IDS = {
   EPR: 'epr',
+  SECURITY_MITIGATION: 'security-mitigation',
   COMMAND_CENTER: 'command-center',
   FIRE_SYSTEM: 'fire-system',
   CAMERA_CONTROLS: 'camera-controls',
@@ -16,6 +17,7 @@ export type ServiceId = (typeof SERVICE_IDS)[keyof typeof SERVICE_IDS];
 
 const CAPABILITY_TO_SERVICE_ID: Record<string, ServiceId> = {
   'executive-readiness': SERVICE_IDS.EPR,
+  'security-mitigation': SERVICE_IDS.SECURITY_MITIGATION,
   'command-center': SERVICE_IDS.COMMAND_CENTER,
   'fire-system-monitoring': SERVICE_IDS.FIRE_SYSTEM,
   'camera-technical-control': SERVICE_IDS.CAMERA_CONTROLS,

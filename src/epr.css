@@ -205,7 +205,9 @@
 .vb-step h4 { margin: 0 0 6px; color: var(--yellow); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .vb-help { margin: 0 0 16px; color: var(--text-secondary); }
 .vb-airport-form { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 4px; }
-.vb-airport-input { flex: 1 1 220px; padding: 12px 14px; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white); background: rgba(255,255,255,0.06); border: 1px solid rgba(169,221,247,0.28); border-radius: var(--radius-md); }
+.vb-airport-input { flex: 1 1 220px; padding: 12px 14px; font-size: 1rem; font-weight: 600; color: var(--white); background: rgba(255,255,255,0.06); border: 1px solid rgba(169,221,247,0.28); border-radius: var(--radius-md); }
+select.vb-airport-input { appearance: auto; cursor: pointer; }
+select.vb-airport-input option { color: #111; background: #fff; }
 .vb-airport-input:focus { outline: 2px solid var(--yellow); outline-offset: 1px; }
 .vb-error { margin: 8px 0 0; padding: 10px 12px; color: #ffd0c8; background: rgba(234, 17, 0, 0.18); border: 1px solid rgba(234, 17, 0, 0.4); border-radius: var(--radius-md); font-size: 0.85rem; }
 .vb-suggestions { margin-top: 16px; color: var(--text-secondary); }
@@ -284,7 +286,36 @@
 .vb-hotel-ribbon { position: absolute; top: 10px; left: 10px; z-index: 2; padding: 4px 10px; background: var(--yellow); color: var(--bentonville-blue); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.45); pointer-events: none; }
 
 /* ===== Visit Brief Email composition ===== */
-.vb-email { margin: 8px 0 16px; background: #f6f7fb; color: #1c2a3d; border: 1px solid rgba(255,255,255,0.18); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+.vb-email { margin: 8px 0 16px; background: #f6f7fb; color: #1c2a3d; border: 1px solid rgba(255,255,255,0.18); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.35); font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif; }
+.vb-email--branded { max-width: 720px; margin-left: auto; margin-right: auto; }
+
+/* Walmart-branded banner across the very top of the email */
+.vb-brand-banner { background: linear-gradient(135deg, #0053e2 0%, #0a3aa6 60%, #001b58 100%); color: #ffffff; }
+.vb-brand-banner-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; }
+.vb-brand-mark { display: flex; align-items: center; gap: 14px; }
+.vb-brand-spark { width: 36px; height: 36px; flex-shrink: 0; }
+.vb-brand-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+.vb-brand-wordmark-name { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.01em; color: #ffffff; }
+.vb-brand-wordmark-sub { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.78); margin-top: 2px; }
+.vb-brand-meta { text-align: right; display: flex; flex-direction: column; gap: 2px; }
+.vb-brand-meta-label { font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: #ffc220; font-weight: 700; }
+.vb-brand-meta-value { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+.vb-brand-stripe { height: 4px; background: linear-gradient(90deg, #ffc220 0%, #ffd863 50%, #ffc220 100%); }
+@media (max-width: 600px) {
+  .vb-brand-banner-inner { flex-direction: column; align-items: flex-start; }
+  .vb-brand-meta { text-align: left; }
+}
+
+/* Classification ribbon */
+.vb-email-classification { display: flex; align-items: center; gap: 8px; padding: 8px 18px; background: #fff8e1; color: #6b4d00; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; border-bottom: 1px solid #ffe7a0; }
+.vb-classification-dot { width: 8px; height: 8px; border-radius: 50%; background: #ea1100; box-shadow: 0 0 0 3px rgba(234,17,0,0.18); flex-shrink: 0; }
+
+/* Hero section between headers and body */
+.vb-email-hero { padding: 22px 22px 18px; background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%); border-bottom: 1px solid #e3e6ed; }
+.vb-email-hero-eyebrow { margin: 0 0 6px !important; color: #0053e2 !important; font-size: 0.72rem !important; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 800; }
+.vb-email-hero-title { margin: 0 0 6px !important; color: #001b58 !important; font-size: 1.55rem !important; font-weight: 800; letter-spacing: -0.01em; }
+.vb-email-hero-meta { margin: 0 !important; color: #4b5563 !important; font-size: 0.85rem; }
+
 .vb-email-headers { padding: 14px 18px; background: #ffffff; border-bottom: 1px solid #e3e6ed; display: grid; gap: 4px; font-size: 0.85rem; }
 .vb-email-headers > div { display: grid; grid-template-columns: 80px 1fr; gap: 8px; align-items: baseline; }
 .vb-email-label { color: #6b7280; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em; }
@@ -295,8 +326,11 @@
 .vb-email-h { margin: 18px 0 8px; padding-bottom: 6px; color: #001b58 !important; font-size: 0.78rem !important; letter-spacing: 0.12em !important; text-transform: uppercase; border-bottom: 2px solid #ffc220; font-weight: 800; }
 .vb-email-ul { margin: 0 0 12px; padding-left: 18px; color: #1c2a3d; }
 .vb-email-ul li { margin: 3px 0; }
-.vb-email-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 8px 0 18px; padding: 12px; background: #fff8e1; border: 1px solid #ffe7a0; border-radius: 8px; }
-.vb-email-summary > div { display: grid; gap: 2px; }
+.vb-email-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 10px 0 18px; padding: 0; background: transparent; border: 0; border-radius: 0; }
+.vb-email-summary > div { display: grid; gap: 4px; padding: 14px 14px 12px; background: #ffffff; border: 1px solid #e3e6ed; border-top: 3px solid #0053e2; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,27,88,0.04); }
+.vb-email-summary > div:nth-child(2) { border-top-color: #ffc220; }
+.vb-email-summary > div:nth-child(3) { border-top-color: #ea1100; }
+.vb-email-summary > div:nth-child(4) { border-top-color: #995213; }
 .vb-email-summary span { color: #6b7280; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .vb-email-summary strong { color: #001b58; font-size: 1.4rem; font-weight: 800; }
 .vb-email-hotel { display: grid; grid-template-columns: 160px 1fr; gap: 14px; align-items: center; margin: 0 0 14px; padding: 10px; background: #ffffff; border: 1px solid #e3e6ed; border-radius: 8px; }
@@ -305,7 +339,18 @@
 .vb-email-hotel-photo .vb-hotel-img { min-height: 110px; }
 .vb-email-hotel-name { margin: 0 0 2px !important; color: #001b58 !important; font-weight: 800; }
 .vb-email-hotel-meta { margin: 0 !important; color: #4b5563 !important; font-size: 0.82rem; }
-.vb-email-signoff { margin-top: 18px !important; padding-top: 14px; border-top: 1px solid #e3e6ed; color: #4b5563 !important; }
+.vb-email-signoff { margin-top: 18px !important; padding-top: 14px; border-top: 1px solid #e3e6ed; color: #1c2a3d !important; font-size: 0.9rem; }
+.vb-email-signoff strong { color: #001b58; }
+.vb-email-signoff-meta { color: #6b7280; font-size: 0.78rem; }
+
+/* Walmart-branded footer band */
+.vb-email-footer { background: linear-gradient(180deg, #001b58 0%, #000d33 100%); color: #cfd8ec; padding: 20px 22px 18px; border-top: 4px solid #ffc220; }
+.vb-email-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 14px; }
+@media (max-width: 600px) { .vb-email-footer-grid { grid-template-columns: 1fr; } }
+.vb-email-footer-h { margin: 0 0 6px !important; color: #ffc220 !important; font-size: 0.7rem !important; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 800; }
+.vb-email-footer-line { margin: 2px 0 !important; color: #cfd8ec !important; font-size: 0.82rem; }
+.vb-email-footer-line strong { color: #ffffff; }
+.vb-email-footer-fine { margin: 0 !important; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); color: #8fa1c7 !important; font-size: 0.7rem !important; line-height: 1.5; }
 .vb-email-sent { margin: -4px 0 12px; padding: 10px 14px; background: rgba(42,135,3,0.16); border: 1px solid rgba(42,135,3,0.45); color: #b8eea1; border-radius: var(--radius-md); font-size: 0.88rem; }
 
 /* ===== Per-store risk briefing block (inside email) ===== */

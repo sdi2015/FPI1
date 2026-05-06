@@ -60,12 +60,11 @@ type EprHotelDraft = {
 
 // 'overview' (Readiness), 'tasks' (Tasks & Governance), and 'analysis' (Data Provenance) tabs
 // are intentionally hidden from the EPR sub-nav per product request.
-// The matching components below are kept intact so they can be re-enabled by adding them back to this array.
+// Tabs for the EPR workspace. Security Mitigation is now a top-level module — don't re-add it here.
+// Hotel Intelligence and Incident Risk are hidden for now — their tab components are kept intact below
+// so they can be re-enabled by adding them back to this array.
 const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'visits', label: 'Visit Planner', eyebrow: 'Travel' },
-  { id: 'hotels', label: 'Hotel Intelligence', eyebrow: 'Safety' },
-  { id: 'mitigation', label: 'Security Mitigation', eyebrow: 'Controls' },
-  { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
 ];
 
 const EPR_PANEL_LAYOUT_STORAGE_KEY = 'fpi-epr-panel-layout-v1';
@@ -164,7 +163,6 @@ export function ExecutiveProtectionReadinessView({
           {activeTab === 'visits' ? <VisitPlannerTab data={eprData} /> : null}
           {activeTab === 'hotels' ? <HotelIntelligenceTab data={eprData} /> : null}
           {activeTab === 'incidents' ? <IncidentRiskTab data={eprData} /> : null}
-          {activeTab === 'mitigation' ? <MitigationTab data={eprData} allStores={eprState.data?.field_operations.facilities ?? eprData.field_operations.facilities} /> : null}
         </>
       ) : null}
     </section>
@@ -349,12 +347,12 @@ function IncidentRiskTab({ data }: { data: EprData }) {
   );
 }
 
-function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacility[] }) {
+export function MitigationTab({ data, allStores }: { data: EprData; allStores: EprFacility[] }) {
   const [storeFilter, setStoreFilter] = useState('all');
   // User-built deployment plan. Recommendations are advisory — the plan is what drives the KPI math + email request.
-  const [planSolutionIds, setPlanSolutionIds] = useState<ReadonlySet<number>>(() => new Set());
+  const [planSolutionIds, setPlanSolutionIds] = useState<ReadonlySet<number>>(new Set<number>());
   // Reset the plan when the store changes so each store starts clean.
-  useEffect(() => { setPlanSolutionIds(new Set()); }, [storeFilter]);
+  useEffect(() => { setPlanSolutionIds(new Set<number>()); }, [storeFilter]);
   const togglePlanSolution = (solution: EprSecuritySolution) => setPlanSolutionIds((current) => {
     const next = new Set(current);
     if (next.has(solution.id)) next.delete(solution.id); else next.add(solution.id);
