@@ -5,7 +5,7 @@ import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
 import { applyTechnologyHealthScope } from '../../data/technologyHealthScope';
-import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, storeHasOffline, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
+import { formatDate, formatNumber, formatPercent, getCameraTechnologyIssues, getHealthyStores, getOfflineCameraStores, getUnhealthyStores, healthLabelForPercent, healthToneForPercent, percent, sortStoresByTechnicalRisk, storeHasOffline, storeOfflineTotal, type HealthThresholdTone } from '../../data/technologyHealthSelectors';
 import type { NetworkPlacementFlagEntry, ProfileWarningEntry, StoreCameraHealth, TechnologyHealthData } from '../../data/technologyHealthTypes';
 import { useCameraWarrantyData } from '../../data/useCameraWarrantyData';
 import { useTechnologyHealthData } from '../../data/useTechnologyHealthData';
@@ -513,7 +513,7 @@ function buildOfflineCameraRows(data: TechnologyHealthData): OfflineCameraRow[] 
   }
 
   return getOfflineCameraStores(data.storeHealth).flatMap((store, storeIndex) => {
-    const rowCount = Math.min(Math.max(store.offlineCameras, 1), 3);
+    const rowCount = Math.min(Math.max(storeOfflineTotal(store), 1), 3);
     return Array.from({ length: rowCount }, (_, cameraIndex) => {
       const storeNumber = formatStoreNumber(store.siteAlias, storeIndex);
       return {
@@ -525,7 +525,7 @@ function buildOfflineCameraRows(data: TechnologyHealthData): OfflineCameraRow[] 
         lastSeen: formatDate(store.lastScan),
         cameraType: 'IP',
         recorderName: recorderNameForStore(storeNumber, cameraIndex),
-        reason: store.scanError ?? `${formatNumber(store.offlineCameras)} offline cameras · ${formatNumber(store.issueCameraCount)} issue cameras`,
+        reason: store.scanError ?? `${formatNumber(storeOfflineTotal(store))} offline cameras · ${formatNumber(store.issueCameraCount)} issue cameras`,
       };
     });
   });

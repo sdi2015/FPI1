@@ -7,6 +7,14 @@ import { applyEprScope } from '../../data/eprScope';
 import { useEprData } from '../../data/useEprData';
 import { RouteMap } from '../RouteMap';
 import { VisitBriefWizard } from '../VisitBriefWizard';
+import { HandoffModal } from '../HandoffModal';
+import {
+  exportRouteCsv,
+  exportRouteGpx,
+  exportRouteIcs,
+  exportRouteJson,
+  triggerDownload,
+} from '../../data/routeExporters';
 
 export type ExecutiveProtectionReadinessViewProps = {
   facilities: FpiFacility[];
@@ -236,6 +244,7 @@ function VisitPlannerTab({ data }: { data: EprData }) {
   const [riskFilter, setRiskFilter] = useState('all');
   const [selectedRouteIds, setSelectedRouteIds] = useState<number[]>([]);
   const [briefOpen, setBriefOpen] = useState(false);
+  const [handoffOpen, setHandoffOpen] = useState(false);
   const facilities = useMemo(() => {
     const term = search.trim().toLowerCase();
     return [...data.visit_planner.route_facilities]
@@ -257,7 +266,7 @@ function VisitPlannerTab({ data }: { data: EprData }) {
       <section className="panel epr-route-panel epr-resizable-panel" data-resizable-panel="visit-draft-route" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
         <div className="card-heading"><div><p className="eyebrow">Draft route</p><h2>Selected visit route and handoff summary</h2></div><StatusPill label="MOCK ONLY" tone="track" /></div>
         {selectedRoute.length === 0 ? <p className="epr-empty-state">No facilities selected yet. Add facilities from the route queue to build a draft visit route.</p> : <div className="epr-route-body"><RouteMap facilities={selectedRoute} /><div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div></div>}
-        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Create Visit Brief</button><button className="epr-action-button" type="button" disabled>Export Route — Coming Soon</button><button className="epr-action-button secondary" type="button" disabled>Send Handoff — Mock Only</button></div>
+        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Create Visit Brief</button><details className="epr-export-menu"><summary className="epr-action-button" aria-disabled={selectedRoute.length === 0} role="button">Export Route ▾</summary><div className="epr-export-menu-list" role="menu"><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteCsv(selectedRoute)); }}><strong>Spreadsheet (CSV)</strong><span>One row per stop · Excel-friendly</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteGpx(selectedRoute)); }}><strong>GPS route (GPX)</strong><span>Import into Google Maps / Garmin / Apple Maps</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteIcs(selectedRoute)); }}><strong>Calendar invites (ICS)</strong><span>One event per stop · Outlook / Google Cal</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteJson(selectedRoute)); }}><strong>Raw data (JSON)</strong><span>For dashboards / API consumers</span></button></div></details><button className="epr-action-button secondary" type="button" disabled={selectedRoute.length === 0} onClick={() => setHandoffOpen(true)}>Send Handoff (mock)</button></div>
         <p className="epr-disclaimer">Draft only — no calendar export, notification, booking, or production workflow is triggered.</p>
       </section>
       {briefOpen && (
@@ -267,6 +276,12 @@ function VisitPlannerTab({ data }: { data: EprData }) {
           incidents={data.incident_intelligence.recent_incident_sample}
           tasks={data.tasks_governance.tasks}
           onClose={() => setBriefOpen(false)}
+        />
+      )}
+      {handoffOpen && (
+        <HandoffModal
+          route={selectedRoute}
+          onClose={() => setHandoffOpen(false)}
         />
       )}
     </section>
