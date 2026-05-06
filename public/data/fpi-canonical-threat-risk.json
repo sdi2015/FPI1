@@ -11,7 +11,7 @@
       "security_technology.csv",
       "region_75_incidents (2).csv"
     ],
-    "governanceNote": "Risk score supports prioritization and does not replace formal threat assessment, law enforcement guidance, or corporate security judgment."
+    "governanceNote": "Risk Intelligence supports prioritization and collaboration. It does not replace formal investigation, associate relations review, legal review, law-enforcement guidance, or corporate security judgment."
   },
   "summary": {
     "facilities": 12,
@@ -24,38 +24,38 @@
   },
   "sources": [
     {
-      "sourceId": "srm-placeholder",
-      "sourceName": "SRM",
+      "sourceId": "incident-intelligence-intake",
+      "sourceName": "Incident Intelligence Intake",
       "sourceType": "Internal System",
       "integrationStatus": "Adapter Planned",
       "freshnessStatus": "Unknown",
       "confidence": "Reference",
       "recordsLoaded": 0,
-      "notes": "Reserved seam for security/risk/case management signals once approved access or exports exist."
+      "notes": "Planned intake for approved incident, risk, and case-management signals once access, retention, and export controls are approved."
     },
     {
-      "sourceId": "fpp-placeholder",
-      "sourceName": "FPP",
+      "sourceId": "protection-program-intake",
+      "sourceName": "Protection Program Intake",
       "sourceType": "Walmart Program",
       "integrationStatus": "Adapter Planned",
       "freshnessStatus": "Unknown",
       "confidence": "Reference",
       "recordsLoaded": 0,
-      "notes": "Reserved seam for facility protection profiles and control maturity scoring."
+      "notes": "Planned intake for FPI facility protection profiles, control maturity, and field context scoring."
     },
     {
       "sourceId": "incident-csv",
-      "sourceName": "Region 75 incident CSV",
+      "sourceName": "Incident Tracker Intelligence",
       "sourceType": "Manual Upload",
       "integrationStatus": "Loaded",
       "freshnessStatus": "Current",
       "confidence": "Medium",
       "recordsLoaded": 56,
-      "notes": "Used for threat signal and incident pattern detection in this demo."
+      "notes": "Used for incident pattern detection and proactive facility risk signals in this demo."
     },
     {
       "sourceId": "canonical-technology",
-      "sourceName": "Technology Health",
+      "sourceName": "Security Technology Health",
       "sourceType": "Internal System",
       "integrationStatus": "Loaded",
       "freshnessStatus": "Current",
@@ -390,7 +390,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -413,7 +413,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -436,7 +436,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -459,7 +459,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -482,7 +482,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -505,7 +505,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -528,7 +528,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [
@@ -551,7 +551,7 @@
       "riskContribution": 8,
       "sourceIds": [
         "remediation-task-csv",
-        "fpp-placeholder"
+        "protection-program-intake"
       ],
       "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
       "bestPracticeRefs": [

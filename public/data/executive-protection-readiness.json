@@ -419,8 +419,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 278.0,
         "risk_score": 55.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 29.798,
+        "longitude": -95.4716,
+        "city": "Houston",
+        "state": "TX"
       },
       {
         "facility_id": 8642,
@@ -433,8 +435,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 135.0,
         "risk_score": 70.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 39.782,
+        "longitude": -104.8736,
+        "city": "Denver",
+        "state": "CO"
       },
       {
         "facility_id": 5678,
@@ -447,8 +451,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 234.0,
         "risk_score": 25.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 32.8121,
+        "longitude": -96.8505,
+        "city": "Dallas",
+        "state": "TX"
       },
       {
         "facility_id": 7890,
@@ -461,8 +467,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 69.66666666666667,
         "risk_score": 75.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 33.5237,
+        "longitude": -112.0944,
+        "city": "Phoenix",
+        "state": "AZ"
       },
       {
         "facility_id": 1234,
@@ -475,8 +483,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 70.0,
         "risk_score": 35.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 32.7668,
+        "longitude": -96.6063,
+        "city": "Mesquite",
+        "state": "TX"
       },
       {
         "facility_id": 9753,
@@ -489,8 +499,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 94.5,
         "risk_score": 40.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 41.7484,
+        "longitude": -87.7973,
+        "city": "Burbank",
+        "state": "IL"
       },
       {
         "facility_id": 5432,
@@ -503,8 +515,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 49.0,
         "risk_score": 0.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 41.7508,
+        "longitude": -88.1503,
+        "city": "Naperville",
+        "state": "IL"
       }
     ],
     "markets": [
@@ -615,8 +629,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 278.0,
         "risk_score": 55.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 29.798,
+        "longitude": -95.4716,
+        "city": "Houston",
+        "state": "TX"
       },
       {
         "facility_id": 8642,
@@ -629,8 +645,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 135.0,
         "risk_score": 70.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 39.782,
+        "longitude": -104.8736,
+        "city": "Denver",
+        "state": "CO"
       },
       {
         "facility_id": 5678,
@@ -643,8 +661,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 234.0,
         "risk_score": 25.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 32.8121,
+        "longitude": -96.8505,
+        "city": "Dallas",
+        "state": "TX"
       },
       {
         "facility_id": 7890,
@@ -657,8 +677,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 69.66666666666667,
         "risk_score": 75.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 33.5237,
+        "longitude": -112.0944,
+        "city": "Phoenix",
+        "state": "AZ"
       },
       {
         "facility_id": 1234,
@@ -671,8 +693,10 @@
         "critical_task_count": 1,
         "avg_remediation_hours": 70.0,
         "risk_score": 35.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 32.7668,
+        "longitude": -96.6063,
+        "city": "Mesquite",
+        "state": "TX"
       },
       {
         "facility_id": 9753,
@@ -685,8 +709,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 94.5,
         "risk_score": 40.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 41.7484,
+        "longitude": -87.7973,
+        "city": "Burbank",
+        "state": "IL"
       },
       {
         "facility_id": 5432,
@@ -699,8 +725,10 @@
         "critical_task_count": 0,
         "avg_remediation_hours": 49.0,
         "risk_score": 0.0,
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 41.7508,
+        "longitude": -88.1503,
+        "city": "Naperville",
+        "state": "IL"
       }
     ],
     "nearby_facilities": [
@@ -1269,7 +1297,7 @@
         "incident_time": "08:23:00",
         "incident_type": "Bomb Threat",
         "severity": 1,
-        "description": "Update (4/25/26, 10:07 AM CDT): Law enforcement was able to place the subject into custody and gave the all clear. Business operations resumed after approximately one and half hours. Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "description": "Update (4/25/26, 10:07 AM CDT): Law enforcement was able to place the subject into custody and gave the all clear. Business operations resumed after approximately one and half hours. Management reported that an unknown individual locked themselves in the mother’s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
         "city": "BALTIMORE",
         "state": "MD",
         "region": 75,
@@ -1283,7 +1311,7 @@
         "incident_time": "08:23:00",
         "incident_type": "Bomb Threat",
         "severity": 1,
-        "description": "Management reported that an unknown individual locked themselves in the mother\u2019s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
+        "description": "Management reported that an unknown individual locked themselves in the mother’s room claiming to have a bomb and the facility is evacuating. Law enforcement is on scene investigating. No injuries were reported and all associates are accounted for.",
         "city": "BALTIMORE",
         "state": "MD",
         "region": 75,

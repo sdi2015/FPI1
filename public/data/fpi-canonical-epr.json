@@ -4,7 +4,9 @@
     "data_environment": "canonical_demo",
     "classification": "Walmart Internal / Synthetic Demo",
     "analysis_status": "Canonical EPR package generated from shared facility_id data.",
-    "file_count_analyzed": 8
+    "file_count_analyzed": 8,
+    "region_scope": "Walmart Region 75 (Mid-Atlantic)",
+    "region_code": 75
   },
   "executive_summary": {
     "modules": [
@@ -35,11 +37,11 @@
       {
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Norfolk",
+        "state": "VA",
         "address": "3420 Custer Rd, Plano, TX 75023",
         "banner": "Supercenter",
         "open_task_count": 8,
@@ -49,17 +51,18 @@
         "risk_score": 100,
         "risk_tier": "Critical",
         "data_mode": "canonical_demo",
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 36.8508,
+        "longitude": -76.2859,
+        "region_code": 75
       },
       {
         "facility_id": 2941,
         "facility_name": "Store #2941",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Portsmouth (M288)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Portsmouth",
+        "state": "VA",
         "address": "4000 W Wheatland Rd, Dallas, TX 75237",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -69,17 +72,18 @@
         "risk_score": 22.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.927200000000006,
-        "longitude": -77.0569
+        "latitude": 36.8354,
+        "longitude": -76.2983,
+        "region_code": 75
       },
       {
         "facility_id": 3156,
         "facility_name": "Store #3156",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Colonial Heights (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Colonial Heights",
+        "state": "VA",
         "address": "8801 Walnut Hill Ln, Dallas, TX 75231",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -89,17 +93,18 @@
         "risk_score": 6.8,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.9472,
-        "longitude": -77.07690000000001
+        "latitude": 37.2649,
+        "longitude": -77.4108,
+        "region_code": 75
       },
       {
         "facility_id": 1823,
         "facility_name": "Store #1823",
-        "market": "Houston",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Houston",
-        "state": "TX",
+        "market": "Nottingham (M281)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Nottingham",
+        "state": "MD",
         "address": "5455 W Loop S, Bellaire, TX 77401",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -109,17 +114,18 @@
         "risk_score": 18.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.967200000000005,
-        "longitude": -77.0969
+        "latitude": 39.4012,
+        "longitude": -76.4661,
+        "region_code": 75
       },
       {
         "facility_id": 4567,
         "facility_name": "Store #4567",
-        "market": "Houston",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Houston",
-        "state": "TX",
+        "market": "Midlothian (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Midlothian",
+        "state": "VA",
         "address": "14833 Woodforest Blvd, Houston, TX 77530",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -129,17 +135,18 @@
         "risk_score": 48.0,
         "risk_tier": "Medium",
         "data_mode": "canonical_demo",
-        "latitude": 38.9872,
-        "longitude": -77.1169
+        "latitude": 37.5076,
+        "longitude": -77.6588,
+        "region_code": 75
       },
       {
         "facility_id": 3421,
         "facility_name": "Store #3421",
-        "market": "Phoenix",
-        "region": "West",
-        "division": "Div 2",
-        "city": "Phoenix",
-        "state": "AZ",
+        "market": "Bedford (M314)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Bedford",
+        "state": "VA",
         "address": "200 W Baseline Rd, Tempe, AZ 85283",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -149,17 +156,18 @@
         "risk_score": 18.1,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.007200000000005,
-        "longitude": -77.1369
+        "latitude": 37.3346,
+        "longitude": -79.5237,
+        "region_code": 75
       },
       {
         "facility_id": 2789,
         "facility_name": "Store #2789",
-        "market": "Phoenix",
-        "region": "West",
-        "division": "Div 2",
-        "city": "Phoenix",
-        "state": "AZ",
+        "market": "Baltimore (M282)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Baltimore",
+        "state": "MD",
         "address": "1130 N 51st Ave, Phoenix, AZ 85043",
         "banner": "Supercenter",
         "open_task_count": 3,
@@ -169,17 +177,18 @@
         "risk_score": 52.1,
         "risk_tier": "Medium",
         "data_mode": "canonical_demo",
-        "latitude": 39.0272,
-        "longitude": -77.15690000000001
+        "latitude": 39.2904,
+        "longitude": -76.6122,
+        "region_code": 75
       },
       {
         "facility_id": 1245,
         "facility_name": "Store #1245",
-        "market": "Atlanta",
-        "region": "Southeast",
-        "division": "Div 3",
-        "city": "Atlanta",
-        "state": "GA",
+        "market": "Emporia (M314)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Emporia",
+        "state": "VA",
         "address": "4166 Jonesboro Rd, Union City, GA 30291",
         "banner": "Supercenter",
         "open_task_count": 0,
@@ -189,17 +198,18 @@
         "risk_score": 0.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.047200000000004,
-        "longitude": -77.1769
+        "latitude": 36.6857,
+        "longitude": -77.5425,
+        "region_code": 75
       },
       {
         "facility_id": 3891,
         "facility_name": "Store #3891",
-        "market": "Atlanta",
-        "region": "Southeast",
-        "division": "Div 3",
-        "city": "Atlanta",
-        "state": "GA",
+        "market": "Roanoke (M312)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Roanoke",
+        "state": "VA",
         "address": "835 Martin Luther King Jr Dr NW, Atlanta, GA 30314",
         "banner": "Supercenter",
         "open_task_count": 0,
@@ -209,17 +219,18 @@
         "risk_score": 1.7,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.0672,
-        "longitude": -77.1969
+        "latitude": 37.271,
+        "longitude": -79.9414,
+        "region_code": 75
       },
       {
         "facility_id": 4123,
         "facility_name": "Store #4123",
-        "market": "Denver",
-        "region": "Mountain",
-        "division": "Div 4",
-        "city": "Denver",
-        "state": "CO",
+        "market": "Arbutus (M293)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Arbutus",
+        "state": "MD",
         "address": "2770 W Evans Ave, Denver, CO 80219",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -229,17 +240,18 @@
         "risk_score": 36.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.0872,
-        "longitude": -77.21690000000001
+        "latitude": 39.254,
+        "longitude": -76.6975,
+        "region_code": 75
       },
       {
         "facility_id": 2567,
         "facility_name": "Store #2567",
-        "market": "Chicago",
-        "region": "Midwest",
-        "division": "Div 5",
-        "city": "Chicago",
-        "state": "IL",
+        "market": "Cockeysville (M281)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Cockeysville",
+        "state": "MD",
         "address": "7050 S Ashland Ave, Chicago, IL 60636",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -249,17 +261,18 @@
         "risk_score": 4.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.107200000000006,
-        "longitude": -77.2369
+        "latitude": 39.4843,
+        "longitude": -76.6438,
+        "region_code": 75
       },
       {
         "facility_id": 3789,
         "facility_name": "Store #3789",
-        "market": "Chicago",
-        "region": "Midwest",
-        "division": "Div 5",
-        "city": "Chicago",
-        "state": "IL",
+        "market": "Richmond (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Richmond",
+        "state": "VA",
         "address": "7535 S Kingery Hwy, Willowbrook, IL 60527",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -269,8 +282,9 @@
         "risk_score": 12.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.1272,
-        "longitude": -77.2569
+        "latitude": 37.5407,
+        "longitude": -77.436,
+        "region_code": 75
       }
     ],
     "markets": [],
@@ -330,11 +344,11 @@
       {
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Norfolk",
+        "state": "VA",
         "address": "3420 Custer Rd, Plano, TX 75023",
         "banner": "Supercenter",
         "open_task_count": 8,
@@ -344,17 +358,18 @@
         "risk_score": 100,
         "risk_tier": "Critical",
         "data_mode": "canonical_demo",
-        "latitude": 38.9072,
-        "longitude": -77.0369
+        "latitude": 36.8508,
+        "longitude": -76.2859,
+        "region_code": 75
       },
       {
         "facility_id": 2789,
         "facility_name": "Store #2789",
-        "market": "Phoenix",
-        "region": "West",
-        "division": "Div 2",
-        "city": "Phoenix",
-        "state": "AZ",
+        "market": "Baltimore (M282)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Baltimore",
+        "state": "MD",
         "address": "1130 N 51st Ave, Phoenix, AZ 85043",
         "banner": "Supercenter",
         "open_task_count": 3,
@@ -364,17 +379,18 @@
         "risk_score": 52.1,
         "risk_tier": "Medium",
         "data_mode": "canonical_demo",
-        "latitude": 39.0272,
-        "longitude": -77.15690000000001
+        "latitude": 39.2904,
+        "longitude": -76.6122,
+        "region_code": 75
       },
       {
         "facility_id": 4567,
         "facility_name": "Store #4567",
-        "market": "Houston",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Houston",
-        "state": "TX",
+        "market": "Midlothian (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Midlothian",
+        "state": "VA",
         "address": "14833 Woodforest Blvd, Houston, TX 77530",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -384,17 +400,18 @@
         "risk_score": 48.0,
         "risk_tier": "Medium",
         "data_mode": "canonical_demo",
-        "latitude": 38.9872,
-        "longitude": -77.1169
+        "latitude": 37.5076,
+        "longitude": -77.6588,
+        "region_code": 75
       },
       {
         "facility_id": 4123,
         "facility_name": "Store #4123",
-        "market": "Denver",
-        "region": "Mountain",
-        "division": "Div 4",
-        "city": "Denver",
-        "state": "CO",
+        "market": "Arbutus (M293)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Arbutus",
+        "state": "MD",
         "address": "2770 W Evans Ave, Denver, CO 80219",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -404,17 +421,18 @@
         "risk_score": 36.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.0872,
-        "longitude": -77.21690000000001
+        "latitude": 39.254,
+        "longitude": -76.6975,
+        "region_code": 75
       },
       {
         "facility_id": 2941,
         "facility_name": "Store #2941",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Portsmouth (M288)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Portsmouth",
+        "state": "VA",
         "address": "4000 W Wheatland Rd, Dallas, TX 75237",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -424,17 +442,18 @@
         "risk_score": 22.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.927200000000006,
-        "longitude": -77.0569
+        "latitude": 36.8354,
+        "longitude": -76.2983,
+        "region_code": 75
       },
       {
         "facility_id": 3421,
         "facility_name": "Store #3421",
-        "market": "Phoenix",
-        "region": "West",
-        "division": "Div 2",
-        "city": "Phoenix",
-        "state": "AZ",
+        "market": "Bedford (M314)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Bedford",
+        "state": "VA",
         "address": "200 W Baseline Rd, Tempe, AZ 85283",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -444,17 +463,18 @@
         "risk_score": 18.1,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.007200000000005,
-        "longitude": -77.1369
+        "latitude": 37.3346,
+        "longitude": -79.5237,
+        "region_code": 75
       },
       {
         "facility_id": 1823,
         "facility_name": "Store #1823",
-        "market": "Houston",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Houston",
-        "state": "TX",
+        "market": "Nottingham (M281)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Nottingham",
+        "state": "MD",
         "address": "5455 W Loop S, Bellaire, TX 77401",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -464,17 +484,18 @@
         "risk_score": 18.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.967200000000005,
-        "longitude": -77.0969
+        "latitude": 39.4012,
+        "longitude": -76.4661,
+        "region_code": 75
       },
       {
         "facility_id": 3789,
         "facility_name": "Store #3789",
-        "market": "Chicago",
-        "region": "Midwest",
-        "division": "Div 5",
-        "city": "Chicago",
-        "state": "IL",
+        "market": "Richmond (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Richmond",
+        "state": "VA",
         "address": "7535 S Kingery Hwy, Willowbrook, IL 60527",
         "banner": "Supercenter",
         "open_task_count": 2,
@@ -484,17 +505,18 @@
         "risk_score": 12.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.1272,
-        "longitude": -77.2569
+        "latitude": 37.5407,
+        "longitude": -77.436,
+        "region_code": 75
       },
       {
         "facility_id": 3156,
         "facility_name": "Store #3156",
-        "market": "Dallas",
-        "region": "South Central",
-        "division": "Div 1",
-        "city": "Dallas",
-        "state": "TX",
+        "market": "Colonial Heights (M290)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Colonial Heights",
+        "state": "VA",
         "address": "8801 Walnut Hill Ln, Dallas, TX 75231",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -504,17 +526,18 @@
         "risk_score": 6.8,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 38.9472,
-        "longitude": -77.07690000000001
+        "latitude": 37.2649,
+        "longitude": -77.4108,
+        "region_code": 75
       },
       {
         "facility_id": 2567,
         "facility_name": "Store #2567",
-        "market": "Chicago",
-        "region": "Midwest",
-        "division": "Div 5",
-        "city": "Chicago",
-        "state": "IL",
+        "market": "Cockeysville (M281)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Cockeysville",
+        "state": "MD",
         "address": "7050 S Ashland Ave, Chicago, IL 60636",
         "banner": "Supercenter",
         "open_task_count": 1,
@@ -524,17 +547,18 @@
         "risk_score": 4.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.107200000000006,
-        "longitude": -77.2369
+        "latitude": 39.4843,
+        "longitude": -76.6438,
+        "region_code": 75
       },
       {
         "facility_id": 3891,
         "facility_name": "Store #3891",
-        "market": "Atlanta",
-        "region": "Southeast",
-        "division": "Div 3",
-        "city": "Atlanta",
-        "state": "GA",
+        "market": "Roanoke (M312)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Roanoke",
+        "state": "VA",
         "address": "835 Martin Luther King Jr Dr NW, Atlanta, GA 30314",
         "banner": "Supercenter",
         "open_task_count": 0,
@@ -544,17 +568,18 @@
         "risk_score": 1.7,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.0672,
-        "longitude": -77.1969
+        "latitude": 37.271,
+        "longitude": -79.9414,
+        "region_code": 75
       },
       {
         "facility_id": 1245,
         "facility_name": "Store #1245",
-        "market": "Atlanta",
-        "region": "Southeast",
-        "division": "Div 3",
-        "city": "Atlanta",
-        "state": "GA",
+        "market": "Emporia (M314)",
+        "region": "Region 75",
+        "division": "Mid-Atlantic",
+        "city": "Emporia",
+        "state": "VA",
         "address": "4166 Jonesboro Rd, Union City, GA 30291",
         "banner": "Supercenter",
         "open_task_count": 0,
@@ -564,8 +589,9 @@
         "risk_score": 0.0,
         "risk_tier": "Low",
         "data_mode": "canonical_demo",
-        "latitude": 39.047200000000004,
-        "longitude": -77.1769
+        "latitude": 36.6857,
+        "longitude": -77.5425,
+        "region_code": 75
       }
     ],
     "nearby_facilities": [],
@@ -593,377 +619,395 @@
     },
     "hotels": [
       {
-        "hotel_id": "HOT-001",
-        "name": "Hilton Dallas Lincoln Centre",
-        "brand": "Hilton",
-        "address": "5410 LBJ Fwy, Dallas, TX 75240",
-        "city": "Dallas",
-        "state": "TX",
-        "rating": 4.0,
-        "price_per_night": 149.0,
+        "hotel_id": "HOT-201",
+        "name": "Hyatt Regency Crystal City",
+        "brand": "Hyatt",
+        "address": "2799 Richmond Hwy, Arlington, VA 22202",
+        "city": "Arlington",
+        "state": "VA",
+        "latitude": 38.8482,
+        "longitude": -77.051,
+        "rating": 4.2,
+        "price_per_night": 189.0,
         "walmart_preferred": true,
-        "distance_from_airport": 12.5,
+        "distance_from_airport": 1.2,
+        "nearest_airport": "DCA",
         "amenities": [
           "WiFi",
-          "Pool",
           "Gym",
-          "Restaurant"
+          "Restaurant",
+          "Shuttle"
         ],
         "safety_score": {
-          "overall_score": 92,
-          "crime_index": 8,
+          "overall_score": 91,
+          "crime_index": 12,
           "store_incidents": 0,
           "news_sentiment": "Neutral",
           "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
+            "24/7 Front Desk",
+            "Keycard Access"
           ],
           "risk_factors": []
-        }
+        },
+        "image_url": "/images/hotels/hotel-photo-1.jpg"
       },
       {
-        "hotel_id": "HOT-002",
-        "name": "Marriott Dallas Downtown",
-        "brand": "Marriott",
-        "address": "650 N Pearl St, Dallas, TX 75201",
-        "city": "Dallas",
-        "state": "TX",
-        "rating": 4.5,
-        "price_per_night": 189.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 0.5,
-        "amenities": [
-          "WiFi",
-          "Pool",
-          "Gym",
-          "Restaurant",
-          "Valet"
-        ],
-        "safety_score": {
-          "overall_score": 95,
-          "crime_index": 5,
-          "store_incidents": 1,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-003",
-        "name": "Courtyard by Marriott Dallas",
-        "brand": "Marriott",
-        "address": "2383 Stemmons Trail, Dallas, TX 75220",
-        "city": "Dallas",
-        "state": "TX",
-        "rating": 3.5,
-        "price_per_night": 119.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 8.2,
-        "amenities": [
-          "WiFi",
-          "Pool",
-          "Gym"
-        ],
-        "safety_score": {
-          "overall_score": 88,
-          "crime_index": 12,
-          "store_incidents": 2,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-004",
-        "name": "Hilton Houston Plaza",
+        "hotel_id": "HOT-202",
+        "name": "Hilton Garden Inn Dulles North",
         "brand": "Hilton",
-        "address": "6633 Travis St, Houston, TX 77030",
-        "city": "Houston",
-        "state": "TX",
+        "address": "22400 Flagstaff Plaza, Ashburn, VA 20148",
+        "city": "Ashburn",
+        "state": "VA",
+        "latitude": 39.0182,
+        "longitude": -77.4711,
         "rating": 4.0,
-        "price_per_night": 139.0,
+        "price_per_night": 159.0,
         "walmart_preferred": true,
-        "distance_from_airport": 3.5,
+        "distance_from_airport": 5.4,
+        "nearest_airport": "IAD",
         "amenities": [
           "WiFi",
-          "Pool",
-          "Gym",
-          "Restaurant"
-        ],
-        "safety_score": {
-          "overall_score": 90,
-          "crime_index": 10,
-          "store_incidents": 3,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-005",
-        "name": "Marriott Marquis Houston",
-        "brand": "Marriott",
-        "address": "1777 Walker St, Houston, TX 77010",
-        "city": "Houston",
-        "state": "TX",
-        "rating": 4.5,
-        "price_per_night": 199.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 0.3,
-        "amenities": [
-          "WiFi",
-          "Pool",
           "Gym",
           "Restaurant",
-          "Valet"
+          "Pool"
         ],
         "safety_score": {
           "overall_score": 94,
           "crime_index": 6,
-          "store_incidents": 4,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-006",
-        "name": "Hilton Phoenix Airport",
-        "brand": "Hilton",
-        "address": "2435 S 47th St, Phoenix, AZ 85034",
-        "city": "Phoenix",
-        "state": "AZ",
-        "rating": 3.5,
-        "price_per_night": 129.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 4.2,
-        "amenities": [
-          "WiFi",
-          "Pool",
-          "Gym",
-          "Shuttle"
-        ],
-        "safety_score": {
-          "overall_score": 87,
-          "crime_index": 13,
           "store_incidents": 0,
-          "news_sentiment": "Neutral",
+          "news_sentiment": "Positive",
           "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Shuttle"
+            "Well-lit Parking",
+            "24/7 Front Desk"
           ],
           "risk_factors": []
-        }
+        },
+        "image_url": "/images/hotels/hotel-photo-2.jpg"
       },
       {
-        "hotel_id": "HOT-007",
-        "name": "Renaissance Phoenix Downtown",
+        "hotel_id": "HOT-203",
+        "name": "Marriott BWI Airport",
         "brand": "Marriott",
-        "address": "50 E Adams St, Phoenix, AZ 85004",
-        "city": "Phoenix",
-        "state": "AZ",
-        "rating": 4.0,
+        "address": "1743 W Nursery Rd, Linthicum Heights, MD 21090",
+        "city": "Linthicum Heights",
+        "state": "MD",
+        "latitude": 39.1971,
+        "longitude": -76.6716,
+        "rating": 4.1,
         "price_per_night": 169.0,
         "walmart_preferred": true,
-        "distance_from_airport": 0.2,
+        "distance_from_airport": 0.6,
+        "nearest_airport": "BWI",
         "amenities": [
           "WiFi",
-          "Pool",
-          "Gym",
-          "Restaurant"
-        ],
-        "safety_score": {
-          "overall_score": 91,
-          "crime_index": 9,
-          "store_incidents": 1,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-008",
-        "name": "Hilton Atlanta Airport",
-        "brand": "Hilton",
-        "address": "1031 Virginia Ave, Atlanta, GA 30354",
-        "city": "Atlanta",
-        "state": "GA",
-        "rating": 3.5,
-        "price_per_night": 119.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 9.5,
-        "amenities": [
-          "WiFi",
-          "Pool",
-          "Gym",
-          "Shuttle"
-        ],
-        "safety_score": {
-          "overall_score": 86,
-          "crime_index": 14,
-          "store_incidents": 2,
-          "news_sentiment": "Neutral",
-          "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Shuttle"
-          ],
-          "risk_factors": []
-        }
-      },
-      {
-        "hotel_id": "HOT-009",
-        "name": "Marriott Marquis Atlanta",
-        "brand": "Marriott",
-        "address": "265 Peachtree Center Ave NE, Atlanta, GA 30303",
-        "city": "Atlanta",
-        "state": "GA",
-        "rating": 4.5,
-        "price_per_night": 179.0,
-        "walmart_preferred": true,
-        "distance_from_airport": 0.1,
-        "amenities": [
-          "WiFi",
-          "Pool",
           "Gym",
           "Restaurant",
-          "Valet"
+          "Shuttle"
         ],
         "safety_score": {
           "overall_score": 93,
-          "crime_index": 7,
-          "store_incidents": 3,
+          "crime_index": 9,
+          "store_incidents": 0,
           "news_sentiment": "Neutral",
           "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
+            "Airport Shuttle",
+            "24/7 Security"
           ],
           "risk_factors": []
-        }
+        },
+        "image_url": "/images/hotels/hotel-photo-3.jpg"
       },
       {
-        "hotel_id": "HOT-010",
-        "name": "Hilton Chicago",
+        "hotel_id": "HOT-204",
+        "name": "Hampton Inn Baltimore Downtown",
         "brand": "Hilton",
-        "address": "720 S Michigan Ave, Chicago, IL 60605",
-        "city": "Chicago",
-        "state": "IL",
+        "address": "131 E Redwood St, Baltimore, MD 21202",
+        "city": "Baltimore",
+        "state": "MD",
+        "latitude": 39.2895,
+        "longitude": -76.6128,
         "rating": 4.0,
-        "price_per_night": 159.0,
+        "price_per_night": 139.0,
         "walmart_preferred": true,
-        "distance_from_airport": 0.8,
+        "distance_from_airport": 11.3,
+        "nearest_airport": "BWI",
         "amenities": [
           "WiFi",
-          "Pool",
           "Gym",
-          "Restaurant"
+          "Breakfast"
         ],
         "safety_score": {
-          "overall_score": 89,
-          "crime_index": 11,
-          "store_incidents": 4,
-          "news_sentiment": "Neutral",
+          "overall_score": 84,
+          "crime_index": 22,
+          "store_incidents": 1,
+          "news_sentiment": "Mixed",
           "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
+            "Keycard Access"
           ],
-          "risk_factors": []
-        }
+          "risk_factors": [
+            "Urban core after dark"
+          ]
+        },
+        "image_url": "/images/hotels/hotel-photo-4.jpg"
       },
       {
-        "hotel_id": "HOT-011",
-        "name": "Marriott Magnificent Mile",
+        "hotel_id": "HOT-205",
+        "name": "Courtyard Richmond Airport",
         "brand": "Marriott",
-        "address": "540 N Michigan Ave, Chicago, IL 60611",
-        "city": "Chicago",
-        "state": "IL",
+        "address": "5400 Williamsburg Rd, Sandston, VA 23150",
+        "city": "Sandston",
+        "state": "VA",
+        "latitude": 37.5121,
+        "longitude": -77.3409,
         "rating": 4.0,
-        "price_per_night": 189.0,
+        "price_per_night": 134.0,
         "walmart_preferred": true,
-        "distance_from_airport": 1.2,
+        "distance_from_airport": 1.8,
+        "nearest_airport": "RIC",
         "amenities": [
           "WiFi",
           "Gym",
           "Restaurant",
-          "Valet"
+          "Shuttle"
+        ],
+        "safety_score": {
+          "overall_score": 92,
+          "crime_index": 10,
+          "store_incidents": 0,
+          "news_sentiment": "Neutral",
+          "safety_features": [
+            "Airport Shuttle",
+            "24/7 Front Desk"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-1.jpg"
+      },
+      {
+        "hotel_id": "HOT-206",
+        "name": "Hilton Richmond Downtown",
+        "brand": "Hilton",
+        "address": "501 E Broad St, Richmond, VA 23219",
+        "city": "Richmond",
+        "state": "VA",
+        "latitude": 37.5421,
+        "longitude": -77.4357,
+        "rating": 4.3,
+        "price_per_night": 179.0,
+        "walmart_preferred": true,
+        "distance_from_airport": 8.9,
+        "nearest_airport": "RIC",
+        "amenities": [
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Pool",
+          "Concierge"
+        ],
+        "safety_score": {
+          "overall_score": 89,
+          "crime_index": 14,
+          "store_incidents": 0,
+          "news_sentiment": "Positive",
+          "safety_features": [
+            "24/7 Security",
+            "Keycard Access"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-2.jpg"
+      },
+      {
+        "hotel_id": "HOT-207",
+        "name": "Hilton Norfolk The Main",
+        "brand": "Hilton",
+        "address": "100 E Main St, Norfolk, VA 23510",
+        "city": "Norfolk",
+        "state": "VA",
+        "latitude": 36.8478,
+        "longitude": -76.289,
+        "rating": 4.4,
+        "price_per_night": 199.0,
+        "walmart_preferred": true,
+        "distance_from_airport": 7.6,
+        "nearest_airport": "ORF",
+        "amenities": [
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Pool",
+          "Concierge"
+        ],
+        "safety_score": {
+          "overall_score": 90,
+          "crime_index": 12,
+          "store_incidents": 0,
+          "news_sentiment": "Positive",
+          "safety_features": [
+            "24/7 Security"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-3.jpg"
+      },
+      {
+        "hotel_id": "HOT-208",
+        "name": "Hampton Inn Norfolk Airport",
+        "brand": "Hilton",
+        "address": "1450 N Military Hwy, Norfolk, VA 23502",
+        "city": "Norfolk",
+        "state": "VA",
+        "latitude": 36.8819,
+        "longitude": -76.2127,
+        "rating": 4.0,
+        "price_per_night": 119.0,
+        "walmart_preferred": true,
+        "distance_from_airport": 1.4,
+        "nearest_airport": "ORF",
+        "amenities": [
+          "WiFi",
+          "Gym",
+          "Breakfast",
+          "Shuttle"
+        ],
+        "safety_score": {
+          "overall_score": 88,
+          "crime_index": 16,
+          "store_incidents": 0,
+          "news_sentiment": "Neutral",
+          "safety_features": [
+            "Airport Shuttle"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-4.jpg"
+      },
+      {
+        "hotel_id": "HOT-209",
+        "name": "Hotel Roanoke & Conference Center",
+        "brand": "Hilton",
+        "address": "110 Shenandoah Ave NE, Roanoke, VA 24016",
+        "city": "Roanoke",
+        "state": "VA",
+        "latitude": 37.275,
+        "longitude": -79.9388,
+        "rating": 4.5,
+        "price_per_night": 169.0,
+        "walmart_preferred": true,
+        "distance_from_airport": 4.1,
+        "nearest_airport": "ROA",
+        "amenities": [
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Pool",
+          "Spa"
+        ],
+        "safety_score": {
+          "overall_score": 95,
+          "crime_index": 5,
+          "store_incidents": 0,
+          "news_sentiment": "Positive",
+          "safety_features": [
+            "24/7 Security",
+            "Valet"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-1.jpg"
+      },
+      {
+        "hotel_id": "HOT-210",
+        "name": "Holiday Inn Lynchburg",
+        "brand": "IHG",
+        "address": "601 Main St, Lynchburg, VA 24504",
+        "city": "Lynchburg",
+        "state": "VA",
+        "latitude": 37.4127,
+        "longitude": -79.1437,
+        "rating": 3.9,
+        "price_per_night": 109.0,
+        "walmart_preferred": false,
+        "distance_from_airport": 12.4,
+        "nearest_airport": "ROA",
+        "amenities": [
+          "WiFi",
+          "Restaurant"
+        ],
+        "safety_score": {
+          "overall_score": 86,
+          "crime_index": 18,
+          "store_incidents": 0,
+          "news_sentiment": "Neutral",
+          "safety_features": [
+            "Keycard Access"
+          ],
+          "risk_factors": []
+        },
+        "image_url": "/images/hotels/hotel-photo-2.jpg"
+      },
+      {
+        "hotel_id": "HOT-211",
+        "name": "Marriott Newport News at City Center",
+        "brand": "Marriott",
+        "address": "740 Town Center Dr, Newport News, VA 23606",
+        "city": "Newport News",
+        "state": "VA",
+        "latitude": 37.1228,
+        "longitude": -76.5247,
+        "rating": 4.2,
+        "price_per_night": 159.0,
+        "walmart_preferred": true,
+        "distance_from_airport": 4.6,
+        "nearest_airport": "PHF",
+        "amenities": [
+          "WiFi",
+          "Gym",
+          "Restaurant",
+          "Pool"
         ],
         "safety_score": {
           "overall_score": 92,
           "crime_index": 8,
           "store_incidents": 0,
-          "news_sentiment": "Neutral",
+          "news_sentiment": "Positive",
           "safety_features": [
-            "WiFi",
-            "Gym",
-            "Restaurant",
-            "Valet"
+            "24/7 Security"
           ],
           "risk_factors": []
-        }
+        },
+        "image_url": "/images/hotels/hotel-photo-3.jpg"
       },
       {
-        "hotel_id": "HOT-012",
-        "name": "Hilton Denver City Center",
-        "brand": "Hilton",
-        "address": "1701 California St, Denver, CO 80202",
-        "city": "Denver",
-        "state": "CO",
-        "rating": 4.0,
-        "price_per_night": 149.0,
+        "hotel_id": "HOT-212",
+        "name": "Courtyard Salisbury",
+        "brand": "Marriott",
+        "address": "2701 N Salisbury Blvd, Salisbury, MD 21801",
+        "city": "Salisbury",
+        "state": "MD",
+        "latitude": 38.3927,
+        "longitude": -75.5817,
+        "rating": 4.1,
+        "price_per_night": 129.0,
         "walmart_preferred": true,
-        "distance_from_airport": 0.5,
+        "distance_from_airport": 4.8,
+        "nearest_airport": "SBY",
         "amenities": [
           "WiFi",
-          "Pool",
           "Gym",
-          "Restaurant"
+          "Breakfast"
         ],
         "safety_score": {
-          "overall_score": 88,
-          "crime_index": 12,
-          "store_incidents": 1,
+          "overall_score": 91,
+          "crime_index": 11,
+          "store_incidents": 0,
           "news_sentiment": "Neutral",
           "safety_features": [
-            "WiFi",
-            "Pool",
-            "Gym",
-            "Restaurant"
+            "Keycard Access"
           ],
           "risk_factors": []
-        }
+        },
+        "image_url": "/images/hotels/hotel-photo-4.jpg"
       }
     ]
   },
@@ -1135,7 +1179,7 @@
         "incident_time": "01:00 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that on 8/27/25 a former associate sent a threatening text message to an associate due to a personal issue. The victim associate will notify law enforcement for assistance. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "description": "Management reported that on 8/27/25 a former associate sent a threatening text message to an associate due to a personal issue. The victim associate will notify law enforcement for assistance. • Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. • Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
         "city": "PETERSBURG",
         "state": "VA",
         "region": 75,
@@ -1382,7 +1426,7 @@
         "incident_time": "01:00 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported an individual sent threatening text messages to an associate due to a personal issue. Law enforcement has not been notified at this time. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "description": "Management reported an individual sent threatening text messages to an associate due to a personal issue. Law enforcement has not been notified at this time. • Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. • Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
         "city": "SOUTH BOSTON",
         "state": "VA",
         "region": 75,
@@ -1713,7 +1757,7 @@
         "incident_time": "01:00 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that on 8/27/25 a former associate sent a threatening text message to an associate due to a personal issue. The victim associate will notify law enforcement for assistance. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "description": "Management reported that on 8/27/25 a former associate sent a threatening text message to an associate due to a personal issue. The victim associate will notify law enforcement for assistance. • Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. • Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
         "city": "PETERSBURG",
         "state": "VA",
         "region": 75,
@@ -1960,7 +2004,7 @@
         "incident_time": "01:00 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported an individual sent threatening text messages to an associate due to a personal issue. Law enforcement has not been notified at this time. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "description": "Management reported an individual sent threatening text messages to an associate due to a personal issue. Law enforcement has not been notified at this time. • Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. • Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
         "city": "SOUTH BOSTON",
         "state": "VA",
         "region": 75,
@@ -2090,7 +2134,7 @@
         "incident_time": "10:30 PM CDT",
         "incident_type": "Battery",
         "severity": 2,
-        "description": "Management reported that on 12/13/25 a customer stated that they were allegedly physically assaulted in the parking lot by unknown subject (s) the customer walked off-site and called 911 to report the incident. Law enforcement requested to review CCTV on 12/16/25 No associates were involved, and the extent of the customers\u2019 injuries is unknown.",
+        "description": "Management reported that on 12/13/25 a customer stated that they were allegedly physically assaulted in the parking lot by unknown subject (s) the customer walked off-site and called 911 to report the incident. Law enforcement requested to review CCTV on 12/16/25 No associates were involved, and the extent of the customers’ injuries is unknown.",
         "city": "FREDERICKSBURG",
         "state": "VA",
         "region": 75,
@@ -2129,7 +2173,7 @@
         "incident_time": "08:30 AM CST",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that a customer issued a threat of violence towards an associate. Law enforcement was notified and no injuries or impact to business operations were reported. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported that a customer issued a threat of violence towards an associate. Law enforcement was notified and no injuries or impact to business operations were reported. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management’s request form.",
         "city": "ABERDEEN",
         "state": "MD",
         "region": 75,
@@ -2402,7 +2446,7 @@
         "incident_time": "03:47 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that two associates were involved in a verbal altercation, when one party attempted to engage in a physical altercation with the other. Additional associates intervened, and both parties were suspended pending the outcome of the investigation. \u2022 Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. \u2022 Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
+        "description": "Management reported that two associates were involved in a verbal altercation, when one party attempted to engage in a physical altercation with the other. Additional associates intervened, and both parties were suspended pending the outcome of the investigation. • Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. • Notice: If you need assistance from Threat Management, please use the link below to be directed to Threat Management's request form.",
         "city": "CHESTER",
         "state": "VA",
         "region": 75,
@@ -2610,7 +2654,7 @@
         "incident_time": "10:48 AM CST",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported a former associate made threats of self harm due to persona reasons. Law enforcement was at the facility but no actions were taken. No injuries were reported. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported a former associate made threats of self harm due to persona reasons. Law enforcement was at the facility but no actions were taken. No injuries were reported. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management’s request form.",
         "city": "NEWPORT NEWS",
         "state": "VA",
         "region": 75,
@@ -2727,7 +2771,7 @@
         "incident_time": "06:45 AM CST",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that a customer threatened to physically assault an associate after they were found attempting to shoplift and made mentions of using a firearm. Law enforcement was notified, but the customer fled the facility prior to their arrival. There were no injuries reported, store operations were not impacted, and Threat Management assistance was not directly requested. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported that a customer threatened to physically assault an associate after they were found attempting to shoplift and made mentions of using a firearm. Law enforcement was notified, but the customer fled the facility prior to their arrival. There were no injuries reported, store operations were not impacted, and Threat Management assistance was not directly requested. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management’s request form.",
         "city": "CATONSVILLE",
         "state": "MD",
         "region": 75,
@@ -2792,7 +2836,7 @@
         "incident_time": "06:45 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that a customer entered the facility and advised management that the customer's dog became sick from eating a certain kind of dog food. The customer then demanded that the store remove all the dog food from the shelf, and the demand was denied per store policy. The subject then made a threat of violence toward the store, while referencing an explosive. The subject then fled the area and law enforcement was not notified. Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported that a customer entered the facility and advised management that the customer's dog became sick from eating a certain kind of dog food. The customer then demanded that the store remove all the dog food from the shelf, and the demand was denied per store policy. The subject then made a threat of violence toward the store, while referencing an explosive. The subject then fled the area and law enforcement was not notified. Notice: If the incident involved a threat or physical assault with or without a weapon, please be sure to follow the link below to create an event in the Auror app. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management’s request form.",
         "city": "STAUNTON",
         "state": "VA",
         "region": 75,
@@ -2961,7 +3005,7 @@
         "incident_time": "03:00 PM CST",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that an associate was terminated for gross misconduct and afterward expressed thoughts of self-harm due to personal reasons. LYRA resources were not provided, and management will conduct a store-level investigation before notifying law enforcement. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the link below to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported that an associate was terminated for gross misconduct and afterward expressed thoughts of self-harm due to personal reasons. LYRA resources were not provided, and management will conduct a store-level investigation before notifying law enforcement. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the link below to be directed to Threat Management’s request form.",
         "city": "CHESTERFIELD",
         "state": "VA",
         "region": 75,
@@ -3000,7 +3044,7 @@
         "incident_time": "08:00 PM CDT",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported an associate made a threat of violence towards a tenant associate due to potential intoxication. No injuries were reported. Law enforcement was not notified. Store operations were not impacted. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported an associate made a threat of violence towards a tenant associate due to potential intoxication. No injuries were reported. Law enforcement was not notified. Store operations were not impacted. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the below link to be directed to Threat Management’s request form.",
         "city": "LA PLATA",
         "state": "MD",
         "region": 75,
@@ -3013,7 +3057,7 @@
         "incident_time": "11:40 PM CST",
         "incident_type": "Threat of Violence",
         "severity": 3,
-        "description": "Management reported that a third-party driver made a threat of violence towards an associate due to the back door receiving doorbell not working. Law enforcement was not notified; however, management also made a report to the Distribution Center. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the link below to be directed to Threat Management\u2019s request form.",
+        "description": "Management reported that a third-party driver made a threat of violence towards an associate due to the back door receiving doorbell not working. Law enforcement was not notified; however, management also made a report to the Distribution Center. Thank you for calling the EOC to report an incident. If you need assistance from Threat Management, please use the link below to be directed to Threat Management’s request form.",
         "city": "FALLSTON",
         "state": "MD",
         "region": 75,
@@ -3278,8 +3322,8 @@
         "task_id": "TSK-1000",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Jordan Lee",
         "priority": "Critical",
@@ -3292,14 +3336,15 @@
         "updated_at": "2026-05-04 05:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1001",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Alex Thompson",
         "priority": "High",
@@ -3312,14 +3357,15 @@
         "updated_at": "2026-05-03 21:50:56",
         "sla_hours": 24,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1002",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Chris Anderson",
         "priority": "Critical",
@@ -3332,14 +3378,15 @@
         "updated_at": "2026-05-04 13:50:56",
         "sla_hours": 4,
         "evidence_url": "https://evidence.walmart.com/store2638/task_0002.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1003",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Jordan Lee",
         "priority": "High",
@@ -3352,14 +3399,15 @@
         "updated_at": "2026-05-04 12:50:56",
         "sla_hours": 24,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1004",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Pat Taylor",
         "priority": "Critical",
@@ -3372,14 +3420,15 @@
         "updated_at": "2026-05-04 04:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1005",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Store Manager",
         "owner_name": "Bob Johnson",
         "priority": "Medium",
@@ -3392,14 +3441,15 @@
         "updated_at": "2026-05-03 16:50:56",
         "sla_hours": 72,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1006",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Store Manager",
         "owner_name": "Jane Smith",
         "priority": "High",
@@ -3412,14 +3462,15 @@
         "updated_at": "2026-05-04 10:50:56",
         "sla_hours": 24,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1007",
         "facility_id": 2638,
         "facility_name": "Store #2638",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Norfolk (M289)",
+        "region": "Region 75",
         "owner_role": "Store Manager",
         "owner_name": "Maria Garcia",
         "priority": "Medium",
@@ -3432,14 +3483,15 @@
         "updated_at": "2026-05-03 19:50:56",
         "sla_hours": 72,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1008",
         "facility_id": 2789,
         "facility_name": "Store #2789",
-        "market": "Phoenix",
-        "region": "West",
+        "market": "Baltimore (M282)",
+        "region": "Region 75",
         "owner_role": "Regional Manager",
         "owner_name": "James Clark",
         "priority": "Critical",
@@ -3452,14 +3504,15 @@
         "updated_at": "2026-05-03 23:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1009",
         "facility_id": 4123,
         "facility_name": "Store #4123",
-        "market": "Denver",
-        "region": "Mountain",
+        "market": "Arbutus (M293)",
+        "region": "Region 75",
         "owner_role": "Store Manager",
         "owner_name": "Jane Smith",
         "priority": "High",
@@ -3472,14 +3525,15 @@
         "updated_at": "2026-05-03 21:50:56",
         "sla_hours": 24,
         "evidence_url": "https://evidence.walmart.com/task_0009.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1010",
         "facility_id": 3789,
         "facility_name": "Store #3789",
-        "market": "Chicago",
-        "region": "Midwest",
+        "market": "Richmond (M290)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Jordan Lee",
         "priority": "Medium",
@@ -3492,14 +3546,15 @@
         "updated_at": "2026-05-03 21:50:56",
         "sla_hours": 72,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1011",
         "facility_id": 4123,
         "facility_name": "Store #4123",
-        "market": "Denver",
-        "region": "Mountain",
+        "market": "Arbutus (M293)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Amanda Lewis",
         "priority": "Critical",
@@ -3512,14 +3567,15 @@
         "updated_at": "2026-05-04 11:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1012",
         "facility_id": 3156,
         "facility_name": "Store #3156",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Colonial Heights (M290)",
+        "region": "Region 75",
         "owner_role": "Field Engineer",
         "owner_name": "Alex Thompson",
         "priority": "Medium",
@@ -3532,14 +3588,15 @@
         "updated_at": "2026-05-04 10:50:56",
         "sla_hours": 72,
         "evidence_url": "",
-        "closed_at": "2026-05-04 06:50:56"
+        "closed_at": "2026-05-04 06:50:56",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1013",
         "facility_id": 2567,
         "facility_name": "Store #2567",
-        "market": "Chicago",
-        "region": "Midwest",
+        "market": "Cockeysville (M281)",
+        "region": "Region 75",
         "owner_role": "Field Lead",
         "owner_name": "Kevin Brown",
         "priority": "Low",
@@ -3552,14 +3609,15 @@
         "updated_at": "2026-05-03 22:50:56",
         "sla_hours": 168,
         "evidence_url": "https://evidence.walmart.com/task_0013.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1014",
         "facility_id": 3789,
         "facility_name": "Store #3789",
-        "market": "Chicago",
-        "region": "Midwest",
+        "market": "Richmond (M290)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Amanda Lewis",
         "priority": "Low",
@@ -3572,14 +3630,15 @@
         "updated_at": "2026-05-03 15:50:56",
         "sla_hours": 168,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1015",
         "facility_id": 4567,
         "facility_name": "Store #4567",
-        "market": "Houston",
-        "region": "South Central",
+        "market": "Midlothian (M290)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Daniel Park",
         "priority": "Critical",
@@ -3592,14 +3651,15 @@
         "updated_at": "2026-05-03 17:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": "2026-05-04 12:50:56"
+        "closed_at": "2026-05-04 12:50:56",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1016",
         "facility_id": 1823,
         "facility_name": "Store #1823",
-        "market": "Houston",
-        "region": "South Central",
+        "market": "Nottingham (M281)",
+        "region": "Region 75",
         "owner_role": "Regional Manager",
         "owner_name": "David Miller",
         "priority": "Low",
@@ -3612,14 +3672,15 @@
         "updated_at": "2026-05-04 03:50:56",
         "sla_hours": 168,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1017",
         "facility_id": 4567,
         "facility_name": "Store #4567",
-        "market": "Houston",
-        "region": "South Central",
+        "market": "Midlothian (M290)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Emily Rodriguez",
         "priority": "Low",
@@ -3632,14 +3693,15 @@
         "updated_at": "2026-05-04 02:50:56",
         "sla_hours": 168,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1018",
         "facility_id": 2789,
         "facility_name": "Store #2789",
-        "market": "Phoenix",
-        "region": "West",
+        "market": "Baltimore (M282)",
+        "region": "Region 75",
         "owner_role": "Field Lead",
         "owner_name": "Sarah Chen",
         "priority": "Medium",
@@ -3652,14 +3714,15 @@
         "updated_at": "2026-05-04 08:50:56",
         "sla_hours": 72,
         "evidence_url": "https://evidence.walmart.com/task_0018.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1019",
         "facility_id": 1823,
         "facility_name": "Store #1823",
-        "market": "Houston",
-        "region": "South Central",
+        "market": "Nottingham (M281)",
+        "region": "Region 75",
         "owner_role": "Field Lead",
         "owner_name": "Kevin Brown",
         "priority": "High",
@@ -3672,14 +3735,15 @@
         "updated_at": "2026-05-04 08:50:56",
         "sla_hours": 24,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1020",
         "facility_id": 2789,
         "facility_name": "Store #2789",
-        "market": "Phoenix",
-        "region": "West",
+        "market": "Baltimore (M282)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Daniel Park",
         "priority": "Critical",
@@ -3692,14 +3756,15 @@
         "updated_at": "2026-05-04 13:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1021",
         "facility_id": 4567,
         "facility_name": "Store #4567",
-        "market": "Houston",
-        "region": "South Central",
+        "market": "Midlothian (M290)",
+        "region": "Region 75",
         "owner_role": "Store Manager",
         "owner_name": "Tom Wilson",
         "priority": "Critical",
@@ -3712,14 +3777,15 @@
         "updated_at": "2026-05-04 03:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1022",
         "facility_id": 3421,
         "facility_name": "Store #3421",
-        "market": "Phoenix",
-        "region": "West",
+        "market": "Bedford (M314)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Amanda Lewis",
         "priority": "High",
@@ -3732,14 +3798,15 @@
         "updated_at": "2026-05-03 17:50:56",
         "sla_hours": 24,
         "evidence_url": "https://evidence.walmart.com/task_0022.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1023",
         "facility_id": 3156,
         "facility_name": "Store #3156",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Colonial Heights (M290)",
+        "region": "Region 75",
         "owner_role": "Regional Manager",
         "owner_name": "Rachel White",
         "priority": "Medium",
@@ -3752,14 +3819,15 @@
         "updated_at": "2026-05-03 22:50:56",
         "sla_hours": 72,
         "evidence_url": "https://evidence.walmart.com/task_0023.jpg",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       },
       {
         "task_id": "TSK-1024",
         "facility_id": 2941,
         "facility_name": "Store #2941",
-        "market": "Dallas",
-        "region": "South Central",
+        "market": "Portsmouth (M288)",
+        "region": "Region 75",
         "owner_role": "Corporate",
         "owner_name": "Daniel Park",
         "priority": "Critical",
@@ -3772,7 +3840,8 @@
         "updated_at": "2026-05-03 23:50:56",
         "sla_hours": 4,
         "evidence_url": "",
-        "closed_at": ""
+        "closed_at": "",
+        "region_code": 75
       }
     ],
     "remediations": [

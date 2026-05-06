@@ -1,0 +1,915 @@
+/* Dark-mode harmonization for service workspaces that use light enterprise page skins. */
+[data-theme='dark'] .tech-page,
+[data-theme='dark'] .fire-ops-page,
+[data-theme='dark'] .remediation-page,
+[data-theme='dark'] .threat-page,
+[data-theme='dark'] .vendor-page,
+[data-theme='dark'] .external-page {
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 194, 32, 0.12), transparent 24rem),
+    radial-gradient(circle at 90% 4%, rgba(77, 189, 245, 0.15), transparent 24rem),
+    linear-gradient(180deg, #020817 0%, #061638 58%, #001e60 100%);
+}
+
+[data-theme='dark'] .tech-header:not(.tech-command-header),
+[data-theme='dark'] .fire-ops-header,
+[data-theme='dark'] .remediation-header {
+  border-color: var(--border-subtle);
+  background: radial-gradient(circle at 88% 8%, rgba(255, 194, 32, 0.15), transparent 18rem), linear-gradient(135deg, rgba(0, 83, 226, 0.34), rgba(255, 255, 255, 0.055));
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .tech-header h1,
+[data-theme='dark'] .tech-header p,
+[data-theme='dark'] .fire-ops-header h1,
+[data-theme='dark'] .fire-ops-header p,
+[data-theme='dark'] .remediation-header h1,
+[data-theme='dark'] .remediation-header p {
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .tech-eyebrow,
+[data-theme='dark'] .fire-ops-eyebrow,
+[data-theme='dark'] .remediation-eyebrow,
+[data-theme='dark'] .vendor-eyebrow,
+[data-theme='dark'] .external-eyebrow {
+  color: var(--yellow);
+}
+
+[data-theme='dark'] .tech-mode,
+[data-theme='dark'] .fire-ops-mode,
+[data-theme='dark'] .remediation-mode,
+[data-theme='dark'] .vendor-mode,
+[data-theme='dark'] .external-mode,
+[data-theme='dark'] .threat-mode {
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 194, 32, 0.3);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme='dark'] .tech-mode span,
+[data-theme='dark'] .fire-ops-mode span,
+[data-theme='dark'] .remediation-mode span,
+[data-theme='dark'] .vendor-mode span,
+[data-theme='dark'] .external-mode span,
+[data-theme='dark'] .threat-mode span {
+  color: var(--yellow);
+}
+
+[data-theme='dark'] .tech-tab-bar,
+[data-theme='dark'] .remediation-tab-bar,
+[data-theme='dark'] .vendor-tab-bar,
+[data-theme='dark'] .external-tab-bar,
+[data-theme='dark'] .threat-tab-bar {
+  border-color: var(--border-subtle);
+  background: rgba(2, 8, 23, 0.76);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .tech-tab,
+[data-theme='dark'] .remediation-tab,
+[data-theme='dark'] .vendor-tab,
+[data-theme='dark'] .external-tab,
+[data-theme='dark'] .threat-tab {
+  color: var(--text-secondary);
+  border-color: rgba(169, 221, 247, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+[data-theme='dark'] .tech-tab span,
+[data-theme='dark'] .remediation-tab span,
+[data-theme='dark'] .vendor-tab span,
+[data-theme='dark'] .external-tab span,
+[data-theme='dark'] .threat-tab span {
+  color: var(--yellow);
+}
+
+[data-theme='dark'] .tech-tab.active,
+[data-theme='dark'] .tech-tab:hover,
+[data-theme='dark'] .remediation-tab.active,
+[data-theme='dark'] .remediation-tab:hover,
+[data-theme='dark'] .vendor-tab.active,
+[data-theme='dark'] .vendor-tab:hover,
+[data-theme='dark'] .external-tab.active,
+[data-theme='dark'] .external-tab:hover,
+[data-theme='dark'] .threat-tab.active,
+[data-theme='dark'] .threat-tab:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 194, 32, 0.46);
+  background: linear-gradient(135deg, rgba(0, 83, 226, 0.34), rgba(77, 189, 245, 0.1));
+  box-shadow: inset 0 3px 0 var(--yellow), var(--shadow-card);
+}
+
+[data-theme='dark'] .tech-kpi,
+[data-theme='dark'] .tech-card,
+[data-theme='dark'] .tech-summary-tile,
+[data-theme='dark'] .tech-posture-card,
+[data-theme='dark'] .tech-warning-card,
+[data-theme='dark'] .tech-metric-grid div,
+[data-theme='dark'] .tech-record,
+[data-theme='dark'] .tech-predictive-card,
+[data-theme='dark'] .tech-governance-grid article,
+[data-theme='dark'] .fire-ops-card,
+[data-theme='dark'] .fire-ops-kpi,
+[data-theme='dark'] .fire-ops-summary-list button,
+[data-theme='dark'] .fire-ops-site-toggle,
+[data-theme='dark'] .remediation-kpi,
+[data-theme='dark'] .remediation-card,
+[data-theme='dark'] .remediation-lane,
+[data-theme='dark'] .remediation-board-card,
+[data-theme='dark'] .remediation-evidence-list article,
+[data-theme='dark'] .remediation-readiness-grid article,
+[data-theme='dark'] .threat-kpi,
+[data-theme='dark'] .threat-card,
+[data-theme='dark'] .threat-focus-strip article,
+[data-theme='dark'] .threat-metric-grid div,
+[data-theme='dark'] .threat-draft-empty,
+[data-theme='dark'] .threat-draft-panel,
+[data-theme='dark'] .threat-draft-grid div,
+[data-theme='dark'] .threat-risk-list article,
+[data-theme='dark'] .threat-record,
+[data-theme='dark'] .threat-signal-card,
+[data-theme='dark'] .threat-score-model article,
+[data-theme='dark'] .vendor-kpi,
+[data-theme='dark'] .vendor-card,
+[data-theme='dark'] .vendor-focus-strip article,
+[data-theme='dark'] .vendor-mini-list article,
+[data-theme='dark'] .vendor-candidate,
+[data-theme='dark'] .vendor-record,
+[data-theme='dark'] .vendor-payload-summary details,
+[data-theme='dark'] .external-kpi,
+[data-theme='dark'] .external-card,
+[data-theme='dark'] .external-readiness-list article,
+[data-theme='dark'] .external-record,
+[data-theme='dark'] .external-contact-card,
+[data-theme='dark'] .external-contact-block {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  background: var(--surface-panel-raised);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .tech-kpi.tone-blue,
+[data-theme='dark'] .tech-kpi.tone-yellow,
+[data-theme='dark'] .tech-kpi.tone-sky,
+[data-theme='dark'] .remediation-kpi.tone-blue,
+[data-theme='dark'] .remediation-kpi.tone-yellow,
+[data-theme='dark'] .remediation-kpi.tone-sky,
+[data-theme='dark'] .remediation-kpi.tone-critical,
+[data-theme='dark'] .threat-kpi.tone-critical {
+  background: var(--surface-panel-raised);
+}
+
+/* ── Health-threshold color coding – restored after dark-mode base reset ── */
+[data-theme='dark'] .tech-kpi.health-green,
+[data-theme='dark'] .tech-summary-tile.health-green,
+[data-theme='dark'] .tech-posture-card.health-green {
+  border-color: #16a34a;
+  box-shadow: inset 0 4px 0 #16a34a, var(--shadow-card);
+}
+[data-theme='dark'] .tech-kpi.health-yellow,
+[data-theme='dark'] .tech-summary-tile.health-yellow,
+[data-theme='dark'] .tech-posture-card.health-yellow {
+  border-color: #d97706;
+  box-shadow: inset 0 4px 0 #d97706, var(--shadow-card);
+}
+[data-theme='dark'] .tech-kpi.health-red,
+[data-theme='dark'] .tech-summary-tile.health-red,
+[data-theme='dark'] .tech-posture-card.health-red {
+  border-color: #dc2626;
+  box-shadow: inset 0 4px 0 #dc2626, var(--shadow-card);
+}
+/* ── End health color restore ── */
+
+/* ── Dark mode: active summary tile fill overrides ── */
+[data-theme='dark'] button.tech-summary-tile.health-green.active { background: rgba(22, 163, 74, 0.14); }
+[data-theme='dark'] button.tech-summary-tile.health-yellow.active { background: rgba(217, 119, 6, 0.14); }
+[data-theme='dark'] button.tech-summary-tile.health-red.active { background: rgba(220, 38, 38, 0.14); }
+[data-theme='dark'] button.tech-summary-tile.active .tech-tile-filter-hint { color: #60a5fa; }
+/* ── End active tile dark overrides ── */
+
+/* ── Dark mode: modal note + search ── */
+[data-theme='dark'] .tech-modal-note { background: rgba(255,194,32,0.08); border-left-color: #ffc220; color: #fde68a; }
+[data-theme='dark'] .tech-modal-search { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+[data-theme='dark'] .tech-modal-search:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96,165,250,0.2); }
+/* ── End modal note + search dark overrides ── */
+
+[data-theme='dark'] .tech-focus-strip article {
+  border-color: var(--border-subtle);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 83, 226, 0.18));
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions {
+  color: var(--text-primary);
+  border-color: rgba(169, 221, 247, 0.18);
+  background: radial-gradient(circle at 92% 10%, rgba(255, 194, 32, 0.08), transparent 9rem), linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.045));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead strong,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions span {
+  color: var(--yellow);
+}
+
+[data-theme='dark'] .threat-executive-summary .threat-summary-lead p,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions ol,
+[data-theme='dark'] .threat-executive-summary .threat-next-actions li {
+  color: var(--text-secondary);
+}
+
+[data-theme='dark'] .threat-page .status-watch {
+  color: var(--yellow);
+  border-color: rgba(255, 194, 32, 0.38);
+  background: rgba(255, 194, 32, 0.12);
+}
+
+[data-theme='dark'] .tech-card h2,
+[data-theme='dark'] .tech-card h3,
+[data-theme='dark'] .tech-kpi strong,
+[data-theme='dark'] .tech-table strong,
+[data-theme='dark'] .tech-record strong,
+[data-theme='dark'] .tech-focus-strip strong,
+[data-theme='dark'] .tech-summary-tile strong,
+[data-theme='dark'] .tech-posture-card strong,
+[data-theme='dark'] .tech-warning-card strong,
+[data-theme='dark'] .tech-metric-grid strong,
+[data-theme='dark'] .tech-predictive-card strong,
+[data-theme='dark'] .tech-governance-grid article strong,
+[data-theme='dark'] .tech-chart-row strong,
+[data-theme='dark'] .fire-ops-card h2,
+[data-theme='dark'] .fire-ops-kpi strong,
+[data-theme='dark'] .fire-ops-summary-list strong,
+[data-theme='dark'] .fire-ops-summary-list em,
+[data-theme='dark'] .remediation-card h2,
+[data-theme='dark'] .remediation-kpi strong,
+[data-theme='dark'] .remediation-table strong,
+[data-theme='dark'] .remediation-lane-header h2,
+[data-theme='dark'] .remediation-board-card strong,
+[data-theme='dark'] .remediation-evidence-list strong,
+[data-theme='dark'] .remediation-readiness-grid strong,
+[data-theme='dark'] .threat-card h2,
+[data-theme='dark'] .threat-card h3,
+[data-theme='dark'] .threat-kpi strong,
+[data-theme='dark'] .threat-focus-strip strong,
+[data-theme='dark'] .threat-metric-grid strong,
+[data-theme='dark'] .threat-draft-empty strong,
+[data-theme='dark'] .threat-draft-grid strong,
+[data-theme='dark'] .threat-draft-body h4,
+[data-theme='dark'] .threat-risk-list strong,
+[data-theme='dark'] .threat-record strong,
+[data-theme='dark'] .threat-signal-card strong,
+[data-theme='dark'] .threat-table td,
+[data-theme='dark'] .threat-chart-row strong,
+[data-theme='dark'] .threat-score-model article > div:first-child strong,
+[data-theme='dark'] .vendor-card h2,
+[data-theme='dark'] .vendor-kpi strong,
+[data-theme='dark'] .vendor-focus-strip strong,
+[data-theme='dark'] .vendor-mini-list strong,
+[data-theme='dark'] .vendor-candidate strong,
+[data-theme='dark'] .vendor-record strong,
+[data-theme='dark'] .vendor-table td,
+[data-theme='dark'] .vendor-chart-row strong,
+[data-theme='dark'] .external-card h2,
+[data-theme='dark'] .external-kpi strong,
+[data-theme='dark'] .external-readiness-list strong,
+[data-theme='dark'] .external-record strong,
+[data-theme='dark'] .external-contact-card strong,
+[data-theme='dark'] .external-contact-block strong,
+[data-theme='dark'] .external-table td,
+[data-theme='dark'] .external-metric-grid strong {
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .tech-kpi span,
+[data-theme='dark'] .tech-kpi small,
+[data-theme='dark'] .tech-card p,
+[data-theme='dark'] .tech-record span,
+[data-theme='dark'] .tech-record small,
+[data-theme='dark'] .tech-focus-strip small,
+[data-theme='dark'] .tech-summary-tile small,
+[data-theme='dark'] .tech-posture-card li,
+[data-theme='dark'] .tech-warning-card p,
+[data-theme='dark'] .tech-warning-card li,
+[data-theme='dark'] .tech-warning-card small,
+[data-theme='dark'] .tech-metric-grid span,
+[data-theme='dark'] .tech-metric-grid small,
+[data-theme='dark'] .tech-summary-tile span,
+[data-theme='dark'] .tech-posture-card span,
+[data-theme='dark'] .tech-predictive-card span,
+[data-theme='dark'] .tech-predictive-card ul,
+[data-theme='dark'] .tech-governance-grid article small,
+[data-theme='dark'] .tech-chart-row > div:first-child,
+[data-theme='dark'] .tech-note-list,
+[data-theme='dark'] .tech-ordered-list,
+[data-theme='dark'] .fire-ops-card p,
+[data-theme='dark'] .fire-ops-kpi span,
+[data-theme='dark'] .fire-ops-kpi small,
+[data-theme='dark'] .fire-ops-summary-list small,
+[data-theme='dark'] .remediation-card p,
+[data-theme='dark'] .remediation-kpi span,
+[data-theme='dark'] .remediation-kpi small,
+[data-theme='dark'] .remediation-table small,
+[data-theme='dark'] .remediation-board-card span,
+[data-theme='dark'] .remediation-board-card small,
+[data-theme='dark'] .remediation-board-card p,
+[data-theme='dark'] .remediation-evidence-list span,
+[data-theme='dark'] .remediation-evidence-list ul,
+[data-theme='dark'] .remediation-readiness-grid small,
+[data-theme='dark'] .threat-card p,
+[data-theme='dark'] .threat-kpi span,
+[data-theme='dark'] .threat-kpi small,
+[data-theme='dark'] .threat-focus-strip small,
+[data-theme='dark'] .threat-metric-grid span,
+[data-theme='dark'] .threat-metric-grid small,
+[data-theme='dark'] .threat-draft-grid span,
+[data-theme='dark'] .threat-draft-grid small,
+[data-theme='dark'] .threat-risk-list span,
+[data-theme='dark'] .threat-risk-list small,
+[data-theme='dark'] .threat-record span,
+[data-theme='dark'] .threat-record small,
+[data-theme='dark'] .threat-signal-card span,
+[data-theme='dark'] .threat-signal-card small,
+[data-theme='dark'] .threat-table small,
+[data-theme='dark'] .threat-note-list,
+[data-theme='dark'] .vendor-card p,
+[data-theme='dark'] .vendor-kpi span,
+[data-theme='dark'] .vendor-kpi small,
+[data-theme='dark'] .vendor-focus-strip small,
+[data-theme='dark'] .vendor-mini-list span,
+[data-theme='dark'] .vendor-mini-list small,
+[data-theme='dark'] .vendor-candidate span,
+[data-theme='dark'] .vendor-candidate small,
+[data-theme='dark'] .vendor-record span,
+[data-theme='dark'] .vendor-table small,
+[data-theme='dark'] .vendor-note-list,
+[data-theme='dark'] .external-card p,
+[data-theme='dark'] .external-kpi span,
+[data-theme='dark'] .external-kpi small,
+[data-theme='dark'] .external-readiness-list span,
+[data-theme='dark'] .external-readiness-list small,
+[data-theme='dark'] .external-record span,
+[data-theme='dark'] .external-record small,
+[data-theme='dark'] .external-contact-card span,
+[data-theme='dark'] .external-contact-block span,
+[data-theme='dark'] .external-contact-block small,
+[data-theme='dark'] .external-table small,
+[data-theme='dark'] .external-note-list,
+[data-theme='dark'] .external-metric-grid small {
+  color: var(--text-secondary);
+}
+
+[data-theme='dark'] .tech-table-wrap,
+[data-theme='dark'] .fire-ops-table-wrap,
+[data-theme='dark'] .remediation-table-wrap,
+[data-theme='dark'] .threat-table-wrap,
+[data-theme='dark'] .vendor-table-wrap,
+[data-theme='dark'] .external-table-wrap {
+  border-color: var(--border-subtle);
+}
+
+[data-theme='dark'] .tech-table,
+[data-theme='dark'] .fire-ops-table,
+[data-theme='dark'] .remediation-table,
+[data-theme='dark'] .threat-table,
+[data-theme='dark'] .vendor-table,
+[data-theme='dark'] .external-table {
+  background: rgba(2, 8, 23, 0.72);
+}
+
+[data-theme='dark'] .tech-table th,
+[data-theme='dark'] .fire-ops-table th,
+[data-theme='dark'] .remediation-table th,
+[data-theme='dark'] .threat-table th,
+[data-theme='dark'] .vendor-table th,
+[data-theme='dark'] .external-table th {
+  color: var(--sky-blue);
+  border-color: var(--border-subtle);
+  background: rgba(0, 30, 96, 0.96);
+}
+
+[data-theme='dark'] .tech-table td,
+[data-theme='dark'] .fire-ops-table td,
+[data-theme='dark'] .remediation-table td,
+[data-theme='dark'] .threat-table td,
+[data-theme='dark'] .vendor-table td,
+[data-theme='dark'] .external-table td {
+  color: var(--text-secondary);
+  border-color: rgba(169, 221, 247, 0.12);
+}
+
+[data-theme='dark'] .threat-table-wrap {
+  background: #0b1224;
+}
+
+[data-theme='dark'] .threat-table tbody td {
+  color: #eaf1ff;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #111827;
+}
+
+[data-theme='dark'] .threat-table tbody tr:nth-child(even) td {
+  background: #151f33;
+}
+
+[data-theme='dark'] .threat-table tbody strong {
+  color: #ffffff;
+}
+
+[data-theme='dark'] .threat-table tbody small {
+  color: #b9c7e6;
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-critical td {
+  background: rgba(127, 29, 29, 0.36);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-high td {
+  background: rgba(124, 45, 18, 0.34);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-medium td {
+  background: rgba(113, 63, 18, 0.32);
+}
+
+[data-theme='dark'] .threat-table tbody .facility-row-tier-low td {
+  background: rgba(20, 83, 45, 0.28);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-critical {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(127, 29, 29, 0.44);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-high {
+  color: #fed7aa;
+  border-color: rgba(251, 146, 60, 0.46);
+  background: rgba(124, 45, 18, 0.44);
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-medium {
+  color: #001e60;
+  border-color: rgba(255, 194, 32, 0.72);
+  background: #ffc220;
+}
+
+[data-theme='dark'] .threat-table .threat-tier-pill.tier-low {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.42);
+  background: rgba(20, 83, 45, 0.42);
+}
+
+[data-theme='dark'] .threat-table .status-critical {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.48);
+  background: rgba(127, 29, 29, 0.44);
+}
+
+[data-theme='dark'] .threat-table .status-watch {
+  color: #001e60;
+  border-color: rgba(255, 194, 32, 0.74);
+  background: #ffc220;
+}
+
+[data-theme='dark'] .tech-table tr:hover td,
+[data-theme='dark'] .fire-ops-table tr:hover td,
+[data-theme='dark'] .remediation-table tr:hover td,
+[data-theme='dark'] .threat-table tr:hover td,
+[data-theme='dark'] .vendor-table tr:hover td,
+[data-theme='dark'] .external-table tr:hover td {
+  background: rgba(77, 189, 245, 0.08);
+}
+
+[data-theme='dark'] .remediation-table tr.is-overdue td,
+[data-theme='dark'] .remediation-board-card.overdue {
+  background: rgba(180, 83, 9, 0.16);
+}
+
+[data-theme='dark'] .tech-chart-track,
+[data-theme='dark'] .threat-chart-row > div:last-child,
+[data-theme='dark'] .vendor-chart-row > div:last-child,
+[data-theme='dark'] .remediation-chart-row > div:last-child {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .tech-warning-card.severity-critical {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: linear-gradient(180deg, rgba(127, 29, 29, 0.28), rgba(255, 255, 255, 0.055));
+}
+
+[data-theme='dark'] .tech-warning-card.severity-high {
+  border-color: rgba(245, 158, 11, 0.58);
+  background: linear-gradient(180deg, rgba(146, 64, 14, 0.24), rgba(255, 255, 255, 0.055));
+}
+
+[data-theme='dark'] .tech-warning-card span,
+[data-theme='dark'] .tech-warning-card small,
+[data-theme='dark'] .tech-predictive-card em,
+[data-theme='dark'] .tech-predictive-card p,
+[data-theme='dark'] .tech-posture-card em,
+[data-theme='dark'] .tech-directory-header strong {
+  color: var(--sky-blue);
+}
+
+[data-theme='dark'] .tech-filters input,
+[data-theme='dark'] .tech-filters select,
+[data-theme='dark'] .fire-ops-filters input,
+[data-theme='dark'] .fire-ops-filters select,
+[data-theme='dark'] .fire-ops-scope-actions button,
+[data-theme='dark'] .fire-ops-site-toggle button,
+[data-theme='dark'] .remediation-filters input,
+[data-theme='dark'] .remediation-filters select,
+[data-theme='dark'] .threat-filters input,
+[data-theme='dark'] .threat-filters select,
+[data-theme='dark'] .vendor-form-grid input,
+[data-theme='dark'] .vendor-form-grid select,
+[data-theme='dark'] .vendor-form-grid textarea,
+[data-theme='dark'] .vendor-filters input,
+[data-theme='dark'] .vendor-filters select,
+[data-theme='dark'] .external-filters input {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  background: rgba(2, 8, 23, 0.62);
+}
+
+[data-theme='dark'] .tech-page .locked-scope-panel,
+[data-theme='dark'] .fire-ops-page .locked-scope-panel,
+[data-theme='dark'] .remediation-page .locked-scope-panel,
+[data-theme='dark'] .threat-page .locked-scope-panel,
+[data-theme='dark'] .vendor-page .locked-scope-panel,
+[data-theme='dark'] .external-page .locked-scope-panel,
+[data-theme='dark'] .epr-page .locked-scope-panel,
+[data-theme='dark'] .tech-page .scope-context-chip,
+[data-theme='dark'] .fire-ops-page .scope-context-chip,
+[data-theme='dark'] .remediation-page .scope-context-chip,
+[data-theme='dark'] .threat-page .scope-context-chip,
+[data-theme='dark'] .vendor-page .scope-context-chip,
+[data-theme='dark'] .external-page .scope-context-chip,
+[data-theme='dark'] .epr-page .scope-context-chip {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  background: var(--surface-panel-raised);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .tech-page .locked-scope-panel p,
+[data-theme='dark'] .fire-ops-page .locked-scope-panel p,
+[data-theme='dark'] .remediation-page .locked-scope-panel p,
+[data-theme='dark'] .threat-page .locked-scope-panel p,
+[data-theme='dark'] .vendor-page .locked-scope-panel p,
+[data-theme='dark'] .external-page .locked-scope-panel p,
+[data-theme='dark'] .epr-page .locked-scope-panel p,
+[data-theme='dark'] .tech-page .scope-context-chip small,
+[data-theme='dark'] .fire-ops-page .scope-context-chip small,
+[data-theme='dark'] .remediation-page .scope-context-chip small,
+[data-theme='dark'] .threat-page .scope-context-chip small,
+[data-theme='dark'] .vendor-page .scope-context-chip small,
+[data-theme='dark'] .external-page .scope-context-chip small,
+[data-theme='dark'] .epr-page .scope-context-chip small {
+  color: var(--text-secondary);
+}
+
+[data-theme='dark'] .tech-page .scope-context-chip strong,
+[data-theme='dark'] .fire-ops-page .scope-context-chip strong,
+[data-theme='dark'] .remediation-page .scope-context-chip strong,
+[data-theme='dark'] .threat-page .scope-context-chip strong,
+[data-theme='dark'] .vendor-page .scope-context-chip strong,
+[data-theme='dark'] .external-page .scope-context-chip strong,
+[data-theme='dark'] .epr-page .scope-context-chip strong {
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .tech-page .scope-chip.selected,
+[data-theme='dark'] .fire-ops-page .scope-chip.selected,
+[data-theme='dark'] .remediation-page .scope-chip.selected,
+[data-theme='dark'] .threat-page .scope-chip.selected,
+[data-theme='dark'] .vendor-page .scope-chip.selected,
+[data-theme='dark'] .external-page .scope-chip.selected,
+[data-theme='dark'] .epr-page .scope-chip.selected,
+[data-theme='dark'] .vendor-tags span,
+[data-theme='dark'] .threat-tags span,
+[data-theme='dark'] .masked-ip code {
+  color: var(--sky-blue);
+  border-color: var(--border-subtle);
+  background: rgba(0, 83, 226, 0.18);
+}
+
+[data-theme='dark'] .masked-ip button {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .tech-modal {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  background: #061638;
+}
+
+[data-theme='dark'] .tech-modal-header {
+  border-color: var(--border-subtle);
+  background: linear-gradient(135deg, rgba(0, 83, 226, 0.22), rgba(255, 255, 255, 0.05));
+}
+
+[data-theme='dark'] .tech-modal-header h2 {
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .tech-empty,
+[data-theme='dark'] .remediation-empty,
+[data-theme='dark'] .threat-empty {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+
+/* ── Screen-fit layout guardrails for all FPI modules ── */
+.dashboard-shell,
+.dashboard-content,
+.dashboard-header,
+.panel,
+.kpi-card,
+.progress-card,
+.executive-item,
+.executive-kpi-tile,
+.leadership-attention-item,
+.settings-page,
+.tech-page,
+.fire-ops-page,
+.remediation-page,
+.threat-page,
+.vendor-page,
+.external-page,
+.epr-page,
+.nova-page {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.settings-page,
+.tech-page,
+.fire-ops-page,
+.remediation-page,
+.threat-page,
+.vendor-page,
+.external-page,
+.epr-page,
+.nova-page {
+  width: 100%;
+  margin: 0;
+  padding: clamp(12px, 1.4vw, 22px);
+  overflow-x: hidden;
+}
+
+.settings-page { padding: 0; }
+
+.dashboard-grid,
+.kpi-grid,
+.progress-grid,
+.executive-strip,
+.executive-kpi-grid,
+.leadership-attention-grid,
+.command-guidance-grid,
+.service-meta-grid,
+.service-live-metrics,
+.scope-summary-grid,
+.facility-summary-grid,
+.facility-detail-grid,
+.settings-overview-grid,
+.tech-grid,
+.tech-kpi-grid,
+.tech-region-summary-grid,
+.tech-summary-grid,
+.tech-metric-grid,
+.tech-posture-grid,
+.tech-warning-grid,
+.tech-governance-grid,
+.fire-ops-grid,
+.fire-ops-kpi-grid,
+.fire-chart-grid,
+.remediation-grid,
+.remediation-kpi-grid,
+.remediation-readiness-grid,
+.remediation-tier-summary,
+.remediation-filters,
+.threat-grid,
+.threat-kpi-grid,
+.threat-metric-grid,
+.threat-draft-grid,
+.threat-score-model,
+.vendor-grid,
+.vendor-kpi-grid,
+.vendor-metric-grid,
+.vendor-candidate-grid,
+.vendor-focus-strip,
+.external-grid,
+.external-kpi-grid,
+.external-contact-grid,
+.external-metric-grid,
+.external-program-source-grid,
+.nova-grid,
+.nova-side-stack {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.panel,
+.kpi-card,
+.progress-card,
+.executive-item,
+.executive-kpi-tile,
+.leadership-attention-item,
+.settings-card,
+.tech-card,
+.tech-kpi,
+.tech-summary-tile,
+.tech-posture-card,
+.tech-warning-card,
+.fire-ops-card,
+.fire-ops-kpi,
+.remediation-card,
+.remediation-kpi,
+.remediation-lane,
+.remediation-board-card,
+.threat-card,
+.threat-kpi,
+.vendor-card,
+.vendor-kpi,
+.external-card,
+.external-kpi,
+.nova-card,
+.nova-hero {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tech-table-wrap,
+.fire-ops-table-wrap,
+.remediation-table-wrap,
+.threat-table-wrap,
+.vendor-table-wrap,
+.external-table-wrap,
+.epr-table-shell,
+.facility-risk-table {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.tech-table,
+.fire-ops-table,
+.remediation-table,
+.threat-table,
+.vendor-table,
+.external-table {
+  max-width: none;
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+.dashboard-header,
+.tech-header,
+.fire-ops-header,
+.remediation-header,
+.threat-header,
+.vendor-header,
+.external-header,
+.nova-hero {
+  flex-wrap: wrap;
+}
+
+.settings-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+
+@media (max-width: 1366px) {
+  .dashboard-content { padding: 12px; }
+  .dashboard-header { padding: 18px; }
+  .dashboard-grid { gap: 12px; }
+  .executive-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .service-live-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1280px) {
+  .dashboard-shell { grid-template-columns: 236px minmax(0, 1fr); }
+  .sidebar { width: 236px; max-width: 236px; padding: 14px 12px; }
+  .dashboard-content { padding: 10px; }
+  .dashboard-header h1 { font-size: clamp(1.8rem, 3vw, 2.7rem); }
+  .leadership-attention-grid,
+  .command-guidance-grid,
+  .service-live-metrics,
+  .settings-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .dashboard-shell { display: block; height: auto; overflow: visible; }
+  .sidebar { width: 100%; max-width: 100%; height: auto; }
+  .settings-overview-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ── Responsive controls and long-content containment ── */
+.dashboard-content > *,
+.dashboard-content > section,
+.dashboard-content > article {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.fire-ops-filters,
+.remediation-filters,
+.tech-filters,
+.tech-warranty-toolbar,
+.threat-filters,
+.vendor-filters,
+.vendor-directory-filters,
+.vendor-search-filters,
+.external-filters,
+.epr-controls,
+.epr-source-controls,
+.epr-incident-controls,
+.epr-mitigation-controls,
+.epr-task-controls {
+  max-width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+
+.fire-ops-filters input,
+.fire-ops-filters select,
+.remediation-filters input,
+.remediation-filters select,
+.tech-filters input,
+.tech-filters select,
+.threat-filters input,
+.threat-filters select,
+.vendor-filters input,
+.vendor-filters select,
+.external-filters input,
+.epr-controls input,
+.epr-controls select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.remediation-kanban {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.nova-context-panel,
+.nova-task-panel,
+.nova-feedback-panel {
+  max-height: min(620px, calc(100vh - 220px));
+  overflow: auto;
+}
+
+.tech-table th,
+.tech-table td,
+.fire-ops-table th,
+.fire-ops-table td,
+.remediation-table th,
+.remediation-table td,
+.threat-table th,
+.threat-table td,
+.vendor-table th,
+.vendor-table td,
+.external-table th,
+.external-table td,
+.epr-table-shell th,
+.epr-table-shell td {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1366px) {
+  .fire-ops-posture-grid,
+  .threat-summary-grid,
+  .epr-visit-grid,
+  .ops-donut-wrap {
+    grid-template-columns: 1fr;
+  }
+  .nova-context-panel,
+  .nova-task-panel,
+  .nova-feedback-panel {
+    max-height: none;
+  }
+}
+
+@media (max-width: 1280px) {
+  .remediation-kanban { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .remediation-kanban { grid-template-columns: 1fr; overflow-x: hidden; }
+  .nova-side-stack { grid-template-columns: 1fr; }
+}

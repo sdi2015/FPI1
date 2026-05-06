@@ -96,10 +96,11 @@ export function getFireAlarmDashboardModel(data: FireAlarmProgramData, selectedS
   const summaries = sites.map((site) => toSiteSummary(site));
   const overdueInspections = sites.filter((site) => isPastDue(site.nextInspectionDue)).length;
   const activeTroubles = sites.reduce((sum, site) => sum + site.activeTroubles, 0);
-  const highFalseAlarms = sites.filter((site) => site.falseAlarms90Days >= 3).length;
+  const falseNuisanceAlarms = sites.reduce((sum, site) => sum + site.falseAlarms90Days, 0);
   const openDeficiencies = sites.reduce((sum, site) => sum + site.openDeficiencies, 0);
-  const highRiskSites = sites.filter((site) => site.riskScore >= 70).length;
+  const criticalLifeSafetyIssues = sites.filter((site) => site.riskScore >= 90 || site.activeTroubles > 0 || site.openDeficiencies >= 3).length;
   const normalCondition = sites.filter((site) => site.complianceStatus === 'Normal' && site.activeTroubles === 0 && site.openDeficiencies === 0).length;
+  const inspectionComplianceRate = sites.length > 0 ? Math.round(((sites.length - overdueInspections) / sites.length) * 100) : 100;
   const pmRecommendations = derivePmRecommendations(sites, devices, recommendations);
 
   return {
@@ -108,16 +109,16 @@ export function getFireAlarmDashboardModel(data: FireAlarmProgramData, selectedS
       { label: 'Normal Condition', value: normalCondition, tone: 'good', actionLabel: 'Healthy' },
       { label: 'Active Troubles', value: activeTroubles, tone: activeTroubles > 0 ? 'warning' : 'good', actionLabel: 'Investigate' },
       { label: 'Overdue Inspections', value: overdueInspections, tone: overdueInspections > 0 ? 'danger' : 'good', actionLabel: 'Schedule' },
-      { label: 'High False Alarms', value: highFalseAlarms, tone: highFalseAlarms > 0 ? 'warning' : 'good', actionLabel: '3+ in 90d' },
+      { label: 'False/Nuisance Alarms', value: falseNuisanceAlarms, tone: falseNuisanceAlarms > 0 ? 'warning' : 'good', actionLabel: 'Trailing 90d' },
       { label: 'Open Deficiencies', value: openDeficiencies, tone: openDeficiencies > 0 ? 'danger' : 'good', actionLabel: 'Remediate' },
-      { label: 'High Risk Sites', value: highRiskSites, tone: highRiskSites > 0 ? 'danger' : 'good', actionLabel: 'Risk ≥ 70' },
-      { label: 'PM Recommendations', value: pmRecommendations, tone: 'info', actionLabel: 'Suggested' },
+      { label: 'Critical Life-Safety Issues', value: criticalLifeSafetyIssues, tone: criticalLifeSafetyIssues > 0 ? 'danger' : 'good', actionLabel: 'Escalate' },
+      { label: 'Inspection Compliance Rate', value: `${inspectionComplianceRate}%`, tone: inspectionComplianceRate >= 95 ? 'good' : inspectionComplianceRate >= 85 ? 'warning' : 'danger', actionLabel: 'Target 95%' }, 
     ],
     falseAlarmsByMonth: buildFalseAlarmsByMonth(events, sites),
     topSitesByFalseAlarms: [...sites]
       .sort((a, b) => b.falseAlarms90Days - a.falseAlarms90Days)
       .slice(0, 10)
-      .map((site) => ({ label: `${site.id} - ${site.name}, ${site.state}`, value: site.falseAlarms90Days, tone: site.falseAlarms90Days >= 3 ? 'warning' : 'normal', color: site.falseAlarms90Days >= 3 ? '#f59e0b' : '#2563eb' })),
+      .map((site) => ({ label: `${site.id} - ${site.name}, ${site.city}, ${site.state} · ${site.region}`, value: site.falseAlarms90Days, tone: site.falseAlarms90Days >= 6 ? 'danger' : site.falseAlarms90Days >= 4 ? 'warning' : site.falseAlarms90Days >= 2 ? 'info' : 'good', color: site.falseAlarms90Days >= 6 ? '#ef4444' : site.falseAlarms90Days >= 4 ? '#f97316' : site.falseAlarms90Days >= 2 ? '#facc15' : '#22c55e' })),
     sitesByRiskLevel: ['Low', 'Medium', 'High', 'Critical'].map((riskLevel) => ({
       label: riskLevel,
       value: summaries.filter((site) => site.riskLevel === riskLevel).length,
@@ -179,10 +180,10 @@ export function riskTone(riskLevel: FireAlarmRiskLevel): FireAlarmKpiTone {
 }
 
 export function riskColor(riskLevel: FireAlarmRiskLevel): string {
-  if (riskLevel === 'Critical') return '#7f1d1d';
-  if (riskLevel === 'High') return '#dc2626';
-  if (riskLevel === 'Medium') return '#f59e0b';
-  return '#16a34a';
+  if (riskLevel === 'Critical') return '#ef4444';
+  if (riskLevel === 'High') return '#f97316';
+  if (riskLevel === 'Medium') return '#facc15';
+  return '#22c55e';
 }
 
 function toSiteSummary(site: FireAlarmSite): FireAlarmSiteSummary {
@@ -219,14 +220,30 @@ function buildFalseAlarmsByMonth(events: FireAlarmRawEvent[], sites: FireAlarmSi
 }
 
 function buildInspectionCompliance(inspections: FireAlarmRawInspection[], reports: FireAlarmRawComplianceReport[]): ChartPoint[] {
-  const sourceDates = inspections.length > 0 ? inspections.map((inspection) => inspection.date) : reports.map((report) => report.reportDate);
-  const counts = sourceDates.reduce<Record<string, number>>((accumulator, value) => {
-    const label = monthLabel(value);
+  if (inspections.length > 0) {
+    const grouped = inspections.reduce<Record<string, { total: number; completion: number }>>((accumulator, inspection) => {
+      const label = monthLabel(inspection.date);
+      if (!label) return accumulator;
+      accumulator[label] = accumulator[label] ?? { total: 0, completion: 0 };
+      accumulator[label].total += 1;
+      accumulator[label].completion += inspection.deviceTestCompletion ?? (inspection.result?.toLowerCase().includes('pass') ? 100 : 75);
+      return accumulator;
+    }, {});
+    return Object.entries(grouped)
+      .map(([label, value]) => ({ label, value: Math.round(value.completion / Math.max(value.total, 1)) }))
+      .sort((a, b) => Date.parse(`1 ${a.label}`) - Date.parse(`1 ${b.label}`))
+      .slice(-8);
+  }
+
+  const groupedReports = reports.reduce<Record<string, { total: number; complete: number }>>((accumulator, report) => {
+    const label = monthLabel(report.reportDate);
     if (!label) return accumulator;
-    accumulator[label] = (accumulator[label] ?? 0) + 1;
+    accumulator[label] = accumulator[label] ?? { total: 0, complete: 0 };
+    accumulator[label].total += 1;
+    accumulator[label].complete += report.status?.toLowerCase().includes('complete') ? 1 : 0;
     return accumulator;
   }, {});
-  return Object.entries(counts).map(([label, value]) => ({ label, value })).sort((a, b) => Date.parse(`1 ${a.label}`) - Date.parse(`1 ${b.label}`)).slice(-8);
+  return Object.entries(groupedReports).map(([label, value]) => ({ label, value: Math.round((value.complete / Math.max(value.total, 1)) * 100) })).sort((a, b) => Date.parse(`1 ${a.label}`) - Date.parse(`1 ${b.label}`)).slice(-8);
 }
 
 function makeTopBreakdown(values: string[], limit: number): BarChartPoint[] {

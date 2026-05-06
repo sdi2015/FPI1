@@ -674,7 +674,7 @@ def build_threat_risk(facilities: list[dict[str, Any]], master: dict[str, Any], 
                 "occurredAt": task.get("created_at") or "Unknown",
                 "summary": task.get("description") or "Critical canonical task requires action.",
                 "riskContribution": 8,
-                "sourceIds": ["remediation-task-csv", "fpp-placeholder"],
+                "sourceIds": ["remediation-task-csv", "protection-program-intake"],
                 "recommendedAction": "Assign accountable owner, attach evidence, and verify closure before risk is downgraded.",
                 "bestPracticeRefs": ["dhs-protective-measures", "internal-fpi-evidence-loop"],
             })
@@ -715,10 +715,10 @@ def build_threat_risk(facilities: list[dict[str, Any]], master: dict[str, Any], 
 
 def build_threat_sources(signal_count: int) -> list[dict[str, Any]]:
     return [
-        {"sourceId": "srm-placeholder", "sourceName": "SRM", "sourceType": "Internal System", "integrationStatus": "Adapter Planned", "freshnessStatus": "Unknown", "confidence": "Reference", "recordsLoaded": 0, "notes": "Reserved seam for security/risk/case management signals once approved access or exports exist."},
-        {"sourceId": "fpp-placeholder", "sourceName": "FPP", "sourceType": "Walmart Program", "integrationStatus": "Adapter Planned", "freshnessStatus": "Unknown", "confidence": "Reference", "recordsLoaded": 0, "notes": "Reserved seam for facility protection profiles and control maturity scoring."},
-        {"sourceId": "incident-csv", "sourceName": "Region 75 incident CSV", "sourceType": "Manual Upload", "integrationStatus": "Loaded", "freshnessStatus": "Current", "confidence": "Medium", "recordsLoaded": signal_count, "notes": "Used for threat signal and incident pattern detection in this demo."},
-        {"sourceId": "canonical-technology", "sourceName": "Technology Health", "sourceType": "Internal System", "integrationStatus": "Loaded", "freshnessStatus": "Current", "confidence": "High", "recordsLoaded": 12, "notes": "Camera, NVR, access, network, and technical-control posture."},
+        {"sourceId": "incident-intelligence-intake", "sourceName": "Incident Intelligence Intake", "sourceType": "Internal System", "integrationStatus": "Adapter Planned", "freshnessStatus": "Unknown", "confidence": "Reference", "recordsLoaded": 0, "notes": "Planned intake for approved incident, risk, and case-management signals once access, retention, and export controls are approved."},
+        {"sourceId": "protection-program-intake", "sourceName": "Protection Program Intake", "sourceType": "Walmart Program", "integrationStatus": "Adapter Planned", "freshnessStatus": "Unknown", "confidence": "Reference", "recordsLoaded": 0, "notes": "Planned intake for FPI facility protection profiles, control maturity, and field context scoring."},
+        {"sourceId": "incident-csv", "sourceName": "Incident Tracker Intelligence", "sourceType": "Manual Upload", "integrationStatus": "Loaded", "freshnessStatus": "Current", "confidence": "Medium", "recordsLoaded": signal_count, "notes": "Used for incident pattern detection and proactive facility risk signals in this demo."},
+        {"sourceId": "canonical-technology", "sourceName": "Security Technology Health", "sourceType": "Internal System", "integrationStatus": "Loaded", "freshnessStatus": "Current", "confidence": "High", "recordsLoaded": 12, "notes": "Camera, NVR, access, network, and technical-control posture."},
         {"sourceId": "public-safety-guidance", "sourceName": "FBI / DHS-CISA / OSHA / NFPA references", "sourceType": "Public Safety Guidance", "integrationStatus": "Reference Only", "freshnessStatus": "Unknown", "confidence": "Reference", "recordsLoaded": 5, "notes": "Guidance library for recommended actions; not a live threat-intel feed."},
     ]
 

@@ -8,5 +8,7 @@ import './remediation.css';
 import './threat.css';
 import './vendor.css';
 import './external.css';
+import './nova.css';
+import './theme-overrides.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App />);

@@ -1,5 +1,45 @@
 import type { StoreCameraHealth, TechnologyHealthData, TechnologyIssue } from './technologyHealthTypes';
 
+export type HealthThresholdTone = 'green' | 'yellow' | 'red';
+
+export function healthToneForPercent(value: number): HealthThresholdTone {
+  if (value >= 98) return 'green';
+  if (value >= 85) return 'yellow';
+  return 'red';
+}
+
+export function healthLabelForPercent(value: number): 'Healthy' | 'Warning' | 'Critical' {
+  const tone = healthToneForPercent(value);
+  if (tone === 'green') return 'Healthy';
+  if (tone === 'yellow') return 'Warning';
+  return 'Critical';
+}
+
+export function getHealthyStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return stores.filter((store) => healthToneForPercent(store.onlinePercent) === 'green');
+}
+
+export function getUnhealthyStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return sortStoresByTechnicalRisk(stores).filter((store) => healthToneForPercent(store.onlinePercent) !== 'green');
+}
+
+/** True when any offline count field is non-zero. Needed because offlineCameras
+ *  comes from the source CSV column (often blank) while ipOffline / analogOffline
+ *  are counted from the camera inventory and are always accurate.
+ */
+export function storeHasOffline(store: StoreCameraHealth): boolean {
+  return store.offlineCameras > 0 || store.ipOffline > 0 || store.analogOffline > 0;
+}
+
+/** Best available offline total for a store. */
+export function storeOfflineTotal(store: StoreCameraHealth): number {
+  return Math.max(store.offlineCameras, store.ipOffline + store.analogOffline);
+}
+
+export function getOfflineCameraStores(stores: StoreCameraHealth[]): StoreCameraHealth[] {
+  return sortStoresByTechnicalRisk(stores).filter(storeHasOffline);
+}
+
 export function getCameraTechnologyIssues(data: TechnologyHealthData): TechnologyIssue[] {
   return data.technologyIssues.filter((issue) => issue.domain === 'Camera/VMS' || issue.domain === 'Recorder');
 }
@@ -15,7 +55,7 @@ export function sortStoresByTechnicalRisk(stores: StoreCameraHealth[]): StoreCam
 export function riskValue(store: StoreCameraHealth): number {
   return (
     (100 - store.onlinePercent) * 2 +
-    store.offlineCameras * 0.8 +
+    storeOfflineTotal(store) * 0.8 +
     store.issueCameraCount * 0.4 +
     store.missingProfileCount * 0.12 +
     store.misplacedSubnetCount * 2 +

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
+import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
 import { ExternalCoordinationView } from './components/views/ExternalCoordinationView';
 import { FireSystemServiceView } from './components/views/FireSystemServiceView';
 import { NetworkDevicePostureView } from './components/views/NetworkDevicePostureView';
+import { NovaAgentView } from './components/views/NovaAgentView';
 import { PlaceholderServiceView } from './components/views/PlaceholderServiceView';
 import { ReadinessOverviewView } from './components/views/ReadinessOverviewView';
 import { RemediationOrchestrationView } from './components/views/RemediationOrchestrationView';
@@ -13,24 +15,77 @@ import { ThreatDetectionRiskScoringView } from './components/views/ThreatDetecti
 import { VendorIntelligenceRecommendationsView } from './components/views/VendorIntelligenceRecommendationsView';
 import { getFacilityDetailModel } from './data/fpiSelectors';
 import { calculateFpiDashboardMetrics } from './data/fpiMetrics';
+import { buildNovaContext } from './data/novaContextBuilder';
 import { applyStoreScopeToFpiProgram } from './data/fpiStoreScope';
-import { createAllStoresScope, hasEmptyStoreScope, type StoreScopeState } from './data/storeScope';
-import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
-import { capabilities, pillars, type Capability, type Pillar } from './data/program';
+import { createAllStoresScope, getStoreScopeSummary, hasEmptyStoreScope, type StoreScopeMode, type StoreScopeState } from './data/storeScope';
+import { getServiceMetrics } from './data/fpiServiceMetrics';
+import { capabilities, pillars, type Capability } from './data/program';
 import { capabilityIdForService, serviceIdForCapability, SERVICE_IDS, type ServiceId } from './data/serviceIds';
-import type { FpiDashboardMetrics, FpiKpi, FpiTopRiskFacility, StatusTone } from './data/fpiTypes';
+import type { StatusTone } from './data/fpiTypes';
 import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
 import { useFireAlarmData } from './data/useFireAlarmData';
 
 type Screen = 'landing' | 'dashboard';
 
 const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
+const STORE_SCOPE_STORAGE_KEY = 'fpi-store-scope';
+const validServiceIds = Object.values(SERVICE_IDS) as ServiceId[];
+
+function getServiceIdFromHash(): ServiceId | null {
+  if (typeof window === 'undefined') return null;
+  const hashValue = window.location.hash.replace(/^#\/?/, '');
+  return validServiceIds.includes(hashValue as ServiceId) ? (hashValue as ServiceId) : null;
+}
+
+function updateServiceHash(serviceId: ServiceId) {
+  if (typeof window === 'undefined') return;
+  const nextHash = `#/${serviceId}`;
+  if (window.location.hash !== nextHash) {
+    window.history.pushState(null, '', nextHash);
+  }
+}
+
+function clearServiceHash() {
+  if (typeof window === 'undefined') return;
+  window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`);
+}
+
+function loadStoredStoreScope(): StoreScopeState {
+  if (typeof window === 'undefined') return createAllStoresScope();
+
+  try {
+    const storedValue = window.localStorage.getItem(STORE_SCOPE_STORAGE_KEY);
+    if (!storedValue) return createAllStoresScope();
+
+    const parsed = JSON.parse(storedValue) as Partial<StoreScopeState>;
+    if (!isValidStoreScope(parsed)) return createAllStoresScope();
+
+    return parsed;
+  } catch {
+    return createAllStoresScope();
+  }
+}
+
+function isValidStoreScope(value: Partial<StoreScopeState>): value is StoreScopeState {
+  const validModes: StoreScopeMode[] = ['all', 'regions', 'stores'];
+  return Boolean(
+    value &&
+      typeof value === 'object' &&
+      typeof value.mode === 'string' &&
+      validModes.includes(value.mode as StoreScopeMode) &&
+      Array.isArray(value.selectedRegionNames) &&
+      value.selectedRegionNames.every((region) => typeof region === 'string') &&
+      Array.isArray(value.selectedStoreIds) &&
+      value.selectedStoreIds.every((storeId) => typeof storeId === 'string'),
+  );
+}
 
 function App() {
   const initialTheme =
     typeof window !== 'undefined' && window.localStorage.getItem('fpi-theme') === 'light' ? 'light' : 'dark';
-  const [screen, setScreen] = useState<Screen>('landing');
-  const [selectedService, setSelectedService] = useState<ServiceId>(defaultServiceId);
+  const initialServiceFromHash = getServiceIdFromHash();
+  const [screen, setScreen] = useState<Screen>(initialServiceFromHash ? 'dashboard' : 'landing');
+  const [selectedService, setSelectedService] = useState<ServiceId>(initialServiceFromHash ?? defaultServiceId);
   const [theme, setTheme] = useState<'dark' | 'light'>(initialTheme);
   const fpiState = useFpiProgramData();
 
@@ -39,17 +94,52 @@ function App() {
     window.localStorage.setItem('fpi-theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    function handleHashChange() {
+      const serviceId = getServiceIdFromHash();
+      if (!serviceId) {
+        setScreen('landing');
+        return;
+      }
+      setSelectedService(serviceId);
+      setScreen('dashboard');
+    }
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
+
   const activeCapability = useMemo(
     () => capabilities.find((capability) => capability.id === capabilityIdForService(selectedService)) ?? capabilities[0],
     [selectedService],
   );
 
+  function handleSelectService(serviceId: ServiceId) {
+    setSelectedService(serviceId);
+    setScreen('dashboard');
+    updateServiceHash(serviceId);
+  }
+
+  function handleEnterDashboard() {
+    setScreen('dashboard');
+    updateServiceHash(selectedService);
+  }
+
+  function handleBackToLanding() {
+    setScreen('landing');
+    clearServiceHash();
+  }
+
   if (screen === 'dashboard') {
     return (
       <DashboardShell
         selectedService={selectedService}
-        onSelectService={setSelectedService}
-        onBackToLanding={() => setScreen('landing')}
+        onSelectService={handleSelectService}
+        onBackToLanding={handleBackToLanding}
         activeCapability={activeCapability}
         fpiState={fpiState}
         theme={theme}
@@ -60,7 +150,7 @@ function App() {
 
   return (
     <Landing
-      onEnter={() => setScreen('dashboard')}
+      onEnter={handleEnterDashboard}
       theme={theme}
       onThemeToggle={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
     />
@@ -235,7 +325,9 @@ function DashboardShell({
   onThemeToggle: () => void;
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
-  const [storeScope, setStoreScope] = useState<StoreScopeState>(createAllStoresScope());
+  const [storeScope, setStoreScope] = useState<StoreScopeState>(loadStoredStoreScope());
+  const [novaDrawerOpen, setNovaDrawerOpen] = useState(false);
+  const [isNovaWidgetDismissed, setIsNovaWidgetDismissed] = useState<boolean>(typeof window !== 'undefined' && window.localStorage.getItem('fpi_nova_floating_button_dismissed') === 'true');
   const fireAlarmState = useFireAlarmData();
   const globalMetrics = fpiState.data?.dashboardMetrics;
   const programData = fpiState.data?.programData;
@@ -257,6 +349,34 @@ function DashboardShell({
     () => (scopedProgramData ? getServiceMetrics(scopedProgramData, activeCapability.id, activeCapability.title) : null),
     [scopedProgramData, activeCapability.id, activeCapability.title],
   );
+  const scopeSummary = useMemo(() => getStoreScopeSummary(storeScope, fireSites), [storeScope, fireSites]);
+  const novaContext = useMemo(
+    () => buildNovaContext({ activeCapability, metrics, programData: scopedProgramData ?? undefined, fireAlarmData: fireAlarmState.data, scopeSummary, storeScope }),
+    [activeCapability, metrics, scopedProgramData, fireAlarmState.data, scopeSummary, storeScope],
+  );
+
+  useEffect(() => {
+    window.localStorage.setItem(STORE_SCOPE_STORAGE_KEY, JSON.stringify(storeScope));
+  }, [storeScope]);
+
+  useEffect(() => {
+    function closeNovaOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setNovaDrawerOpen(false);
+    }
+    window.addEventListener('keydown', closeNovaOnEscape);
+    return () => window.removeEventListener('keydown', closeNovaOnEscape);
+  }, []);
+
+  function dismissNovaWidget() {
+    setIsNovaWidgetDismissed(true);
+    setNovaDrawerOpen(false);
+    window.localStorage.setItem('fpi_nova_floating_button_dismissed', 'true');
+  }
+
+  function restoreNovaWidget() {
+    setIsNovaWidgetDismissed(false);
+    window.localStorage.removeItem('fpi_nova_floating_button_dismissed');
+  }
 
   useEffect(() => {
     if (!selectedFacilityId || !scopedProgramData) return;
@@ -278,9 +398,21 @@ function DashboardShell({
       <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} theme={theme} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
-        <div className="top-controls">
-          <ThemeToggle theme={theme} onToggle={onThemeToggle} />
-        </div>
+        <CompactCommandBar
+          activeCapability={activeCapability}
+          metrics={metrics}
+          scopeSummary={scopeSummary}
+          fpiLoading={fpiState.loading}
+          fpiError={fpiState.error}
+          fireLoading={fireAlarmState.loading}
+          fireError={fireAlarmState.error}
+          isEmptyScope={isEmptyScope}
+          theme={theme}
+          onThemeToggle={onThemeToggle}
+          onCommandCenter={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
+          onChangeScope={handleChangeStoreScopeRequest}
+          onSettings={() => onSelectService(SERVICE_IDS.SETTINGS)}
+        />
         {fpiState.loading ? <DashboardStatePanel title="Loading FPI master data" message="Preparing the local master JSON dataset and calculating dashboard metrics." /> : null}
         {fpiState.error ? <DashboardStatePanel title="Dashboard data is unavailable" message={fpiState.error} tone="critical" /> : null}
         {!fpiState.loading && !fpiState.error && !metrics ? (
@@ -289,7 +421,9 @@ function DashboardShell({
 
         {metrics && programData && scopedProgramData ? (
           <>
-            {selectedService === SERVICE_IDS.SETTINGS ? (
+            {selectedService === SERVICE_IDS.NOVA ? (
+              <NovaAgentView context={novaContext} onRestoreFloatingButton={restoreNovaWidget} />
+            ) : selectedService === SERVICE_IDS.SETTINGS ? (
               <SettingsView
                 fireSites={fireSites}
                 fireAlarmLoading={fireAlarmState.loading}
@@ -392,8 +526,93 @@ function DashboardShell({
             <FacilityDetailPanel facility={selectedFacility} onClose={() => setSelectedFacilityId(null)} />
           </>
         ) : null}
+        {selectedService !== SERVICE_IDS.NOVA ? (
+          <FloatingNovaAssistant
+            context={novaContext}
+            open={novaDrawerOpen}
+            dismissed={isNovaWidgetDismissed}
+            onOpen={() => setNovaDrawerOpen(true)}
+            onClose={() => setNovaDrawerOpen(false)}
+            onDismiss={dismissNovaWidget}
+          />
+        ) : null}
       </main>
     </div>
+  );
+}
+
+function CompactCommandBar({
+  activeCapability,
+  metrics,
+  scopeSummary,
+  fpiLoading,
+  fpiError,
+  fireLoading,
+  fireError,
+  isEmptyScope,
+  theme,
+  onThemeToggle,
+  onCommandCenter,
+  onChangeScope,
+  onSettings,
+}: {
+  activeCapability: Capability;
+  metrics?: NonNullable<FpiProgramDataState['data']>['dashboardMetrics'];
+  scopeSummary: string;
+  fpiLoading: boolean;
+  fpiError: string | null;
+  fireLoading: boolean;
+  fireError: string | null;
+  isEmptyScope: boolean;
+  theme: 'dark' | 'light';
+  onThemeToggle: () => void;
+  onCommandCenter: () => void;
+  onChangeScope: () => void;
+  onSettings: () => void;
+}) {
+  const hasDataIssue = Boolean(fpiError || fireError);
+  const isLoading = fpiLoading || fireLoading;
+  const posture = isEmptyScope ? 'NO SCOPE' : metrics?.overallStatus ?? (isLoading ? 'LOADING' : 'WATCH');
+  const tone: StatusTone = hasDataIssue ? 'critical' : isEmptyScope ? 'watch' : isLoading ? 'buildout' : metrics?.overallStatus === 'CRITICAL' ? 'critical' : metrics?.overallStatus === 'WATCH' ? 'watch' : 'ready';
+  const diagnostics = [
+    { label: 'FPI data', value: fpiError ? 'Issue' : fpiLoading ? 'Loading' : 'Loaded', tone: fpiError ? 'critical' : fpiLoading ? 'buildout' : 'ready' },
+    { label: 'Fire data', value: fireError ? 'Issue' : fireLoading ? 'Loading' : 'Loaded', tone: fireError ? 'critical' : fireLoading ? 'buildout' : 'ready' },
+    { label: 'Scope', value: isEmptyScope ? 'No facilities' : scopeSummary, tone: isEmptyScope ? 'watch' : 'stable' },
+    { label: 'Active view', value: activeCapability.navLabel ?? activeCapability.title, tone: 'track' },
+  ] satisfies Array<{ label: string; value: string; tone: StatusTone }>;
+
+  return (
+    <section className="compact-command-bar" aria-label="Dashboard command bar">
+      <div className="compact-command-main">
+        <div>
+          <span>Current view</span>
+          <strong>{activeCapability.navLabel ?? activeCapability.title}</strong>
+        </div>
+        <button type="button" className="compact-scope-pill" onClick={onChangeScope} aria-label={`Change dashboard scope. Current scope: ${scopeSummary}`}>
+          <span>Scope</span>
+          <strong>{scopeSummary}</strong>
+        </button>
+        <StatusPill label={posture} tone={tone} />
+      </div>
+      <div className="compact-command-actions" aria-label="Dashboard quick actions">
+        <details className="system-health-popover">
+          <summary>System Health</summary>
+          <div className="system-health-menu">
+            {diagnostics.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <StatusPill label={item.tone === 'ready' ? 'OK' : item.tone === 'critical' ? 'CHECK' : item.tone.toUpperCase()} tone={item.tone} />
+              </article>
+            ))}
+          </div>
+        </details>
+        <button type="button" className="ops-action-button" onClick={onCommandCenter}>Command Center</button>
+        <button type="button" className="ops-action-button secondary" onClick={onChangeScope}>Change Scope</button>
+        <button type="button" className="ops-action-button secondary" onClick={onSettings}>Settings</button>
+        <ThemeToggle theme={theme} onToggle={onThemeToggle} />
+      </div>
+    </section>
   );
 }
 
@@ -429,14 +648,16 @@ function SidebarNav({
             aria-current={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'page' : undefined}
             onClick={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
           >
-            <span>{commandCenterCapability.eyebrow}</span>
-            {commandCenterCapability.navLabel ?? commandCenterCapability.title}
+            <span className="nav-title-row">
+              <strong>{commandCenterCapability.navLabel ?? commandCenterCapability.title}</strong>
+              <span className={`nav-status-dot nav-status-${capabilityStatusTone(commandCenterCapability.status)}`} aria-label={`${commandCenterCapability.status} status`} />
+            </span>
           </button>
         </nav>
       ) : null}
 
       <nav aria-label="Program service navigation">
-        <p className="nav-label">Program services</p>
+        <p className="nav-label">Modules</p>
         {programServiceCapabilities.map((capability) => {
           const serviceId = serviceIdForCapability(capability.id);
           return (
@@ -447,8 +668,10 @@ function SidebarNav({
               aria-current={serviceId === selectedService ? 'page' : undefined}
               onClick={() => onSelectService(serviceId)}
             >
-              <span>{capability.eyebrow}</span>
-              {capability.navLabel ?? capability.title}
+              <span className="nav-title-row">
+                <strong>{capability.navLabel ?? capability.title}</strong>
+                <span className={`nav-status-dot nav-status-${capabilityStatusTone(capability.status)}`} aria-label={`${capability.status} status`} />
+              </span>
             </button>
           );
         })}
@@ -462,8 +685,7 @@ function SidebarNav({
           aria-current={selectedService === SERVICE_IDS.SETTINGS ? 'page' : undefined}
           onClick={() => onSelectService(SERVICE_IDS.SETTINGS)}
         >
-          <span>Controls</span>
-          Settings
+          <span className="nav-title-row"><strong>Settings</strong><span className="nav-status-dot nav-status-track" aria-label="Workspace controls" /></span>
         </button>
       </nav>
 
@@ -473,6 +695,10 @@ function SidebarNav({
       </footer>
     </aside>
   );
+}
+
+function capabilityStatusTone(status: Capability['status']): StatusTone {
+  return status === 'Ready' ? 'ready' : status === 'Watching' ? 'watch' : 'buildout';
 }
 
 function DashboardStatePanel({ title, message, tone = 'stable' }: { title: string; message: string; tone?: StatusTone }) {
@@ -757,19 +983,6 @@ function TopRiskFacilities({
 
 function StatusPill({ label, tone }: { label: string; tone: StatusTone }) {
   return <span className={`status-pill status-${tone}`}>{label}</span>;
-}
-
-function riskTierTone(riskTier: FpiTopRiskFacility['riskTier']): StatusTone {
-  if (riskTier === 'Critical') return 'critical';
-  if (riskTier === 'High') return 'watch';
-  if (riskTier === 'Medium') return 'stable';
-  return 'ready';
-}
-
-function statusToneForCapability(status: Capability['status']): StatusTone {
-  if (status === 'Ready') return 'ready';
-  if (status === 'Buildout') return 'buildout';
-  return 'watch';
 }
 
 export default App;

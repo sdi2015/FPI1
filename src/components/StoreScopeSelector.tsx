@@ -59,13 +59,13 @@ export function StoreScopeSelector({ sites, scope, onScopeChange }: StoreScopeSe
           <h2 id="store-scope-title">{summary}</h2>
           <p>
             Select the canonical FPI facility population once here. This store or region lock follows the user across every
-            service tab, including Fire-System Monitoring & Assurance.
+            service tab and is saved on this device. Choose a region/store below, or reset to all stores.
           </p>
         </div>
         <div className="facility-scope-actions" aria-label="Store scope actions">
-          <button type="button" onClick={() => onScopeChange(createAllStoresScope())}>View All Stores</button>
-          <button type="button" onClick={() => onScopeChange(createRegionStoreScope(regions.slice(0, 1)))}>Region Mode</button>
-          <button type="button" onClick={() => onScopeChange(createSelectedStoresScope([]))}>Store Mode / Clear</button>
+          <button type="button" onClick={() => onScopeChange(createAllStoresScope())}>Reset to All Stores</button>
+          <button type="button" onClick={() => onScopeChange(createRegionStoreScope([]))}>Choose Regions</button>
+          <button type="button" onClick={() => onScopeChange(createSelectedStoresScope([]))}>Choose Stores</button>
         </div>
       </div>
 

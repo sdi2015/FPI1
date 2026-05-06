@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LockedScopeSummary } from '../LockedScopeSummary';
+import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import type { StatusTone } from '../../data/fpiTypes';
 import type { StoreScopeState } from '../../data/storeScope';
@@ -18,7 +18,7 @@ type PostureTab = 'overview' | 'freshness' | 'domains' | 'recorders' | 'governan
 
 const postureTabs: Array<{ id: PostureTab; label: string; eyebrow: string }> = [
   { id: 'overview', label: 'Overview', eyebrow: 'Posture' },
-  { id: 'freshness', label: 'Source Freshness', eyebrow: 'Adapters' },
+  { id: 'freshness', label: 'Data Health', eyebrow: 'Inputs' },
   { id: 'domains', label: 'Device Domains', eyebrow: 'Controls' },
   { id: 'recorders', label: 'Recorder Dependencies', eyebrow: 'VMS' },
   { id: 'governance', label: 'Governance', eyebrow: 'Readiness' },
@@ -40,7 +40,7 @@ export function NetworkDevicePostureView({ fireSites, storeScope, onChangeScopeR
         <div className="tech-mode"><span>MODE</span>ADAPTER READY</div>
       </header>
 
-      <LockedScopeSummary sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
+      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
       {techState.loading ? <StatePanel title="Loading device posture dataset" message="Preparing normalized TechnologyIssue and adapter-health data." /> : null}
       {techState.error ? <StatePanel title="Device posture dataset unavailable" message={techState.error} danger /> : null}
 
@@ -72,13 +72,13 @@ function PostureOverview({ data }: { data: TechnologyHealthData }) {
     <>
       <section className="tech-kpi-grid" aria-label="Device posture KPIs">
         <Kpi label="Posture issues" value={formatNumber(issues.length)} detail="Normalized TechnologyIssue records" tone="blue" />
-        <Kpi label="Source warnings" value={formatNumber(staleSources.length)} detail="Aging, stale, or unknown sources" tone="yellow" />
+        <Kpi label="Data warnings" value={formatNumber(staleSources.length)} detail="Aging, stale, or unknown inputs" tone="yellow" />
         <Kpi label="Recorder dependencies" value={formatNumber(data.recorderHealth.length)} detail={`${formatNumber(offlineRecorders.length)} require review`} tone="sky" />
-        <Kpi label="Adapter result" value={data.adapterRun.result} detail={`${data.adapterRun.adapter_mode} · ${formatNumber(data.adapterRun.record_count)} records`} tone="white" />
+        <Kpi label="Data connection" value={data.adapterRun.result} detail={`${formatNumber(data.adapterRun.record_count)} normalized records`} tone="white" />
       </section>
       <PostureFocusStrip />
       <section className="tech-grid">
-        <section className="tech-card wide"><CardHeading eyebrow="Normalized posture model" title="Device posture uses TechnologyIssue records before UI/scoring/remediation." pill="CANONICAL" tone="ready" /><p>{data.metadata.sourceNote}</p><div className="tech-metric-grid"><Metric label="Analyzed files" value={formatNumber(data.metadata.analyzedFileCount)} helper="Chris R task source package" /><Metric label="Warnings" value={formatNumber(data.adapterRun.warnings.length)} helper="Adapter run notices" /><Metric label="Governance checks" value={formatNumber(data.governanceChecklist.length)} helper="Before future live integration" /><Metric label="Data mode" value={data.metadata.dataMode} helper={data.metadata.classification} /></div></section>
+        <section className="tech-card wide"><CardHeading eyebrow="Normalized posture model" title="Device posture uses TechnologyIssue records before UI/scoring/remediation." pill="CANONICAL" tone="ready" /><p>{data.metadata.sourceNote}</p><div className="tech-metric-grid"><Metric label="Data checks" value={formatNumber(data.metadata.analyzedFileCount)} helper="Input coverage reviewed" /><Metric label="Warnings" value={formatNumber(data.adapterRun.warnings.length)} helper="Adapter run notices" /><Metric label="Governance checks" value={formatNumber(data.governanceChecklist.length)} helper="Before future live integration" /><Metric label="Data mode" value={data.metadata.dataMode} helper={data.metadata.classification} /></div></section>
         <section className="tech-card"><CardHeading eyebrow="Current device posture" title="Issue summary" /><IssueList issues={issues} /></section>
       </section>
     </>
@@ -99,7 +99,7 @@ function SourceFreshness({ data }: { data: TechnologyHealthData }) {
   return (
     <section className="tech-grid">
       <section className="tech-card wide"><CardHeading eyebrow="Adapter run" title="Technology health adapter status" pill={data.adapterRun.result.toUpperCase()} tone={data.adapterRun.result === 'Success' ? 'ready' : 'watch'} /><div className="tech-metric-grid"><Metric label="Adapter" value={data.adapterRun.adapter_id} helper={data.adapterRun.adapter_mode} /><Metric label="Started" value={formatDate(data.adapterRun.run_started_at)} helper="Demo run timestamp" /><Metric label="Completed" value={formatDate(data.adapterRun.run_completed_at)} helper="Demo run timestamp" /><Metric label="Record count" value={formatNumber(data.adapterRun.record_count)} helper="Normalized issues emitted" /></div><ul className="tech-note-list">{data.adapterRun.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></section>
-      <section className="tech-card"><CardHeading eyebrow="Source freshness" title="Collection confidence" /><div className="tech-record-list">{data.sourceFreshness.map((source) => <article className="tech-record" key={source.source_id}><strong>{source.source_label}</strong><span>{source.adapter_mode} · {source.confidence} confidence</span><small>{source.freshness_status} · Last update {formatDate(source.last_demo_update)}</small></article>)}</div></section>
+      <section className="tech-card"><CardHeading eyebrow="Data health" title="Collection confidence" /><div className="tech-record-list">{data.sourceFreshness.map((source) => <article className="tech-record" key={source.source_id}><strong>{source.source_label}</strong><span>{source.adapter_mode} · {source.confidence} confidence</span><small>{source.freshness_status} · Last update {formatDate(source.last_demo_update)}</small></article>)}</div></section>
     </section>
   );
 }
