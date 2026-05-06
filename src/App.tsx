@@ -27,9 +27,17 @@ type Screen = 'landing' | 'dashboard';
 const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
 
 function App() {
+  const initialTheme =
+    typeof window !== 'undefined' && window.localStorage.getItem('fpi-theme') === 'light' ? 'light' : 'dark';
   const [screen, setScreen] = useState<Screen>('landing');
   const [selectedService, setSelectedService] = useState<ServiceId>(defaultServiceId);
+  const [theme, setTheme] = useState<'dark' | 'light'>(initialTheme);
   const fpiState = useFpiProgramData();
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    window.localStorage.setItem('fpi-theme', theme);
+  }, [theme]);
 
   const activeCapability = useMemo(
     () => capabilities.find((capability) => capability.id === capabilityIdForService(selectedService)) ?? capabilities[0],
@@ -44,16 +52,44 @@ function App() {
         onBackToLanding={() => setScreen('landing')}
         activeCapability={activeCapability}
         fpiState={fpiState}
+        theme={theme}
+        onThemeToggle={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
       />
     );
   }
 
-  return <Landing onEnter={() => setScreen('dashboard')} />;
+  return (
+    <Landing
+      onEnter={() => setScreen('dashboard')}
+      theme={theme}
+      onThemeToggle={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+    />
+  );
 }
 
-function Landing({ onEnter }: { onEnter: () => void }) {
+function ThemeToggle({ theme, onToggle }: { theme: 'dark' | 'light'; onToggle: () => void }) {
+  return (
+    <button type="button" className="theme-toggle" onClick={onToggle} aria-label="Toggle light and dark mode">
+      <span>{theme === 'dark' ? 'Dark mode' : 'Light mode'}</span>
+      <strong>{theme === 'dark' ? '🌙' : '☀️'}</strong>
+    </button>
+  );
+}
+
+function Landing({
+  onEnter,
+  theme,
+  onThemeToggle,
+}: {
+  onEnter: () => void;
+  theme: 'dark' | 'light';
+  onThemeToggle: () => void;
+}) {
   return (
     <main className="landing-shell">
+      <div className="top-controls">
+        <ThemeToggle theme={theme} onToggle={onThemeToggle} />
+      </div>
       <section className="hero-panel">
         <div className="hero-content">
           <div className="brand-row" aria-label="FPI program brand">
@@ -182,12 +218,16 @@ function DashboardShell({
   onSelectService,
   onBackToLanding,
   fpiState,
+  theme,
+  onThemeToggle,
 }: {
   selectedService: ServiceId;
   activeCapability: Capability;
   onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
   fpiState: FpiProgramDataState;
+  theme: 'dark' | 'light';
+  onThemeToggle: () => void;
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [storeScope, setStoreScope] = useState<StoreScopeState>(createAllStoresScope());
@@ -233,6 +273,9 @@ function DashboardShell({
       <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
+        <div className="top-controls">
+          <ThemeToggle theme={theme} onToggle={onThemeToggle} />
+        </div>
         {fpiState.loading ? <DashboardStatePanel title="Loading FPI master data" message="Preparing the local master JSON dataset and calculating dashboard metrics." /> : null}
         {fpiState.error ? <DashboardStatePanel title="Dashboard data is unavailable" message={fpiState.error} tone="critical" /> : null}
         {!fpiState.loading && !fpiState.error && !metrics ? (
