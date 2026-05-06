@@ -16,6 +16,27 @@ export type ThreatDetectionRiskScoringViewProps = {
 
 type ThreatTab = 'overview' | 'leaderboard' | 'signals' | 'sources' | 'guidance' | 'model';
 
+type DraftRequestType = 'RASA Review Request' | 'Security Technology Ticket' | 'Enterprise Governance Follow-Up' | 'Store Context Request' | 'External Coordination Prep';
+
+type MockDraft = {
+  id: string;
+  sourceType: 'facility' | 'signal';
+  sourceId: string;
+  facilityId: string;
+  facilityName: string;
+  priority: 'P1' | 'P2' | 'P3';
+  requestType: DraftRequestType;
+  owner: string;
+  subject: string;
+  summary: string;
+  whyItMatters: string[];
+  recommendedAction: string;
+  evidenceNeeded: string[];
+  requestedResponse: string;
+  status: 'Draft';
+  mode: 'Mock Only';
+};
+
 const tabs: Array<{ id: ThreatTab; label: string; eyebrow: string }> = [
   { id: 'overview', label: 'Overview', eyebrow: 'Risk' },
   { id: 'leaderboard', label: 'Priority Facilities', eyebrow: 'Triage' },
@@ -90,6 +111,7 @@ export function ThreatDetectionRiskScoringView({ fireSites, storeScope, onChange
 }
 
 function ThreatOverview({ data }: { data: ThreatRiskData }) {
+  const [selectedDraft, setSelectedDraft] = useState<MockDraft | null>(null);
   const topFacilities = getTopRiskFacilities(data.facilities, 5);
   const topSignals = getTopThreatSignals(data.signals, 6);
   const coordinationCandidates = getCoordinationCandidates(data.facilities);
@@ -111,7 +133,8 @@ function ThreatOverview({ data }: { data: ThreatRiskData }) {
       </section>
 
       <section className="threat-grid">
-        <section className="threat-card wide"><CardHeading eyebrow="Proactive triage" title="Recommended action queue" pill="NEXT BEST ACTION" tone="watch" /><ActionQueue facilities={actionQueue} /></section>
+        <section className="threat-card wide"><CardHeading eyebrow="Proactive triage" title="Recommended action queue" pill="NEXT BEST ACTION" tone="watch" /><ActionQueue facilities={actionQueue} onCreateDraft={(facility) => setSelectedDraft(createMockDraftFromFacility(facility))} /></section>
+        <section className="threat-card wide"><CardHeading eyebrow="Mock workflow" title="Communication & Ticket Drafting" pill="DRAFT ONLY" tone="stable" /><p>Generate a structured mock draft from a tracked facility. Use it to align RASA, Security Technology, Enterprise partners, and store-facing teams on next steps. Drafts are mock-only and do not send messages or create production tickets.</p><MockDraftPanel draft={selectedDraft} onClear={() => setSelectedDraft(null)} /></section>
         <section className="threat-card wide"><CardHeading eyebrow="Priority facilities" title="Facility risk leaderboard" pill="EXPLAINABLE" tone="watch" /><RiskList facilities={topFacilities} /></section>
         <section className="threat-card"><CardHeading eyebrow="Incident intelligence" title="Top protection signals" /><SignalList signals={topSignals} />
         </section>
@@ -135,16 +158,131 @@ function ownerForFacility(facility: ThreatRiskFacility): string {
   return 'Store-Facing Partners';
 }
 
-function evidenceForFacility(facility: ThreatRiskFacility): string {
-  const evidence = ['incident summary'];
-  if (facility.technicalIssueCount > 0) evidence.push('device health');
-  if (facility.fireTroubleCount > 0) evidence.push('life-safety status');
-  if (facility.openTaskCount > 0) evidence.push('open actions');
-  return evidence.join(', ');
+function evidenceListForFacility(facility: ThreatRiskFacility): string[] {
+  const evidence = ['Incident summary'];
+  if (facility.technicalIssueCount > 0) evidence.push('Device health');
+  if (facility.fireTroubleCount > 0) evidence.push('Life-safety status');
+  if (facility.openTaskCount > 0) evidence.push('Open actions');
+  evidence.push('Store context');
+  return evidence;
 }
 
-function ActionQueue({ facilities }: { facilities: ThreatRiskFacility[] }) {
-  return <div className="threat-table-wrap"><table className="threat-table"><thead><tr><th>Priority</th><th>Facility</th><th>Why it matters</th><th>Recommended owner</th><th>Next action</th><th>Evidence needed</th></tr></thead><tbody>{facilities.map((facility, index) => <tr key={facility.facilityId}><td><StatusPill label={index < 2 ? 'P1' : 'P2'} tone={index < 2 ? 'critical' : 'watch'} /></td><td><strong>Store {facility.facilityId}</strong><small>{facility.city}, {facility.state} · {facility.riskTier}</small></td><td>{facility.topDriver}<small>{facility.drivers.slice(0, 2).join(' · ')}</small></td><td>{ownerForFacility(facility)}</td><td>{facility.recommendedAction}</td><td>{evidenceForFacility(facility)}</td></tr>)}</tbody></table></div>;
+function evidenceForFacility(facility: ThreatRiskFacility): string {
+  return evidenceListForFacility(facility).join(', ');
+}
+
+function priorityForFacility(facility: ThreatRiskFacility): 'P1' | 'P2' | 'P3' {
+  if (facility.riskTier === 'Critical' || facility.severeIncidentCount >= 5 || facility.criticalTaskCount >= 3) return 'P1';
+  if (facility.riskTier === 'High' || facility.technicalIssueCount > 0 || facility.fireTroubleCount > 0) return 'P2';
+  return 'P3';
+}
+
+function requestTypeForFacility(facility: ThreatRiskFacility): DraftRequestType {
+  if (facility.severeIncidentCount >= 5) return 'RASA Review Request';
+  if (facility.technicalIssueCount >= 4) return 'Security Technology Ticket';
+  if (facility.fireTroubleCount >= 2) return 'Enterprise Governance Follow-Up';
+  if (facility.riskTier === 'Critical') return 'External Coordination Prep';
+  return 'Store Context Request';
+}
+
+function createMockDraftFromFacility(facility: ThreatRiskFacility): MockDraft {
+  const priority = priorityForFacility(facility);
+  const requestType = requestTypeForFacility(facility);
+  const owner = ownerForFacility(facility);
+  return {
+    id: `draft-${facility.facilityId}-${requestType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    sourceType: 'facility',
+    sourceId: facility.facilityId,
+    facilityId: facility.facilityId,
+    facilityName: facility.facilityName,
+    priority,
+    requestType,
+    owner,
+    subject: `${priority} FPI Risk Intelligence Review Needed — Store ${facility.facilityId}`,
+    summary: `Risk Intelligence surfaced Store ${facility.facilityId} (${facility.facilityName}) as ${facility.riskTier} based on current incident activity, protection signals, technical-control health, life-safety exceptions, and open action burden.`,
+    whyItMatters: [
+      `${formatNumber(facility.incidentCount)} tracked incident signals, including ${formatNumber(facility.severeIncidentCount)} severe`,
+      `${formatNumber(facility.criticalTaskCount)} critical tasks and ${formatNumber(facility.openTaskCount)} total open actions`,
+      `${formatNumber(facility.technicalIssueCount)} technical-control gaps and ${formatNumber(facility.fireTroubleCount)} life-safety exceptions`,
+      facility.topDriver,
+    ],
+    recommendedAction: facility.recommendedAction,
+    evidenceNeeded: evidenceListForFacility(facility),
+    requestedResponse: 'Please review the listed evidence and provide disposition, accountable owner, mitigation status, and any recommended escalation path. This draft is for coordination only until an approved workflow integration is available.',
+    status: 'Draft',
+    mode: 'Mock Only',
+  };
+}
+
+function priorityForSignal(signal: ThreatRiskSignal): 'P1' | 'P2' | 'P3' {
+  if (signal.severity === 'Critical' || signal.riskContribution >= 8) return 'P1';
+  if (signal.severity === 'High' || signal.riskContribution >= 5) return 'P2';
+  return 'P3';
+}
+
+function requestTypeForSignal(signal: ThreatRiskSignal): DraftRequestType {
+  if (signal.category === 'Technology Gap' || signal.category === 'Access Control') return 'Security Technology Ticket';
+  if (signal.category === 'Fire/Life Safety') return 'Enterprise Governance Follow-Up';
+  if (signal.category === 'External Coordination' || signal.category === 'Weapon' || signal.category === 'Violence') return 'RASA Review Request';
+  if (signal.category === 'Vendor') return 'External Coordination Prep';
+  return 'Store Context Request';
+}
+
+function ownerForSignal(signal: ThreatRiskSignal): string {
+  const requestType = requestTypeForSignal(signal);
+  if (requestType === 'Security Technology Ticket') return 'Security Technology';
+  if (requestType === 'Enterprise Governance Follow-Up') return 'Enterprise / Life Safety';
+  if (requestType === 'RASA Review Request') return 'RASA / Risk Intelligence';
+  if (requestType === 'External Coordination Prep') return 'Enterprise / Program Governance';
+  return 'Store-Facing Partners';
+}
+
+function evidenceListForSignal(signal: ThreatRiskSignal): string[] {
+  const evidence = ['Signal summary', 'Incident context', 'Store context'];
+  signal.sourceIds.forEach((source) => evidence.push(sourceLabel(source)));
+  signal.bestPracticeRefs.forEach((ref) => evidence.push(ref));
+  return Array.from(new Set(evidence));
+}
+
+function createMockDraftFromSignal(signal: ThreatRiskSignal): MockDraft {
+  const priority = priorityForSignal(signal);
+  const requestType = requestTypeForSignal(signal);
+  const owner = ownerForSignal(signal);
+  return {
+    id: `draft-${signal.id}-${requestType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    sourceType: 'signal',
+    sourceId: signal.id,
+    facilityId: signal.facilityId,
+    facilityName: signal.facilityName,
+    priority,
+    requestType,
+    owner,
+    subject: `${priority} ${signal.signalType} Review Needed — Store ${signal.facilityId}`,
+    summary: `Risk Intelligence surfaced a ${signal.severity.toLowerCase()} ${signal.category.toLowerCase()} signal for Store ${signal.facilityId} (${signal.facilityName}) with +${signal.riskContribution} modeled risk contribution.`,
+    whyItMatters: [
+      signal.summary,
+      `${signal.severity} severity with ${signal.confidence.toLowerCase()} confidence`,
+      `Category: ${signal.category}`,
+      `Source context: ${signal.sourceIds.map((source) => sourceLabel(source)).join(', ')}`,
+    ],
+    recommendedAction: signal.recommendedAction,
+    evidenceNeeded: evidenceListForSignal(signal),
+    requestedResponse: 'Please review the signal context and provide disposition, validation notes, accountable owner, and mitigation status. This draft is for coordination only until an approved workflow integration is available.',
+    status: 'Draft',
+    mode: 'Mock Only',
+  };
+}
+
+function ActionQueue({ facilities, onCreateDraft }: { facilities: ThreatRiskFacility[]; onCreateDraft: (facility: ThreatRiskFacility) => void }) {
+  return <div className="threat-table-wrap"><table className="threat-table"><thead><tr><th>Priority</th><th>Facility</th><th>Why it matters</th><th>Recommended owner</th><th>Next action</th><th>Evidence needed</th><th>Mock workflow</th></tr></thead><tbody>{facilities.map((facility) => { const priority = priorityForFacility(facility); return <tr key={facility.facilityId}><td><StatusPill label={priority} tone={priority === 'P1' ? 'critical' : priority === 'P2' ? 'watch' : 'stable'} /></td><td><strong>Store {facility.facilityId}</strong><small>{facility.city}, {facility.state} · {facility.riskTier}</small></td><td>{facility.topDriver}<small>{facility.drivers.slice(0, 2).join(' · ')}</small></td><td>{ownerForFacility(facility)}</td><td>{facility.recommendedAction}</td><td>{evidenceForFacility(facility)}</td><td><button className="threat-action-button" type="button" onClick={() => onCreateDraft(facility)}>Create Draft</button></td></tr>; })}</tbody></table></div>;
+}
+
+function MockDraftPanel({ draft, onClear }: { draft: MockDraft | null; onClear: () => void }) {
+  if (!draft) {
+    return <div className="threat-draft-empty"><strong>No draft selected</strong><p>Select <b>Create Draft</b> from a facility or signal to generate a mock communication or ticket draft. No production workflow will be triggered.</p></div>;
+  }
+
+  return <article className="threat-draft-panel" aria-live="polite"><div className="threat-draft-header"><div><StatusPill label={draft.priority} tone={draft.priority === 'P1' ? 'critical' : draft.priority === 'P2' ? 'watch' : 'stable'} /><StatusPill label={draft.mode} tone="stable" /></div><button className="threat-action-button secondary" type="button" onClick={onClear}>Clear Draft</button></div><div className="threat-draft-grid"><div><span>Draft Type</span><strong>{draft.requestType}</strong></div><div><span>Recommended Owner</span><strong>{draft.owner}</strong></div><div><span>Status</span><strong>{draft.status}</strong></div><div><span>Source</span><strong>{draft.sourceType === 'signal' ? 'Signal' : 'Facility'} · Store {draft.facilityId}</strong><small>{draft.facilityName}</small></div></div><div className="threat-draft-body"><h3>{draft.subject}</h3><p>{draft.summary}</p><h4>Why this matters</h4><ul className="threat-note-list compact">{draft.whyItMatters.map((item) => <li key={item}>{item}</li>)}</ul><h4>Recommended next action</h4><p>{draft.recommendedAction}</p><h4>Evidence needed</h4><div className="threat-tags">{draft.evidenceNeeded.map((item) => <span key={item}>{item}</span>)}</div><h4>Requested response</h4><p>{draft.requestedResponse}</p></div><div className="threat-draft-actions"><button className="threat-action-button" type="button" disabled>Create Ticket — Mock Only</button><button className="threat-action-button" type="button" disabled>Send Communication — Mock Only</button><button className="threat-action-button secondary" type="button" disabled>Copy Draft — Coming Soon</button></div><p className="threat-draft-disclaimer">Draft only — no production communication is sent and no ticket is created.</p></article>;
 }
 
 function RiskLeaderboard({ facilities }: { facilities: ThreatRiskFacility[] }) {
@@ -169,12 +307,14 @@ function RiskLeaderboard({ facilities }: { facilities: ThreatRiskFacility[] }) {
 
 function ThreatSignals({ data }: { data: ThreatRiskData }) {
   const [category, setCategory] = useState('all');
+  const [selectedDraft, setSelectedDraft] = useState<MockDraft | null>(null);
   const categories = Array.from(new Set(data.signals.map((signal) => signal.category))).sort();
   const signals = useMemo(() => data.signals.filter((signal) => category === 'all' || signal.category === category).sort((a, b) => b.riskContribution - a.riskContribution), [data.signals, category]);
 
   return (
     <section className="threat-grid">
-      <section className="threat-card wide"><div className="threat-directory-header"><div><p className="threat-eyebrow">Incident intelligence</p><h2>Signals requiring review or action</h2></div><strong>{signals.length} signals</strong></div><p>Use this feed to quickly ingest current incident-driven risk and determine where RASA, Security Technology, Enterprise, or store-facing teams should collaborate next.</p><div className="threat-filters"><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="all">All categories</option>{categories.map((item) => <option value={item} key={item}>{item}</option>)}</select></div><div className="threat-signal-feed">{signals.map((signal) => <SignalCard signal={signal} key={signal.id} />)}</div></section>
+      <section className="threat-card wide"><div className="threat-directory-header"><div><p className="threat-eyebrow">Incident intelligence</p><h2>Signals requiring review or action</h2></div><strong>{signals.length} signals</strong></div><p>Use this feed to quickly ingest current incident-driven risk and determine where RASA, Security Technology, Enterprise, or store-facing teams should collaborate next.</p><div className="threat-filters"><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="all">All categories</option>{categories.map((item) => <option value={item} key={item}>{item}</option>)}</select></div><div className="threat-signal-feed">{signals.map((signal) => <SignalCard signal={signal} key={signal.id} onCreateDraft={(item) => setSelectedDraft(createMockDraftFromSignal(item))} />)}</div></section>
+      <section className="threat-card wide"><CardHeading eyebrow="Mock workflow" title="Signal Communication & Ticket Draft" pill="DRAFT ONLY" tone="stable" /><p>Create a mock draft directly from an incident or protection signal. This preserves the tracked event context while making ownership, evidence, and requested response clear.</p><MockDraftPanel draft={selectedDraft} onClear={() => setSelectedDraft(null)} /></section>
       <section className="threat-card"><CardHeading eyebrow="Incident types" title="Top detected patterns" /><ChartRows rows={data.incidentTypeCounts} /></section>
       <section className="threat-card"><CardHeading eyebrow="Market concentration" title="Elevated facility concentration" /><ChartRows rows={data.marketRiskCounts} /></section>
     </section>
@@ -221,8 +361,8 @@ function sourceLabel(sourceId: string): string {
   return labels[sourceId] ?? sourceId;
 }
 
-function SignalCard({ signal }: { signal: ThreatRiskSignal }) {
-  return <article className="threat-signal-card"><div><StatusPill label={signal.severity} tone={getSeverityTone(signal.severity)} /><span className="threat-contribution">+{signal.riskContribution}</span></div><strong>{signal.signalType}</strong><span>Store {signal.facilityId} · {signal.facilityName} · {signal.city}, {signal.state}</span><p>{signal.summary}</p><small>{signal.recommendedAction}</small><div className="threat-tags">{signal.sourceIds.map((source) => <span key={source}>{sourceLabel(source)}</span>)}{signal.bestPracticeRefs.map((ref) => <span key={ref}>{ref}</span>)}</div></article>;
+function SignalCard({ signal, onCreateDraft }: { signal: ThreatRiskSignal; onCreateDraft?: (signal: ThreatRiskSignal) => void }) {
+  return <article className="threat-signal-card"><div><StatusPill label={signal.severity} tone={getSeverityTone(signal.severity)} /><span className="threat-contribution">+{signal.riskContribution}</span></div><strong>{signal.signalType}</strong><span>Store {signal.facilityId} · {signal.facilityName} · {signal.city}, {signal.state}</span><p>{signal.summary}</p><small>{signal.recommendedAction}</small><div className="threat-signal-actions"><div className="threat-tags">{signal.sourceIds.map((source) => <span key={source}>{sourceLabel(source)}</span>)}{signal.bestPracticeRefs.map((ref) => <span key={ref}>{ref}</span>)}</div>{onCreateDraft ? <button className="threat-action-button" type="button" onClick={() => onCreateDraft(signal)}>Create Draft</button> : null}</div></article>;
 }
 
 function ChartRows({ rows }: { rows: Array<[string, number]> }) {
