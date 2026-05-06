@@ -511,9 +511,12 @@ function HeroSummary({ metrics }: { metrics: FpiDashboardMetrics }) {
 }
 
 function ExecutiveStatusStrip({ metrics }: { metrics: FpiDashboardMetrics }) {
+  const hiddenLabels = new Set(['Trend', 'Executive attention required', 'Highest risk domain']);
+  const visibleStatusItems = metrics.executiveStatus.filter((item) => !hiddenLabels.has(item.label));
+
   return (
     <section className="executive-strip" aria-label="Executive status summary">
-      {metrics.executiveStatus.map((item) => (
+      {visibleStatusItems.map((item) => (
         <article className="executive-item" key={item.label}>
           <span>{item.label}</span>
           <strong>{item.value}</strong>
