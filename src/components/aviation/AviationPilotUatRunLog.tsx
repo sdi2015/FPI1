@@ -1,0 +1,15 @@
+import { useState } from 'react';
+import { recordAviationAuditEvent } from '../../services/aviationAuditService';
+import { getAviationPilotUatRuns, saveAviationPilotUatRun, type AviationPilotUatRun, type AviationUatResult } from '../../services/aviationPilotExecutionService';
+
+export function AviationPilotUatRunLog({ actorRole }: { actorRole: string }) {
+  const [runs, setRuns] = useState(getAviationPilotUatRuns());
+  const [sessionDate, setSessionDate] = useState(new Date().toISOString().slice(0, 10));
+  const [stakeholderRole, setStakeholderRole] = useState('Aviation');
+  const [testScenario, setTestScenario] = useState('Executive Regional Airport Trip demo');
+  const [result, setResult] = useState<AviationUatResult>('pass');
+  const [issuesFound, setIssuesFound] = useState('');
+  const [notes, setNotes] = useState('');
+  function submit() { const saved = saveAviationPilotUatRun({ session_date: sessionDate, stakeholder_role: stakeholderRole, test_scenario: testScenario, result, issues_found: issuesFound, notes }); recordAviationAuditEvent({ event_type: 'pilot_uat_logged', actor_role: actorRole, summary: `UAT session logged: ${saved.test_scenario} — ${saved.result}` }); setRuns(getAviationPilotUatRuns()); setIssuesFound(''); setNotes(''); }
+  return <section className="panel aviation-panel"><div className="card-heading"><div><p className="eyebrow">Pilot UAT</p><h3>UAT Run Log</h3></div></div><div className="aviation-detail-grid"><input className="aviation-input" type="date" value={sessionDate} onChange={(event) => setSessionDate(event.target.value)} /><input className="aviation-input" placeholder="Stakeholder role" value={stakeholderRole} onChange={(event) => setStakeholderRole(event.target.value)} /><select className="aviation-input" value={result} onChange={(event) => setResult(event.target.value as AviationUatResult)}><option>pass</option><option>fail</option><option>partial</option><option>blocked</option></select></div><input className="aviation-input" placeholder="Test scenario" value={testScenario} onChange={(event) => setTestScenario(event.target.value)} /><textarea className="aviation-input" placeholder="Issues found" value={issuesFound} onChange={(event) => setIssuesFound(event.target.value)} /><textarea className="aviation-input" placeholder="Notes" value={notes} onChange={(event) => setNotes(event.target.value)} /><button className="ops-action-button" onClick={submit}>Record UAT Session</button><div className="aviation-table-wrap"><table className="aviation-table"><thead><tr><th>Date</th><th>Role</th><th>Scenario</th><th>Result</th><th>Issues</th><th>Notes</th></tr></thead><tbody>{runs.map((run: AviationPilotUatRun) => <tr key={run.uat_id}><td>{run.session_date}</td><td>{run.stakeholder_role}</td><td>{run.test_scenario}</td><td><span className={`aviation-badge aviation-status-${run.result === 'pass' ? 'ok' : run.result === 'fail' ? 'error' : 'pending'}`}>{run.result}</span></td><td>{run.issues_found || '—'}</td><td>{run.notes || '—'}</td></tr>)}</tbody></table></div></section>;
+}

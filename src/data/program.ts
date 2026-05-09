@@ -150,6 +150,16 @@ export const capabilities: Capability[] = [
     owner: 'External Affairs',
   },
   {
+    id: 'aviation-travel-readiness',
+    title: 'Aviation Travel Readiness',
+    navLabel: 'Aviation Travel Readiness',
+    eyebrow: 'Aviation readiness',
+    description: 'Airport radius scanning, nearby Walmart facility risk ranking, seeded FAA/NOAA watch panels, and go/no-go readiness recommendations.',
+    status: 'Buildout',
+    metric: 'Phase 1',
+    owner: 'Walmart Aviation / FPI',
+  },
+  {
     id: 'nova-agent',
     title: 'NOVA Operational AI Agent',
     navLabel: 'NOVA',

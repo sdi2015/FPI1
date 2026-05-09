@@ -1,0 +1,30 @@
+[
+  {
+    "alert_id": "FAA-0001",
+    "airport_id": "AIR-XNA",
+    "alert_type": "NOTAM",
+    "severity": "Watch",
+    "title": "Runway/taxiway limitation",
+    "summary": "Seeded FAA watch item for aviation readiness scoring. Validate against live FAA source before operational use.",
+    "effective_start": "2026-05-14T06:00:00-05:00",
+    "effective_end": "2026-05-14T18:00:00-05:00",
+    "source": "FAA",
+    "source_url": null,
+    "confidence": 80,
+    "status": "active"
+  },
+  {
+    "alert_id": "FAA-0002",
+    "airport_id": "AIR-DFW",
+    "alert_type": "Airport Delay",
+    "severity": "Elevated",
+    "title": "Ground delay program watch",
+    "summary": "Seeded delay watch for demo scoring; live integration not connected in Phase 1.",
+    "effective_start": "2026-05-14T10:00:00-05:00",
+    "effective_end": "2026-05-14T16:00:00-05:00",
+    "source": "FAA",
+    "source_url": null,
+    "confidence": 70,
+    "status": "active"
+  }
+]

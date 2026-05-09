@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
+import { AviationCommandCenter } from './pages/AviationCommandCenter';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
 import { SecurityMitigationManagerView } from './components/views/SecurityMitigationManagerView';
@@ -37,7 +38,10 @@ const validServiceIds = Object.values(SERVICE_IDS) as ServiceId[];
 function getServiceIdFromHash(): ServiceId | null {
   if (typeof window === 'undefined') return null;
   const hashValue = window.location.hash.replace(/^#\/?/, '');
-  return validServiceIds.includes(hashValue as ServiceId) ? (hashValue as ServiceId) : null;
+  if (validServiceIds.includes(hashValue as ServiceId)) return hashValue as ServiceId;
+
+  const pathValue = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+  return validServiceIds.includes(pathValue as ServiceId) ? (pathValue as ServiceId) : null;
 }
 
 function updateServiceHash(serviceId: ServiceId) {
@@ -473,6 +477,8 @@ function DashboardShell({
                 storeScope={storeScope}
                 onChangeScopeRequest={handleChangeStoreScopeRequest}
               />
+            ) : selectedService === SERVICE_IDS.AVIATION_TRAVEL_READINESS ? (
+              <AviationCommandCenter />
             ) : (
               <PlaceholderServiceView
                 title={activeCapability.title}

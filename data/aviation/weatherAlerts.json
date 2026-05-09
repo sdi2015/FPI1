@@ -1,0 +1,35 @@
+[
+  {
+    "weather_alert_id": "WX-0001",
+    "airport_id": "AIR-XNA",
+    "affected_facility_ids": [
+      "WM-STORE-1001",
+      "WM-SAMS-4969"
+    ],
+    "alert_type": "Severe Thunderstorm Watch",
+    "severity": "Elevated",
+    "summary": "Seeded NOAA alert: thunderstorms possible during arrival window with wind and lightning exposure.",
+    "effective_start": "2026-05-14T12:00:00-05:00",
+    "effective_end": "2026-05-14T20:00:00-05:00",
+    "source": "NOAA",
+    "source_url": null,
+    "confidence": 90,
+    "status": "active"
+  },
+  {
+    "weather_alert_id": "WX-0002",
+    "airport_id": "AIR-DFW",
+    "affected_facility_ids": [
+      "WM-STORE-2020"
+    ],
+    "alert_type": "High Wind Advisory",
+    "severity": "Watch",
+    "summary": "Seeded NOAA alert: gusty crosswinds may affect airport operations and ground movement.",
+    "effective_start": "2026-05-14T09:00:00-05:00",
+    "effective_end": "2026-05-14T17:00:00-05:00",
+    "source": "NOAA",
+    "source_url": null,
+    "confidence": 76,
+    "status": "active"
+  }
+]

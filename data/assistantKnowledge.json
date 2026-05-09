@@ -1,0 +1,10 @@
+{
+  "aviation_travel_readiness": {
+    "mode": "seeded_demo",
+    "guardrails": [
+      "FPI produces go/no-go readiness recommendations only; final authority remains with authorized leadership.",
+      "Sensitive trip details require role-based authorization.",
+      "Seeded/demo/missing/stale data must be labeled."
+    ]
+  }
+}

@@ -9,6 +9,7 @@ import './remediation.css';
 import './threat.css';
 import './vendor.css';
 import './external.css';
+import './aviation.css';
 import './nova.css';
 import './styles/theme.css';
 import './theme-overrides.css';

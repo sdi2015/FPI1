@@ -9,6 +9,7 @@ export const SERVICE_IDS = {
   REMEDIATION: 'remediation',
   VENDOR_INTELLIGENCE: 'vendor-intelligence',
   EXTERNAL_COORDINATION: 'external-coordination',
+  AVIATION_TRAVEL_READINESS: 'aviation-travel-readiness',
   NOVA: 'nova',
   SETTINGS: 'settings',
 } as const;
@@ -26,6 +27,7 @@ const CAPABILITY_TO_SERVICE_ID: Record<string, ServiceId> = {
   'remediation-orchestration': SERVICE_IDS.REMEDIATION,
   'vendor-intelligence': SERVICE_IDS.VENDOR_INTELLIGENCE,
   'external-coordination': SERVICE_IDS.EXTERNAL_COORDINATION,
+  'aviation-travel-readiness': SERVICE_IDS.AVIATION_TRAVEL_READINESS,
   'nova-agent': SERVICE_IDS.NOVA,
 };
 
