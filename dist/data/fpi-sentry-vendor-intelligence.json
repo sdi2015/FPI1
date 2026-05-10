@@ -45716,41 +45716,6 @@
       "strategicFitRationale": "Moderate operational relevance; pilot or scaling maturity; limited tracker evidence."
     },
     {
-      "id": "SENTRY-47577f8f6869",
-      "company": "Supabase",
-      "technologyProduct": "Open-source backend (Auth/DB)",
-      "category": "Cloud Security",
-      "useCase": "Enterprise-grade security and login for startup tech stacks.",
-      "addsValueToWalmart": "Potential rapid-prototyping tool for internal security dev tools.",
-      "maturityLevel": "Growth",
-      "sourceUrlPublisher": "techfundingnews.com",
-      "assessmentStatus": "3.15",
-      "analysisCompleted": "Yes",
-      "initialAssessmentResults": "Competes with Firebase.",
-      "additionalNotes": "",
-      "trackerMonth": "202512",
-      "sourceWorkbook": "EmergingTechTracker_202512.xlsx",
-      "sourceSheet": "Sheet1",
-      "dateTracked": "2025-12-23",
-      "capabilityTags": [
-        "Cloud Security"
-      ],
-      "riskDomains": [
-        "Vendor Intelligence & Recommendations"
-      ],
-      "recommendationScore": 56.3,
-      "scoreBreakdown": {
-        "strategicRelevance": 8,
-        "maturityReadiness": 14.1,
-        "evidenceQuality": 10.7,
-        "capabilityCoverage": 6.0,
-        "freshness": 10.0,
-        "governanceRisk": 5.0
-      },
-      "evidenceLevel": "Partial",
-      "strategicFitRationale": "Unclear security relevance; pilot or scaling maturity; partial assessment evidence."
-    },
-    {
       "id": "SENTRY-2a0db2cec1cf",
       "company": "Safeway (Albertsons)",
       "technologyProduct": "Receipt Scan Gates",

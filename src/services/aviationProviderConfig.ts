@@ -1,3 +1,5 @@
+import { getAviationPersistenceMode, isAviationApiEnabled, isAviationLiveProviderEnabled } from './aviationRuntimeConfig';
+
 export type AviationProviderMode = 'seeded_demo' | 'static_json' | 'localStorage' | 'live_api_pending' | 'live_api' | 'unavailable' | 'unknown';
 export type AviationProviderStatus = 'ok' | 'partial' | 'missing' | 'error' | 'stale' | 'disabled' | 'pending';
 export type AviationProviderName = 'airportProvider' | 'facilityProvider' | 'fpiRiskProvider' | 'faaProvider' | 'weatherProvider' | 'routingProvider' | 'epReadinessProvider' | 'incidentProvider' | 'persistenceProvider' | 'auditProvider';
@@ -28,12 +30,21 @@ export const aviationProviderConfig: Record<AviationProviderName, AviationProvid
   auditProvider: { provider_name: 'auditProvider', display_name: 'Audit Logging', mode: 'localStorage', status: 'partial', source_label: 'Local audit log', last_updated: null, confidence: 70, enabled: true, notes: 'Audit events are stored locally during Phase 2.', next_step: 'Move to production audit/event logging service.' },
 };
 
+function withRuntimeOverrides(provider: AviationProviderConfigItem): AviationProviderConfigItem {
+  if (provider.provider_name === 'faaProvider' && isAviationLiveProviderEnabled('faa')) return { ...provider, mode: 'live_api', status: 'pending', source_label: 'Aviation API FAA/NOTAM endpoint', notes: 'Live FAA/NOTAM path is enabled through the configured Aviation API.' };
+  if (provider.provider_name === 'weatherProvider' && isAviationLiveProviderEnabled('weather')) return { ...provider, mode: 'live_api', status: 'pending', source_label: 'Aviation API NOAA/weather endpoint', notes: 'Live NOAA/weather path is enabled through the configured Aviation API.' };
+  if (provider.provider_name === 'facilityProvider' && isAviationLiveProviderEnabled('facilities')) return { ...provider, mode: 'live_api', status: 'pending', source_label: 'Aviation API facility endpoint', notes: 'Live facility master path is enabled through the configured Aviation API.' };
+  if (provider.provider_name === 'routingProvider' && isAviationLiveProviderEnabled('routing')) return { ...provider, mode: 'live_api', status: 'pending', source_label: 'Aviation API routing endpoint', notes: 'Live routing path is enabled through the configured Aviation API.' };
+  if ((provider.provider_name === 'persistenceProvider' || provider.provider_name === 'auditProvider') && isAviationApiEnabled() && getAviationPersistenceMode() === 'api') return { ...provider, mode: 'live_api', status: 'pending', source_label: 'Configured Aviation API', notes: 'Aviation persistence/audit calls are routed through the configured API with local fallback unless API is required.' };
+  return provider;
+}
+
 export function getAviationProviderConfig(): AviationProviderConfigItem[] {
-  return Object.values(aviationProviderConfig);
+  return Object.values(aviationProviderConfig).map(withRuntimeOverrides);
 }
 
 export function getAviationProvider(providerName: AviationProviderName): AviationProviderConfigItem {
-  return aviationProviderConfig[providerName];
+  return withRuntimeOverrides(aviationProviderConfig[providerName]);
 }
 
 export function isProviderLive(providerName: AviationProviderName): boolean {

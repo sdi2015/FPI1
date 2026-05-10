@@ -44,11 +44,18 @@ export type Facility = NormalizedFacility & {
   ep_readiness_status: 'Stable' | 'Watch' | 'Gap' | 'Unknown';
 };
 
+export type FacilitySortMode = 'risk' | 'distance' | 'support';
+
 export type FacilityWithDistance = NormalizedFacility & {
   facility_number: string;
   latitude: number;
   longitude: number;
   distance_miles: number;
+  estimated_drive_time_minutes: number;
+  drive_time_source: 'estimated' | 'routing_live' | 'unavailable' | 'unknown';
+  weather_exposure: 'Low' | 'Watch' | 'Elevated' | 'High' | 'Critical' | 'Unknown';
+  recommended_action: string;
+  support_candidate_rank?: number;
 };
 
 export type FAAAlert = {

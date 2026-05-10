@@ -96,6 +96,10 @@ function adaptFacility(raw: RawFacility): FpiFacility {
     division: raw.division ?? UNKNOWN,
     city: raw.city ?? UNKNOWN,
     state: raw.state ?? UNKNOWN,
+    address: raw.address,
+    latitude: toNullableNumber(raw.latitude),
+    longitude: toNullableNumber(raw.longitude),
+    locationSource: raw.location_source,
     banner: raw.banner ?? UNKNOWN,
     riskScore: toNumber(raw.risk_score),
     riskTier: normalizeRiskTier(raw.risk_tier),
@@ -168,6 +172,12 @@ function normalizeRiskTier(value: unknown): FpiRiskTier {
 
 function toNumber(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+function toNullableNumber(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim() && Number.isFinite(Number(value))) return Number(value);
+  return null;
 }
 
 function inferRiskType(text: string): string {

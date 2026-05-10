@@ -37,6 +37,9 @@ export type RawFacility = {
   city?: string;
   state?: string;
   address?: string;
+  latitude?: number | string;
+  longitude?: number | string;
+  location_source?: string;
   banner?: string;
   open_task_count?: number;
   overdue_task_count?: number;

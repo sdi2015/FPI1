@@ -1,4 +1,5 @@
 import seededWeatherAlerts from '../../data/aviation/weatherAlerts.json';
+import { buildQuery, tryAviationApiRequest } from './aviationApiClient';
 import { getAviationProvider } from './aviationProviderConfig';
 import type { Airport, FacilityRiskBand, RiskBand, WeatherAlert } from '../types/aviation';
 
@@ -51,8 +52,22 @@ export function normalizeNoaaAlert(raw: unknown, airport: Airport): WeatherAlert
   };
 }
 
+function normalizeWeatherProviderResult(raw: unknown, airport: Airport): WeatherProviderResult {
+  if (raw && typeof raw === 'object' && Array.isArray((raw as { alerts?: unknown }).alerts)) {
+    const item = raw as Partial<WeatherProviderResult> & { alerts: unknown[] };
+    const alerts = item.alerts.map((alert) => normalizeNoaaAlert(alert, airport));
+    return { alerts, source: 'noaa_live', last_updated: String(item.last_updated ?? new Date().toISOString()), confidence: typeof item.confidence === 'number' ? item.confidence : 80, status: item.status ?? (alerts.length ? 'ok' : 'no_data'), error: item.error };
+  }
+  if (Array.isArray(raw)) {
+    const alerts = raw.map((alert) => normalizeNoaaAlert(alert, airport));
+    return { alerts, source: 'noaa_live', last_updated: new Date().toISOString(), confidence: alerts.length ? 80 : 0, status: alerts.length ? 'ok' : 'no_data' };
+  }
+  return { alerts: [], source: 'noaa_live', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data' };
+}
+
 export async function getWeatherAlertsForAirportLive(airport: Airport, tripStart?: string | null, tripEnd?: string | null): Promise<WeatherProviderResult> {
-  void tripStart; void tripEnd;
+  const raw = await tryAviationApiRequest<unknown>(`/aviation/weather/alerts${buildQuery({ airportId: airport.airport_id, lat: airport.latitude, lng: airport.longitude, start: tripStart, end: tripEnd })}`);
+  if (raw) return normalizeWeatherProviderResult(raw, airport);
   return { alerts: [], source: 'noaa_live', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data', error: `Live NOAA provider is enabled for ${airport.airport_id}, but no approved endpoint is configured.` };
 }
 

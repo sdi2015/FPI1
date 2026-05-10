@@ -18,6 +18,8 @@ export function FacilityDetailPanel({ facility, onClose }: FacilityDetailPanelPr
           <p>
             {facility.facilityId} • {facility.region} • {facility.market} • {facility.city}, {facility.state}
           </p>
+          {facility.address ? <p>{facility.address}{facility.zipCode ? ` • ${facility.zipCode}` : ''}</p> : null}
+          {facility.locationSource ? <p>Location source: {facility.locationSource}</p> : null}
         </div>
         <div className="facility-detail-actions">
           <span className={`status-pill status-${riskTierTone(facility.riskTier)}`}>{facility.riskTier.toUpperCase()}</span>
@@ -29,6 +31,9 @@ export function FacilityDetailPanel({ facility, onClose }: FacilityDetailPanelPr
 
       <div className="facility-summary-grid" aria-label="Facility posture summary">
         <SummaryMetric label="Risk score" value={facility.riskScore} />
+        <SummaryMetric label="Banner" value={facility.banner} />
+        <SummaryMetric label="ELM priority" value={facility.finalPriority ?? 'N/A'} />
+        <SummaryMetric label="Coordinates" value={formatCoordinates(facility.latitude, facility.longitude)} />
         <SummaryMetric label="Critical exceptions" value={facility.criticalExceptions} />
         <SummaryMetric label="Active signals" value={facility.activeSignals} />
         <SummaryMetric label="Camera issues" value={facility.cameraIssues} />
@@ -42,6 +47,13 @@ export function FacilityDetailPanel({ facility, onClose }: FacilityDetailPanelPr
           Primary concern: <strong>{facility.primaryIssueType}</strong>. This facility is currently classified as{' '}
           <strong>{facility.riskTier}</strong> with {facility.criticalExceptions} active critical exceptions.
         </p>
+        {facility.finalStatus || facility.googleStatus ? (
+          <p>
+            ELM status: <strong>{facility.finalStatus ?? 'Not provided'}</strong>
+            {facility.googleStatus ? ` • Google check: ${facility.googleStatus}` : ''}
+          </p>
+        ) : null}
+        {facility.finalNotes ? <p>{facility.finalNotes}</p> : null}
       </section>
 
       <div className="facility-detail-grid">
@@ -154,6 +166,10 @@ function riskTierTone(riskTier: FpiRiskTier): StatusTone {
   if (riskTier === 'High') return 'watch';
   if (riskTier === 'Medium') return 'stable';
   return 'ready';
+}
+
+function formatCoordinates(latitude?: number | null, longitude?: number | null): string {
+  return typeof latitude === 'number' && typeof longitude === 'number' ? `${latitude.toFixed(4)}, ${longitude.toFixed(4)}` : 'N/A';
 }
 
 function formatLabel(value: string): string {

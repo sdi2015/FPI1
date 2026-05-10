@@ -1,5 +1,8 @@
+import { tryAviationApiRequest } from './aviationApiClient';
+import { isAviationApiPersistenceEnabled } from './aviationRuntimeConfig';
+
 export type AviationAuditEventType =
-  | 'aviation_module_opened' | 'airport_selected' | 'radius_changed' | 'facilities_scanned' | 'trip_risk_calculated'
+  | 'aviation_module_opened' | 'airport_selected' | 'radius_changed' | 'facility_filters_changed' | 'facilities_scanned' | 'facility_marker_selected' | 'scan_saved_as_trip' | 'trip_risk_calculated'
   | 'trip_brief_generated' | 'trip_saved' | 'trip_opened' | 'trip_duplicated' | 'trip_deleted'
   | 'readiness_actions_generated' | 'readiness_action_status_changed' | 'demo_scenario_launched'
   | 'faa_alerts_loaded' | 'weather_alerts_loaded' | 'integration_status_viewed' | 'brief_exported' | 'trip_closed'
@@ -45,6 +48,7 @@ export function recordAviationAuditEvent(event: Omit<AviationAuditEvent, 'event_
     timestamp: new Date().toISOString(),
   };
   writeEvents([saved, ...readEvents()]);
+  if (isAviationApiPersistenceEnabled()) void tryAviationApiRequest<AviationAuditEvent>('/aviation/audit-events', { method: 'POST', body: saved });
   return saved;
 }
 

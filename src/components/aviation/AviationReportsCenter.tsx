@@ -1,0 +1,8 @@
+import { AviationHandoffPacketPanel } from './AviationHandoffPacketPanel';
+import { AviationPilotReadoutReportPanel } from './AviationPilotReadoutReportPanel';
+import { TripBriefPanel } from './TripBriefPanel';
+import type { Airport, FAAAlert, FacilityWithDistance, TripRiskResult, WeatherAlert } from '../../types/aviation';
+
+export function AviationReportsCenter({ actorRole, tripId, airport, radiusMiles, tripStart, tripEnd, facilityTypes, nearbyFacilities, risk, faaAlerts, weatherAlerts, canGenerateBrief, canCopyBrief }: { actorRole: string; tripId: string; airport: Airport | null; radiusMiles: number; tripStart: string; tripEnd: string; facilityTypes: string[]; nearbyFacilities: FacilityWithDistance[]; risk: TripRiskResult; faaAlerts: FAAAlert[]; weatherAlerts: WeatherAlert[]; canGenerateBrief: boolean; canCopyBrief: boolean }) {
+  return <div className="aviation-reports-page"><section className="panel aviation-panel"><div className="card-heading"><div><p className="eyebrow">Reports & Briefs</p><h3>Export Center</h3></div></div><p className="aviation-caveat">Generate executive-ready outputs here. Long reports are kept out of the operational scanner workflow.</p></section><TripBriefPanel airport={airport} radiusMiles={radiusMiles} tripStart={tripStart} tripEnd={tripEnd} facilityTypes={facilityTypes} nearbyFacilities={nearbyFacilities} risk={risk} faaAlerts={faaAlerts} weatherAlerts={weatherAlerts} canGenerateBrief={canGenerateBrief} canCopyBrief={canCopyBrief} actorRole={actorRole} tripId={tripId} /><AviationPilotReadoutReportPanel actorRole={actorRole} /><AviationHandoffPacketPanel actorRole={actorRole} /></div>;
+}

@@ -18,6 +18,17 @@ export type FpiFacility = {
   division: string;
   city: string;
   state: string;
+  address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  locationSource?: string;
+  locationName?: string;
+  zipCode?: string;
+  finalStatus?: string;
+  finalPriority?: string;
+  finalNotes?: string;
+  googleStatus?: string;
+  googlePriority?: string;
   banner: string;
   riskScore: number;
   riskTier: FpiRiskTier;
@@ -127,6 +138,10 @@ export type FpiDashboardMetrics = {
   cameraIssues: number;
   panelTrouble: number;
   activeWorkQueue: number;
+  elmLocationCount: number;
+  geocodedFacilities: number;
+  elmMediumPriority: number;
+  elmHighPriority: number;
   executiveStatus: FpiExecutiveStatusItem[];
   kpis: FpiKpi[];
   readinessDistribution: FpiReadinessBucket[];

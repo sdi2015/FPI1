@@ -14,6 +14,10 @@ const HIGH_OR_CRITICAL = new Set(['High', 'Critical']);
 export function calculateFpiDashboardMetrics(programData: FpiProgramData): FpiDashboardMetrics {
   try {
     const facilitiesProfiled = programData.facilities.length;
+    const elmLocationCount = programData.facilities.filter((facility) => facility.locationSource?.toLowerCase().includes('elm')).length;
+    const geocodedFacilities = programData.facilities.filter((facility) => typeof facility.latitude === 'number' && typeof facility.longitude === 'number').length;
+    const elmMediumPriority = programData.facilities.filter((facility) => facility.finalPriority === 'Medium').length;
+    const elmHighPriority = programData.facilities.filter((facility) => facility.finalPriority === 'High').length;
     const activeWorkQueue = programData.tasks.filter((task) => !CLOSED_STATUSES.has(task.status)).length;
     const activeSignals = programData.alarmSignals.length;
     const cameraIssues = programData.cameraIssues.length;
@@ -31,12 +35,17 @@ export function calculateFpiDashboardMetrics(programData: FpiProgramData): FpiDa
       cameraIssues,
       panelTrouble,
       activeWorkQueue,
+      elmLocationCount,
+      geocodedFacilities,
+      elmMediumPriority,
+      elmHighPriority,
       executiveStatus: [
         { label: 'Overall Status', value: overallStatus, tone: overallStatus === 'READY' ? 'ready' : 'watch', trend: 'program posture' },
-        { label: 'Facilities Profiled', value: formatNumber(facilitiesProfiled), tone: 'expanding', trend: 'master JSON' },
+        { label: 'Facilities Profiled', value: formatNumber(facilitiesProfiled), tone: 'expanding', trend: 'master JSON + ELM' },
         { label: 'Critical Exceptions', value: formatNumber(criticalExceptions), tone: 'watch', trend: 'active critical' },
         { label: 'Active Signals', value: formatNumber(activeSignals), tone: 'stable', trend: 'alarm stream' },
         { label: 'Panel Trouble', value: formatNumber(panelTrouble), tone: 'critical', trend: 'device health' },
+        { label: 'ELM Locations', value: formatNumber(elmLocationCount), tone: 'ready', trend: `${formatNumber(geocodedFacilities)} geocoded` },
         { label: 'Active Work Queue', value: formatNumber(activeWorkQueue), tone: 'track', trend: 'under governance' },
       ],
       kpis: [
@@ -46,7 +55,15 @@ export function calculateFpiDashboardMetrics(programData: FpiProgramData): FpiDa
           trend: `${programData.metadata.region}`,
           status: 'LIVE',
           tone: 'expanding',
-          caption: 'Facility profiles loaded from the local master JSON dataset.',
+          caption: 'Facility profiles loaded from the local master JSON dataset and ELM Locations Master workbook.',
+        },
+        {
+          label: 'ELM locations',
+          value: formatNumber(elmLocationCount),
+          trend: `${formatNumber(elmMediumPriority + elmHighPriority)} review-priority pins`,
+          status: 'GEO READY',
+          tone: 'ready',
+          caption: 'Store-location inventory ingested from the approved ELM workbook with address and latitude/longitude.',
         },
         {
           label: 'Critical exceptions',
@@ -94,7 +111,7 @@ export function calculateFpiDashboardMetrics(programData: FpiProgramData): FpiDa
       latestSignals: buildLatestSignals(programData, criticalExceptions, panelTrouble, activeWorkQueue),
       headline: `Overall posture is ${overallStatus} across ${formatNumber(
         facilitiesProfiled,
-      )} profiled facilities, with ${formatNumber(criticalExceptions)} active critical exceptions, ${formatNumber(
+      )} profiled facilities including ${formatNumber(elmLocationCount)} ELM locations, with ${formatNumber(criticalExceptions)} active critical exceptions, ${formatNumber(
         activeSignals,
       )} alarm signals, and ${formatNumber(activeWorkQueue)} active work items under governance.`,
     };
@@ -221,9 +238,14 @@ function buildLatestSignals(programData: FpiProgramData, criticalExceptions: num
   const fireSignals = programData.alarmSignals.filter((signal) => signal.category === 'Fire').length;
   const blockedTasks = programData.tasks.filter((task) => task.status === 'Blocked').length;
   const criticalFacilities = programData.facilities.filter((facility) => facility.riskTier === 'Critical').length;
+  const elmLocations = programData.facilities.filter((facility) => facility.locationSource?.toLowerCase().includes('elm')).length;
+  const geocodedFacilities = programData.facilities.filter((facility) => typeof facility.latitude === 'number' && typeof facility.longitude === 'number').length;
+  const reviewPriorityPins = programData.facilities.filter((facility) => facility.finalPriority === 'Medium' || facility.finalPriority === 'High').length;
 
   return [
     `Loaded ${formatNumber(programData.facilities.length)} facility profiles from ${programData.metadata.datasetName}.`,
+    `ELM added ${formatNumber(elmLocations)} store locations with ${formatNumber(geocodedFacilities)} geocoded facilities available for map, airport, and field-planning workflows.`,
+    `${formatNumber(reviewPriorityPins)} ELM location pins are marked Medium/High priority for address or coordinate review.`,
     `Detected ${formatNumber(criticalExceptions)} active critical exceptions across tasks, remediations, alarm signals, and camera issues.`,
     `Monitoring ${formatNumber(programData.alarmSignals.length)} alarm signals, including ${formatNumber(fireSignals)} fire/life-safety signals.`,
     `${formatNumber(panelTrouble)} panels are in Trouble status and ${formatNumber(blockedTasks)} tasks are blocked in the active work queue.`,

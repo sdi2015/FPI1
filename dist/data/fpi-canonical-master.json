@@ -17,9 +17,9 @@
       "market": "Dallas",
       "region": "South Central",
       "division": "Div 1",
-      "city": "Dallas",
-      "state": "TX",
-      "address": "3420 Custer Rd, Plano, TX 75023",
+      "city": "ASHLAND",
+      "state": "KY",
+      "address": "12504 U.S. ROUTE 60",
       "banner": "Supercenter",
       "open_task_count": 8,
       "overdue_task_count": 4,
@@ -27,7 +27,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 100,
       "risk_tier": "Critical",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 38.388444,
+      "longitude": -82.711312,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "2941",
@@ -35,9 +38,9 @@
       "market": "Dallas",
       "region": "South Central",
       "division": "Div 1",
-      "city": "Dallas",
-      "state": "TX",
-      "address": "4000 W Wheatland Rd, Dallas, TX 75237",
+      "city": "ALPHARETTA",
+      "state": "GA",
+      "address": "5200 WINDWARD PKWY",
       "banner": "Supercenter",
       "open_task_count": 1,
       "overdue_task_count": 1,
@@ -45,7 +48,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 22.0,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 34.093829,
+      "longitude": -84.274408,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "3156",
@@ -53,9 +59,9 @@
       "market": "Dallas",
       "region": "South Central",
       "division": "Div 1",
-      "city": "Dallas",
-      "state": "TX",
-      "address": "8801 Walnut Hill Ln, Dallas, TX 75231",
+      "city": "HAMPTON",
+      "state": "VA",
+      "address": "117 MARKETPLACE DRIVE",
       "banner": "Supercenter",
       "open_task_count": 1,
       "overdue_task_count": 0,
@@ -63,7 +69,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 6.8,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 37.036737,
+      "longitude": -76.403591,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "1823",
@@ -71,9 +80,9 @@
       "market": "Houston",
       "region": "South Central",
       "division": "Div 1",
-      "city": "Houston",
-      "state": "TX",
-      "address": "5455 W Loop S, Bellaire, TX 77401",
+      "city": "HANOVER",
+      "state": "PA",
+      "address": "495 EISENHOWER DR",
       "banner": "Supercenter",
       "open_task_count": 2,
       "overdue_task_count": 1,
@@ -81,7 +90,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 18.0,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 39.823502,
+      "longitude": -76.975102,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "4567",
@@ -89,9 +101,9 @@
       "market": "Houston",
       "region": "South Central",
       "division": "Div 1",
-      "city": "Houston",
-      "state": "TX",
-      "address": "14833 Woodforest Blvd, Houston, TX 77530",
+      "city": "BRIGHTON",
+      "state": "CO",
+      "address": "7101 E 128TH AVE",
       "banner": "Supercenter",
       "open_task_count": 2,
       "overdue_task_count": 1,
@@ -99,7 +111,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 48.0,
       "risk_tier": "Medium",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 39.931134,
+      "longitude": -104.905898,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "3421",
@@ -125,9 +140,9 @@
       "market": "Phoenix",
       "region": "West",
       "division": "Div 2",
-      "city": "Phoenix",
-      "state": "AZ",
-      "address": "1130 N 51st Ave, Phoenix, AZ 85043",
+      "city": "BOYNTON BEACH",
+      "state": "FL",
+      "address": "3200 OLD BOYNTON RD",
       "banner": "Supercenter",
       "open_task_count": 3,
       "overdue_task_count": 0,
@@ -135,7 +150,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 52.1,
       "risk_tier": "Medium",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 26.528975,
+      "longitude": -80.095846,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "1245",
@@ -143,9 +161,9 @@
       "market": "Atlanta",
       "region": "Southeast",
       "division": "Div 3",
-      "city": "Atlanta",
-      "state": "GA",
-      "address": "4166 Jonesboro Rd, Union City, GA 30291",
+      "city": "LAKELAND",
+      "state": "FL",
+      "address": "5800 US HIGHWAY 98 N",
       "banner": "Supercenter",
       "open_task_count": 0,
       "overdue_task_count": 0,
@@ -153,7 +171,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 0.0,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 28.119414,
+      "longitude": -81.977138,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "3891",
@@ -161,9 +182,9 @@
       "market": "Atlanta",
       "region": "Southeast",
       "division": "Div 3",
-      "city": "Atlanta",
-      "state": "GA",
-      "address": "835 Martin Luther King Jr Dr NW, Atlanta, GA 30314",
+      "city": "WAUKEGAN",
+      "state": "IL",
+      "address": "3900 FOUNTAIN SQUARE PL",
       "banner": "Supercenter",
       "open_task_count": 0,
       "overdue_task_count": 0,
@@ -171,7 +192,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 1.7,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 42.345046,
+      "longitude": -87.898468,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "4123",
@@ -197,9 +221,9 @@
       "market": "Chicago",
       "region": "Midwest",
       "division": "Div 5",
-      "city": "Chicago",
-      "state": "IL",
-      "address": "7050 S Ashland Ave, Chicago, IL 60636",
+      "city": "GRANDVILLE",
+      "state": "MI",
+      "address": "4542 KENOWA AVE SW",
       "banner": "Supercenter",
       "open_task_count": 1,
       "overdue_task_count": 0,
@@ -207,7 +231,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 4.0,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 42.881504,
+      "longitude": -85.780649,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     },
     {
       "facility_id": "3789",
@@ -215,9 +242,9 @@
       "market": "Chicago",
       "region": "Midwest",
       "division": "Div 5",
-      "city": "Chicago",
-      "state": "IL",
-      "address": "7535 S Kingery Hwy, Willowbrook, IL 60527",
+      "city": "OGDEN",
+      "state": "UT",
+      "address": "1959 WALL AVE",
       "banner": "Supercenter",
       "open_task_count": 2,
       "overdue_task_count": 0,
@@ -225,7 +252,10 @@
       "avg_remediation_hours": 0,
       "risk_score": 12.0,
       "risk_tier": "Low",
-      "data_mode": "canonical_demo"
+      "data_mode": "canonical_demo",
+      "latitude": 41.232123,
+      "longitude": -111.981081,
+      "location_source": "ELM Locations Master Status v7 Google Colorized"
     }
   ],
   "security_technology": [

@@ -1,0 +1,12 @@
+[
+  {
+    "store_number": "2638",
+    "address": "3420 Custer Rd, Plano, TX 75023",
+    "city": "Plano",
+    "state": "TX",
+    "latitude": 33.0424,
+    "longitude": -96.7359,
+    "source": "ELM store-location export",
+    "last_updated": "2026-05-09T00:00:00Z"
+  }
+]

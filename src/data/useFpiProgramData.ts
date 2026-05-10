@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { adaptFpiMaster } from './fpiAdapter';
+import { mergeElmLocationsIntoFpiProgram } from './fpiElmIntegration';
 import { calculateFpiDashboardMetrics } from './fpiMetrics';
 import type { RawFpiMaster } from './fpiRawTypes';
 import type { FpiProgramDashboard } from './fpiTypes';
 
 const MASTER_DATA_URL = '/data/fpi-canonical-master.json';
+const ELM_LOCATION_DATA_URL = '/data/elm-store-locations.json';
 const FALLBACK_ERROR =
   'Dashboard data is unavailable. Confirm that the local master JSON file exists and matches the expected structure.';
 
@@ -22,13 +24,18 @@ export function useFpiProgramData(): FpiProgramDataState {
 
     async function loadDashboardData() {
       try {
-        const response = await fetch(MASTER_DATA_URL);
-        if (!response.ok) {
-          throw new Error(`Unable to load ${MASTER_DATA_URL} (${response.status}).`);
+        const [masterResponse, elmResponse] = await Promise.all([
+          fetch(MASTER_DATA_URL),
+          fetch(ELM_LOCATION_DATA_URL).catch(() => null),
+        ]);
+        if (!masterResponse.ok) {
+          throw new Error(`Unable to load ${MASTER_DATA_URL} (${masterResponse.status}).`);
         }
 
-        const raw = (await response.json()) as RawFpiMaster;
-        const programData = adaptFpiMaster(raw);
+        const raw = (await masterResponse.json()) as RawFpiMaster;
+        const baseProgramData = adaptFpiMaster(raw);
+        const elmLocations = elmResponse?.ok ? await elmResponse.json() : [];
+        const programData = mergeElmLocationsIntoFpiProgram(baseProgramData, elmLocations);
         const dashboardMetrics = calculateFpiDashboardMetrics(programData);
 
         if (!ignore) {

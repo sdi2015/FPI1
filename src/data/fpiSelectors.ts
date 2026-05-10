@@ -20,6 +20,18 @@ export type FacilityDetailModel = {
   market: string;
   city: string;
   state: string;
+  address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  locationSource?: string;
+  locationName?: string;
+  zipCode?: string;
+  finalStatus?: string;
+  finalPriority?: string;
+  finalNotes?: string;
+  googleStatus?: string;
+  googlePriority?: string;
+  banner: string;
   riskScore: number;
   riskTier: FpiRiskTier;
   criticalExceptions: number;
@@ -88,6 +100,18 @@ export function getFacilityDetailModel(programData: FpiProgramData, facilityId: 
     market: facility.market,
     city: facility.city,
     state: facility.state,
+    address: facility.address,
+    latitude: facility.latitude,
+    longitude: facility.longitude,
+    locationSource: facility.locationSource,
+    locationName: facility.locationName,
+    zipCode: facility.zipCode,
+    finalStatus: facility.finalStatus,
+    finalPriority: facility.finalPriority,
+    finalNotes: facility.finalNotes,
+    googleStatus: facility.googleStatus,
+    googlePriority: facility.googlePriority,
+    banner: facility.banner,
     riskScore: facility.riskScore,
     riskTier: facility.riskTier,
     criticalExceptions,

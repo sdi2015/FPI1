@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
+import { SidePanelSettings } from './components/navigation/SidePanelSettings';
 import { AviationCommandCenter } from './pages/AviationCommandCenter';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
@@ -27,6 +28,7 @@ import type { FpiDashboardMetrics, FpiKpi, FpiRiskTier, FpiTopRiskFacility, Stat
 import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
 import { useFireAlarmData } from './data/useFireAlarmData';
 import { applyTheme, getInitialThemePreference, persistThemePreference, resolveTheme, type ThemePreference } from './theme/themePreference';
+import { loadSidePanelDisplayMode, loadSidePanelPreferences, type SidePanelAvailableTab, type SidePanelDisplayMode, type SidePanelPreferences } from './services/sidePanelPreferenceService';
 
 type Screen = 'landing' | 'dashboard';
 
@@ -34,6 +36,36 @@ const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
 const STORE_SCOPE_STORAGE_KEY = 'fpi-store-scope';
 const LANDING_SESSION_KEY = 'fpiLandingEntered';
 const validServiceIds = Object.values(SERVICE_IDS) as ServiceId[];
+
+function getAvailableSidePanelTabs(): SidePanelAvailableTab[] {
+  function toSidePanelTab(capability: Capability): SidePanelAvailableTab {
+    const serviceId = serviceIdForCapability(capability.id);
+    return {
+      tab_id: serviceId,
+      label: capability.navLabel ?? capability.title,
+      route: `#/${serviceId}`,
+      description: capability.description,
+      group: capability.eyebrow,
+      access_note: serviceId === SERVICE_IDS.AVIATION_TRAVEL_READINESS ? 'Aviation workspace is visible by preference; EP, provider, export, and admin controls remain role-restricted.' : 'Module visibility does not grant restricted actions.',
+    };
+  }
+
+  const commandCenter = capabilities.find((capability) => serviceIdForCapability(capability.id) === SERVICE_IDS.COMMAND_CENTER);
+  const programModules = capabilities.filter((capability) => serviceIdForCapability(capability.id) !== SERVICE_IDS.COMMAND_CENTER);
+  const capabilityTabs = [commandCenter, ...programModules].filter((capability): capability is Capability => Boolean(capability)).map(toSidePanelTab);
+
+  return [
+    ...capabilityTabs,
+    {
+      tab_id: SERVICE_IDS.SETTINGS,
+      label: 'Settings',
+      route: `#/${SERVICE_IDS.SETTINGS}`,
+      description: 'Workspace scope, store filters, and application preferences.',
+      group: 'Workspace',
+      access_note: 'Workspace settings available to configure local dashboard preferences.',
+    },
+  ];
+}
 
 function getServiceIdFromHash(): ServiceId | null {
   if (typeof window === 'undefined') return null;
@@ -593,11 +625,23 @@ function SidebarNav({
   onBackToLanding: () => void;
   theme: 'dark' | 'light';
 }) {
-  const commandCenterCapability = capabilities.find((capability) => serviceIdForCapability(capability.id) === SERVICE_IDS.COMMAND_CENTER);
-  const programServiceCapabilities = capabilities.filter((capability) => serviceIdForCapability(capability.id) !== SERVICE_IDS.COMMAND_CENTER);
+  const availableTabs = useMemo(() => getAvailableSidePanelTabs(), []);
+  const [preferences, setPreferences] = useState<SidePanelPreferences>(loadSidePanelPreferences(availableTabs));
+  const [displayMode, setDisplayMode] = useState<SidePanelDisplayMode>(loadSidePanelDisplayMode());
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const capabilityByServiceId = useMemo(() => new Map(capabilities.map((capability) => [serviceIdForCapability(capability.id), capability])), []);
+  const visibleTabs = preferences.tabs
+    .filter((tab) => tab.visible && validServiceIds.includes(tab.tab_id as ServiceId))
+    .sort((a, b) => a.order - b.order);
+
+  function getStatusToneForTab(serviceId: ServiceId): StatusTone {
+    if (serviceId === SERVICE_IDS.SETTINGS) return 'track';
+    const capability = capabilityByServiceId.get(serviceId);
+    return capability ? capabilityStatusTone(capability.status) : 'track';
+  }
 
   return (
-    <aside className="sidebar" aria-label="FPI dashboard navigation">
+    <aside className={displayMode === 'compact' ? 'sidebar sidebar-compact' : 'sidebar'} aria-label="FPI dashboard navigation">
       <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
         <img className="brand-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
         <span>
@@ -606,52 +650,34 @@ function SidebarNav({
         </span>
       </button>
 
-      {commandCenterCapability ? (
-        <nav aria-label="Command Center navigation" className="sidebar-command-nav">
-          <button
-            className={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'nav-item active command-center-nav-item' : 'nav-item command-center-nav-item'}
-            type="button"
-            aria-current={selectedService === SERVICE_IDS.COMMAND_CENTER ? 'page' : undefined}
-            onClick={() => onSelectService(SERVICE_IDS.COMMAND_CENTER)}
-          >
-            <span className="nav-title-row">
-              <strong>{commandCenterCapability.navLabel ?? commandCenterCapability.title}</strong>
-              <span className={`nav-status-dot nav-status-${capabilityStatusTone(commandCenterCapability.status)}`} aria-label={`${commandCenterCapability.status} status`} />
-            </span>
-          </button>
-        </nav>
-      ) : null}
-
-      <nav aria-label="Program service navigation">
-        <p className="nav-label">Modules</p>
-        {programServiceCapabilities.map((capability) => {
-          const serviceId = serviceIdForCapability(capability.id);
+      <nav aria-label="Customizable FPI navigation" className="sidebar-command-nav">
+        <p className="nav-label">Navigation</p>
+        {visibleTabs.length === 0 ? <p className="sidebar-empty-note">No visible modules. Use Customize Navigation to restore tabs.</p> : null}
+        {visibleTabs.map((tab) => {
+          const serviceId = tab.tab_id as ServiceId;
+          const statusTone = getStatusToneForTab(serviceId);
           return (
             <button
-              className={serviceId === selectedService ? 'nav-item active' : 'nav-item'}
-              key={capability.id}
+              className={`${serviceId === selectedService ? 'nav-item active' : 'nav-item'}${serviceId === SERVICE_IDS.COMMAND_CENTER ? ' command-center-nav-item' : ''}`}
+              key={tab.tab_id}
               type="button"
               aria-current={serviceId === selectedService ? 'page' : undefined}
+              title={tab.label}
               onClick={() => onSelectService(serviceId)}
             >
               <span className="nav-title-row">
-                <strong>{capability.navLabel ?? capability.title}</strong>
-                <span className={`nav-status-dot nav-status-${capabilityStatusTone(capability.status)}`} aria-label={`${capability.status} status`} />
+                <strong>{tab.label}</strong>
+                <span className={`nav-status-dot nav-status-${statusTone}`} aria-label={`${statusTone} status`} />
               </span>
             </button>
           );
         })}
       </nav>
 
-      <nav aria-label="Application settings navigation" className="sidebar-settings-nav">
-        <p className="nav-label">Workspace</p>
-        <button
-          className={selectedService === SERVICE_IDS.SETTINGS ? 'nav-item active' : 'nav-item'}
-          type="button"
-          aria-current={selectedService === SERVICE_IDS.SETTINGS ? 'page' : undefined}
-          onClick={() => onSelectService(SERVICE_IDS.SETTINGS)}
-        >
-          <span className="nav-title-row"><strong>Settings</strong><span className="nav-status-dot nav-status-track" aria-label="Workspace controls" /></span>
+      <nav aria-label="Navigation customization" className="sidebar-settings-nav">
+        <p className="nav-label">Personalize</p>
+        <button type="button" className="nav-item customize-navigation-button" onClick={() => setSettingsOpen(true)}>
+          <span className="nav-title-row"><strong>Customize Navigation</strong><span className="nav-status-dot nav-status-track" aria-label="Personal navigation settings" /></span>
         </button>
       </nav>
 
@@ -659,6 +685,8 @@ function SidebarNav({
         <img className="walmart-wordmark" src={theme === 'dark' ? '/brand/walmart/wordmark/WMT-Wordmark-Standard-White-RGB.svg' : '/brand/walmart/wordmark/WMT-Wordmark-Standard-TrueBlue-RGB.svg'} alt="Walmart" />
         <span>Internal prototype</span>
       </footer>
+
+      {settingsOpen ? <SidePanelSettings availableTabs={availableTabs} preferences={preferences} displayMode={displayMode} onClose={() => setSettingsOpen(false)} onPreferencesChange={setPreferences} onDisplayModeChange={setDisplayMode} /> : null}
     </aside>
   );
 }

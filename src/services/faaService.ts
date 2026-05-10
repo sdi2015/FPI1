@@ -1,4 +1,5 @@
 import seededFAAAlerts from '../../data/aviation/faaAlerts.json';
+import { buildQuery, tryAviationApiRequest } from './aviationApiClient';
 import { getAviationProvider } from './aviationProviderConfig';
 import type { FAAAlert, FacilityRiskBand, RiskBand } from '../types/aviation';
 
@@ -51,8 +52,22 @@ export function normalizeFaaAlert(raw: unknown, airportId: string): FAAAlert {
   };
 }
 
+function normalizeFAAProviderResult(raw: unknown, airportId: string): FAAProviderResult {
+  if (raw && typeof raw === 'object' && Array.isArray((raw as { alerts?: unknown }).alerts)) {
+    const item = raw as Partial<FAAProviderResult> & { alerts: unknown[] };
+    const alerts = item.alerts.map((alert) => normalizeFaaAlert(alert, airportId));
+    return { alerts, source: 'faa_live', last_updated: String(item.last_updated ?? new Date().toISOString()), confidence: typeof item.confidence === 'number' ? item.confidence : 80, status: item.status ?? (alerts.length ? 'ok' : 'no_data'), error: item.error };
+  }
+  if (Array.isArray(raw)) {
+    const alerts = raw.map((alert) => normalizeFaaAlert(alert, airportId));
+    return { alerts, source: 'faa_live', last_updated: new Date().toISOString(), confidence: alerts.length ? 80 : 0, status: alerts.length ? 'ok' : 'no_data' };
+  }
+  return { alerts: [], source: 'faa_live', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data' };
+}
+
 export async function getFAAAlertsForAirportLive(airportId: string, tripStart?: string | null, tripEnd?: string | null): Promise<FAAProviderResult> {
-  void tripStart; void tripEnd;
+  const raw = await tryAviationApiRequest<unknown>(`/aviation/faa/alerts${buildQuery({ airportId, start: tripStart, end: tripEnd })}`);
+  if (raw) return normalizeFAAProviderResult(raw, airportId);
   return { alerts: [], source: 'faa_live', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data', error: `Live FAA/NOTAM provider is enabled for ${airportId}, but no approved endpoint is configured.` };
 }
 

@@ -1,3 +1,6 @@
+import { tryAviationApiRequest } from './aviationApiClient';
+import { isAviationApiPersistenceEnabled } from './aviationRuntimeConfig';
+
 export type AviationUatResult = 'pass' | 'fail' | 'partial' | 'blocked';
 
 export type AviationPilotUatRun = {
@@ -53,6 +56,7 @@ function writeLocal<T>(key: string, items: T[]) {
 export function saveAviationPilotUatRun(run: Omit<AviationPilotUatRun, 'uat_id' | 'created_at'>): AviationPilotUatRun {
   const saved: AviationPilotUatRun = { ...run, uat_id: `UAT-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, created_at: new Date().toISOString() };
   writeLocal(UAT_KEY, [saved, ...getAviationPilotUatRuns()]);
+  if (isAviationApiPersistenceEnabled()) void tryAviationApiRequest<AviationPilotUatRun>('/aviation/uat-runs', { method: 'POST', body: saved });
   return saved;
 }
 
@@ -67,12 +71,14 @@ export function updateAviationPilotUatRun(uatId: string, updates: Partial<Aviati
     updated = { ...run, ...updates, uat_id: uatId };
     return updated;
   }));
+  if (updated && isAviationApiPersistenceEnabled()) void tryAviationApiRequest<AviationPilotUatRun>(`/aviation/uat-runs/${encodeURIComponent(uatId)}`, { method: 'PATCH', body: updates });
   return updated;
 }
 
 export function saveAviationStakeholderDecision(decision: Omit<AviationStakeholderDecision, 'decision_id' | 'created_at'>): AviationStakeholderDecision {
   const saved: AviationStakeholderDecision = { ...decision, decision_id: `DEC-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, created_at: new Date().toISOString() };
   writeLocal(DECISION_KEY, [saved, ...getAviationStakeholderDecisions()]);
+  if (isAviationApiPersistenceEnabled()) void tryAviationApiRequest<AviationStakeholderDecision>('/aviation/decisions', { method: 'POST', body: saved });
   return saved;
 }
 
@@ -87,5 +93,6 @@ export function updateAviationStakeholderDecision(decisionId: string, updates: P
     updated = { ...decision, ...updates, decision_id: decisionId };
     return updated;
   }));
+  if (updated && isAviationApiPersistenceEnabled()) void tryAviationApiRequest<AviationStakeholderDecision>(`/aviation/decisions/${encodeURIComponent(decisionId)}`, { method: 'PATCH', body: updates });
   return updated;
 }

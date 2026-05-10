@@ -1,3 +1,4 @@
+import { tryAviationApiRequest } from './aviationApiClient';
 import { getAviationProvider } from './aviationProviderConfig';
 
 export type RoutingProviderResult = {
@@ -23,7 +24,8 @@ export async function getDriveTimeEstimate(distanceMiles: number): Promise<Routi
 export async function getDriveTimeFromRoutingProviderStub(origin: { latitude: number; longitude: number }, destination: { latitude: number; longitude: number }): Promise<RoutingProviderResult> {
   const provider = getAviationProvider('routingProvider');
   if (provider.mode !== 'live_api' || !provider.enabled) return { drive_time_minutes: null, distance_miles: null, source: 'unavailable', confidence: provider.confidence, status: 'no_data', caveat: 'Live routing is not enabled.' };
-  return normalizeRoutingResult({ origin, destination, status: 'no_data' });
+  const result = await tryAviationApiRequest<unknown>('/aviation/routing/drive-time', { method: 'POST', body: { origin, destination } });
+  return result ? normalizeRoutingResult(result) : normalizeRoutingResult({ origin, destination, status: 'no_data' });
 }
 
 export function normalizeRoutingResult(raw: unknown): RoutingProviderResult {

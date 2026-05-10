@@ -24,6 +24,10 @@ type CommandCenterExecutiveMetrics = {
   activeSignals: number;
   panelTrouble: number;
   activeWorkQueue: number;
+  elmLocationCount: number;
+  geocodedFacilities: number;
+  elmMediumPriority: number;
+  elmHighPriority: number;
   dataReadiness: number;
   profileCompleteness: number;
   governanceConfidence: number;
@@ -103,6 +107,8 @@ function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
     { label: 'Trend', value: metrics.trend },
     { label: 'Executive Attention Required', value: metrics.criticalExceptions > 0 ? 'Yes' : 'No' },
     { label: 'Highest Risk Domain', value: 'Remediation / Technical Controls' },
+    { label: 'ELM Locations', value: formatNumber(metrics.elmLocationCount) },
+    { label: 'Geocoded Facilities', value: formatNumber(metrics.geocodedFacilities) },
     { label: 'Data Mode', value: metrics.dataMode },
   ];
 
@@ -115,13 +121,14 @@ function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
           Current Posture: <strong>{metrics.posture}</strong>
         </p>
         <p>
-          {formatNumber(metrics.facilitiesProfiled)} facilities monitored | {formatNumber(metrics.criticalExceptions)} critical exceptions |{' '}
-          {formatNumber(metrics.activeWorkQueue)} active work items | {formatNumber(metrics.panelTrouble)} panel trouble
+          {formatNumber(metrics.facilitiesProfiled)} facilities monitored | {formatNumber(metrics.elmLocationCount)} ELM locations |{' '}
+          {formatNumber(metrics.geocodedFacilities)} geocoded | {formatNumber(metrics.activeWorkQueue)} active work items
         </p>
         <p className="executive-summary-copy">
-          <strong>Executive Summary:</strong> Facility protection posture remains at {metrics.posture} due to unresolved critical
-          exceptions across the active facility portfolio. Current exposure is driven by active remediation items, technical
-          control issues, and life-safety/device health signals requiring governance review.
+          <strong>Executive Summary:</strong> FPI now includes the national ELM location inventory for location-aware facility
+          protection planning. Current exposure remains driven by active remediation items, technical control issues,
+          life-safety/device health signals, and {formatNumber(metrics.elmMediumPriority + metrics.elmHighPriority)} ELM
+          location pins marked for review.
         </p>
       </div>
       <aside className="hero-status-cluster" aria-label="Executive situation status">
@@ -338,7 +345,7 @@ function DataConfidencePanel({ metrics }: { metrics: CommandCenterExecutiveMetri
           <p className="eyebrow">Trust layer</p>
           <h2 id="data-confidence-title">Data Confidence & Coverage</h2>
         </div>
-        <StatusPill label="SYNTHETIC DATA" tone="watch" />
+        <StatusPill label="ELM ENRICHED" tone="ready" />
       </div>
       <p>
         This dashboard is safe for leadership review as a synthetic operating picture. Confidence is strongest where
@@ -713,11 +720,15 @@ function buildExecutiveMetrics(metrics: FpiDashboardMetrics): CommandCenterExecu
     activeSignals: metrics.activeSignals,
     panelTrouble: metrics.panelTrouble,
     activeWorkQueue: metrics.activeWorkQueue,
+    elmLocationCount: metrics.elmLocationCount,
+    geocodedFacilities: metrics.geocodedFacilities,
+    elmMediumPriority: metrics.elmMediumPriority,
+    elmHighPriority: metrics.elmHighPriority,
     dataReadiness: pillars.find((pillar) => pillar.id === 'ingestion')?.progress ?? 86,
     profileCompleteness: pillars.find((pillar) => pillar.id === 'profiling')?.progress ?? 74,
     governanceConfidence: pillars.find((pillar) => pillar.id === 'governance')?.progress ?? 91,
     trend: 'Stable',
-    dataMode: 'Synthetic data',
+    dataMode: metrics.elmLocationCount > 0 ? 'ELM enriched' : 'Synthetic data',
   };
 }
 

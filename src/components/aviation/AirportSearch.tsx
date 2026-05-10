@@ -8,7 +8,7 @@ export interface AirportSearchProps {
 }
 
 function codeSummary(airport: Airport): string {
-  return [airport.faa_id, airport.iata_code, airport.icao_code].filter(Boolean).join(' / ') || 'No codes';
+  return `FAA: ${airport.faa_id ?? 'N/A'} | IATA: ${airport.iata_code ?? 'N/A'} | ICAO: ${airport.icao_code ?? 'N/A'}`;
 }
 
 export function AirportSearch({ selectedAirport, onSelectAirport }: AirportSearchProps) {
@@ -43,14 +43,14 @@ export function AirportSearch({ selectedAirport, onSelectAirport }: AirportSearc
 
   const emptyMessage = query.trim()
     ? 'No matching airports found.'
-    : 'Start typing to search, or choose a recommended demo airport.';
+    : 'Search for an airport to begin a Walmart facility scan.';
 
   return (
     <section className="panel aviation-panel">
       <div className="card-heading">
         <div>
-          <p className="eyebrow">Airport radius scanner</p>
-          <h3>Airport Search</h3>
+          <p className="eyebrow">Airport facility scan</p>
+          <h3>Search airport</h3>
         </div>
       </div>
       <input
@@ -60,14 +60,16 @@ export function AirportSearch({ selectedAirport, onSelectAirport }: AirportSearc
         placeholder="Search name, city, state, FAA, IATA, ICAO"
         aria-label="Search airports"
       />
-      {loading ? <p className="aviation-empty">Loading airports…</p> : null}
-      {error ? <p className="aviation-empty aviation-error">{error}</p> : null}
+      {loading ? <p className="aviation-empty">Loading airport data...</p> : null}
+      {error ? <p className="aviation-empty aviation-error">Airport data unavailable. Try again or use demo scenario.</p> : null}
       {!loading && !error && results.length === 0 ? <p className="aviation-empty">{emptyMessage}</p> : null}
       <div className="aviation-search-results" role="listbox" aria-label="Airport search results">
         {!error && results.map((airport) => (
-          <button key={airport.airport_id} type="button" className="aviation-result-button" onClick={() => onSelectAirport(airport)}>
+          <button key={airport.airport_id} type="button" className="aviation-result-button aviation-airport-result-card" onClick={() => onSelectAirport(airport)}>
             <strong>{airport.airport_name}</strong>
-            <span>{airport.city ?? 'Unknown city'}, {airport.state ?? 'Unknown state'} • {codeSummary(airport)}</span>
+            <span>{airport.city ?? 'Unknown city'}, {airport.state ?? 'Unknown state'}</span>
+            <span>{codeSummary(airport)}</span>
+            <small>{airport.airport_type ?? 'Airport'} • {airport.source_freshness}</small>
           </button>
         ))}
       </div>
@@ -75,8 +77,10 @@ export function AirportSearch({ selectedAirport, onSelectAirport }: AirportSearc
         <article className="aviation-selected-card">
           <span className="eyebrow">Selected airport</span>
           <strong>{selectedAirport.airport_name}</strong>
-          <span>{selectedAirport.city ?? 'Unknown city'}, {selectedAirport.state ?? 'Unknown state'} • {codeSummary(selectedAirport)}</span>
-          <span>{selectedAirport.latitude.toFixed(4)}, {selectedAirport.longitude.toFixed(4)} • {selectedAirport.source_freshness}</span>
+          <span>{selectedAirport.city ?? 'Unknown city'}, {selectedAirport.state ?? 'Unknown state'}</span>
+          <span>{codeSummary(selectedAirport)}</span>
+          <span>{selectedAirport.airport_type ?? 'Airport'} • {selectedAirport.latitude.toFixed(4)}, {selectedAirport.longitude.toFixed(4)}</span>
+          <span>Source status: {selectedAirport.source_freshness}</span>
         </article>
       ) : null}
     </section>
