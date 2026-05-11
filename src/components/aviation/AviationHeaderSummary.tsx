@@ -1,7 +1,9 @@
 export function AviationHeaderSummary({
+  canRunScan,
   onPlanTrip,
   onRunScan,
 }: {
+  canRunScan: boolean;
   onPlanTrip: () => void;
   onRunScan: () => void;
 }) {
@@ -16,7 +18,7 @@ export function AviationHeaderSummary({
       </div>
       <div className="page-header-actions aviation-header-actions" aria-label="Primary aviation actions">
         <button type="button" className="ops-action-button secondary" onClick={onPlanTrip}>New Trip</button>
-        <button type="button" className="ops-action-button" onClick={onRunScan}>Run Scan</button>
+        <button type="button" className="ops-action-button" disabled={!canRunScan} title={canRunScan ? 'Run airport radius scan' : 'Select an airport before running a scan.'} onClick={onRunScan}>Run Scan</button>
       </div>
     </header>
   );
