@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import type { EprFacility, EprHotel, EprIncident, EprTask } from '../data/eprTypes';
 import { lookupAirport, listAirports, type Airport } from '../data/airports';
 import {
@@ -29,6 +29,7 @@ export type VisitBriefWizardProps = {
 };
 
 type Step = 'airport' | 'route' | 'hotel' | 'brief';
+type TripPriority = 'standard' | 'elevated' | 'critical';
 type HotelChoice = 'airport' | 'lastStop';
 
 // Number of hotel options surfaced once the user picks an anchor. Three
@@ -44,6 +45,10 @@ export function VisitBriefWizard({ facilities, hotels, incidents, tasks, onClose
   const [airport, setAirport] = useState<Airport | null>(null);
   const [airportError, setAirportError] = useState<string | null>(null);
   const [hotelChoice, setHotelChoice] = useState<HotelChoice | null>(null);
+  const [tripTitle, setTripTitle] = useState('Region 75 Field Visit');
+  const [travelDates, setTravelDates] = useState('');
+  const [travelerCount, setTravelerCount] = useState('2');
+  const [tripPriority, setTripPriority] = useState<TripPriority>('elevated');
   const [selectedHotelId, setSelectedHotelId] = useState<string | null>(null);
 
   // Hotels in the EPR data may be missing coords (legacy entries). Filter
@@ -135,6 +140,14 @@ export function VisitBriefWizard({ facilities, hotels, incidents, tasks, onClose
               onChange={setAirportInput}
               onSubmit={submitAirport}
               error={airportError}
+              tripTitle={tripTitle}
+              onTripTitleChange={setTripTitle}
+              travelDates={travelDates}
+              onTravelDatesChange={setTravelDates}
+              travelerCount={travelerCount}
+              onTravelerCountChange={setTravelerCount}
+              tripPriority={tripPriority}
+              onTripPriorityChange={setTripPriority}
             />
           )}
 
@@ -177,6 +190,10 @@ export function VisitBriefWizard({ facilities, hotels, incidents, tasks, onClose
               tasks={tasks}
               onBack={() => setStep('hotel')}
               onClose={onClose}
+              tripTitle={tripTitle}
+              travelDates={travelDates}
+              travelerCount={travelerCount}
+              tripPriority={tripPriority}
             />
           )}
         </div>
@@ -185,21 +202,31 @@ export function VisitBriefWizard({ facilities, hotels, incidents, tasks, onClose
   );
 }
 
-function StepDot({ active, done, children }: { active: boolean; done: boolean; children: React.ReactNode }) {
+function StepDot({ active, done, children }: { active: boolean; done: boolean; children: ReactNode }) {
   const cls = active ? 'vb-step-dot vb-step-dot--active' : done ? 'vb-step-dot vb-step-dot--done' : 'vb-step-dot';
   return <span className={cls}>{children}</span>;
 }
 
 function AirportStep({
-  value, onChange, onSubmit, error,
-}: { value: string; onChange: (v: string) => void; onSubmit: () => void; error: string | null }) {
+  value, onChange, onSubmit, error, tripTitle, onTripTitleChange, travelDates, onTravelDatesChange, travelerCount, onTravelerCountChange, tripPriority, onTripPriorityChange,
+}: {
+  value: string; onChange: (v: string) => void; onSubmit: () => void; error: string | null;
+  tripTitle: string; onTripTitleChange: (v: string) => void;
+  travelDates: string; onTravelDatesChange: (v: string) => void;
+  travelerCount: string; onTravelerCountChange: (v: string) => void;
+  tripPriority: TripPriority; onTripPriorityChange: (v: TripPriority) => void;
+}) {
   const sample = listAirports();
   return (
     <div className="vb-step">
-      <h3>What airport are you flying into?</h3>
-      <p className="vb-help">
-        Enter the IATA code for the arrival airport. The wizard will use it as the route start point and to anchor a hotel suggestion.
-      </p>
+      <h3>Trip profile + arrival airport</h3>
+      <p className="vb-help">Capture the trip context first, then provide the arrival airport. This profile will carry into the travel risk report.</p>
+      <div className="vb-trip-grid">
+        <label><span>Trip title</span><input type="text" value={tripTitle} onChange={(event) => onTripTitleChange(event.target.value)} placeholder="Executive site visit" /></label>
+        <label><span>Travel dates</span><input type="text" value={travelDates} onChange={(event) => onTravelDatesChange(event.target.value)} placeholder="May 13–15, 2026" /></label>
+        <label><span>Travelers</span><input type="number" min={1} max={20} value={travelerCount} onChange={(event) => onTravelerCountChange(event.target.value)} /></label>
+        <label><span>Priority</span><select value={tripPriority} onChange={(event) => onTripPriorityChange(event.target.value as TripPriority)}><option value="standard">Standard</option><option value="elevated">Elevated</option><option value="critical">Critical</option></select></label>
+      </div>
       <form
         className="vb-airport-form"
         onSubmit={(event) => {
@@ -566,7 +593,7 @@ function buildStoreBrief(facility: EprFacility, incidents: EprIncident[], tasks:
 }
 
 function BriefStep({
-  airport, route, totalMiles, hotelChoice, selectedHotel, lastStop, incidents, tasks, onBack, onClose,
+  airport, route, totalMiles, hotelChoice, selectedHotel, lastStop, incidents, tasks, onBack, onClose, tripTitle, travelDates, travelerCount, tripPriority,
 }: {
   airport: Airport;
   route: EprFacility[];
@@ -578,6 +605,10 @@ function BriefStep({
   tasks: EprTask[];
   onBack: () => void;
   onClose: () => void;
+  tripTitle: string;
+  travelDates: string;
+  travelerCount: string;
+  tripPriority: TripPriority;
 }) {
   const [sent, setSent] = useState(false);
   // Browser-native PDF export: clone the email into a top-level print host
@@ -610,13 +641,21 @@ function BriefStep({
   const totalIncidents = briefs.reduce((s, b) => s + b.recentIncidents.length, 0);
   const totalCritical = briefs.reduce((s, b) => s + b.facility.critical_task_count, 0);
   const totalOverdue = briefs.reduce((s, b) => s + b.facility.overdue_task_count, 0);
+  const riskScore = Math.min(100, Math.round((totalIncidents * 6) + (totalCritical * 7) + (totalOverdue * 3) + (tripPriority === 'critical' ? 15 : tripPriority === 'elevated' ? 8 : 2)));
+  const riskLevel = riskScore >= 75 ? 'High' : riskScore >= 50 ? 'Moderate' : 'Low';
   const today = new Date();
   const subject = `Executive Visit Brief — Region 75 — ${today.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} (${route.length} stop${route.length === 1 ? '' : 's'})`;
 
   return (
     <div className="vb-step">
-      <h3>Visit Brief — Email Preview</h3>
-      <p className="vb-help">Mock email composition. The “Send” button does not deliver real mail.</p>
+      <h3>Travel risk report — Email Preview</h3>
+      <p className="vb-help">Mock travel risk report composition. Weather, airport alerts, and external risk feeds are designed to connect to your upcoming APIs.</p>
+      <section className="vb-risk-report">
+        <div><p className="eyebrow">Trip</p><strong>{tripTitle}</strong><small>{travelDates || 'Dates TBD'}</small></div>
+        <div><p className="eyebrow">Travelers</p><strong>{travelerCount}</strong><small>Airport {airport.iata}</small></div>
+        <div><p className="eyebrow">Risk level</p><strong>{riskLevel}</strong><small>Score {riskScore}/100</small></div>
+        <div><p className="eyebrow">API feeds</p><strong>Pending</strong><small>Weather · Airport · Threat</small></div>
+      </section>
 
       <article className="vb-email" aria-label="Mock executive visit brief email">
         <header className="vb-email-headers">
