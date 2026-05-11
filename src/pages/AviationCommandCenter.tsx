@@ -3,9 +3,13 @@ import { AviationAdminGovernance } from '../components/aviation/AviationAdminGov
 import { AirportSearch } from '../components/aviation/AirportSearch';
 import { AviationAuditTimeline } from '../components/aviation/AviationAuditTimeline';
 import { AviationHeaderSummary } from '../components/aviation/AviationHeaderSummary';
+import { FacilityRadiusMap } from '../components/aviation/FacilityRadiusMap';
 import { FacilityTypeFilter } from '../components/aviation/FacilityTypeFilter';
+import { NearbyFacilitiesTable } from '../components/aviation/NearbyFacilitiesTable';
 import { RadiusSelector } from '../components/aviation/RadiusSelector';
+import { AviationTravelRiskReportPanel } from '../components/aviation/AviationTravelRiskReportPanel';
 import { AviationTripDetail } from '../components/aviation/AviationTripDetail';
+import { AviationTripSummaryPanel } from '../components/aviation/AviationTripSummaryPanel';
 import { AviationAdminDataSourcesTab, AviationAuditLogTab, AviationBriefsTab, AviationDemoScenarioTab, AviationFAAWatchTab, AviationFacilityDetailTab, AviationNearbyFacilitiesTab, AviationReadinessActionsTab, AviationRiskScoreTab, AviationTripContextBar, AviationWeatherWatchTab } from '../components/aviation/AviationReadinessTabs';
 import { getAirportById } from '../services/airportService';
 import { recordAviationAuditEvent } from '../services/aviationAuditService';
@@ -20,11 +24,12 @@ import { getFAAAlertsForAirport, type FAAProviderResult } from '../services/faaS
 import { createFacilityReadinessAction, generateReadinessActions, updateReadinessActionEvidence, updateReadinessActionStatus } from '../services/readinessActionService';
 import { generateTripBrief } from '../services/tripBriefService';
 import { getWeatherAlertsForAirport, type WeatherProviderResult } from '../services/weatherService';
+import type { AviationTravelRiskReportPayload } from '../services/aviationTravelRiskReportService';
 import type { Airport, AviationTripPlan, AviationUserRole, FAAAlert, FacilitySortMode, FacilityWithDistance, NormalizedFacility, TripReadinessAction, TripRiskResult, WeatherAlert } from '../types/aviation';
 
 const emptyFAAResult: FAAProviderResult = { alerts: [], source: 'unknown', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data' };
 const emptyWeatherResult: WeatherProviderResult = { alerts: [], source: 'unknown', last_updated: new Date().toISOString(), confidence: 0, status: 'no_data' };
-type AviationReviewTab = 'nearby' | 'faa' | 'weather' | 'risk' | 'actions' | 'briefs' | 'demo';
+type AviationReviewTab = 'trip' | 'map' | 'nearby' | 'faa' | 'weather' | 'risk' | 'actions' | 'report' | 'briefs' | 'demo';
 
 function newTripId() {
   return `TRIP-${Date.now()}`;
@@ -39,6 +44,7 @@ export function AviationCommandCenter() {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<FacilitySortMode>('risk');
   const [lastScannedAt, setLastScannedAt] = useState<string | null>(null);
+  const [scanIsStale, setScanIsStale] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [tripName, setTripName] = useState<string>('');
   const [tripNotes, setTripNotes] = useState<string>('');
@@ -56,6 +62,7 @@ export function AviationCommandCenter() {
   const [detailTrip, setDetailTrip] = useState<AviationTripPlan | null>(null);
   const [activeTab, setActiveTab] = useState<AviationReviewTab>('nearby');
   const [briefVisible, setBriefVisible] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
 
   const roleSelectorAllowed = canUseLocalAviationRoleSelector();
   const permissions = useMemo(() => identity?.permissions ?? getAviationPermissions(role), [identity?.permissions, role]);
@@ -115,6 +122,12 @@ export function AviationCommandCenter() {
   }
 
   function selectAirport(airport: Airport) {
+    if (selectedAirport?.airport_id !== airport.airport_id) {
+      setScanResults([]);
+      setSelectedFacilityId(null);
+      setLastScannedAt(null);
+      setScanIsStale(false);
+    }
     setSelectedAirport(airport);
     setTripName((current) => current || `Aviation readiness - ${airport.faa_id ?? airport.airport_name}`);
     recordAviationAuditEvent({ event_type: 'airport_selected', actor_role: role, trip_id: currentTripId, airport_id: airport.airport_id, summary: `Airport selected: ${airport.airport_name}.`, source_context: { provider: 'airportProvider', source_status: airport.source_freshness, confidence: 85 } });
@@ -128,6 +141,7 @@ export function AviationCommandCenter() {
     const visibleMatches = matches.filter((facility) => selectedFacilityTypes.length === 0 || selectedFacilityTypes.includes(facility.facility_type));
     setSelectedFacilityId(visibleMatches[0]?.facility_id ?? matches[0]?.facility_id ?? null);
     setLastScannedAt(new Date().toISOString());
+    setScanIsStale(false);
     setScanning(false);
     setActiveTab('nearby');
     recordAviationAuditEvent({ event_type: 'facilities_scanned', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport.airport_id, summary: `${matches.length} facilities scanned within ${radiusMiles} miles.`, source_context: { provider: 'facilityProvider', source_status: 'seeded_demo', confidence: 60 }, metadata: { facilityTypes: selectedFacilityTypes, sortMode } });
@@ -137,12 +151,14 @@ export function AviationCommandCenter() {
     setScanResults([]);
     setSelectedFacilityId(null);
     setLastScannedAt(null);
+    setScanIsStale(false);
   }
 
   function toggleFacilityType(type: string) {
     setSelectedFacilityTypes((current) => {
       const active = current.includes('__none__') ? [] : current;
       const next = active.includes(type) ? active.filter((item) => item !== type) : [...active, type];
+      if (lastScannedAt) setScanIsStale(true);
       recordAviationAuditEvent({ event_type: 'facility_filters_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Facility filters changed: ${next.length ? next.join(', ') : 'All Walmart Facilities'}.` });
       return next;
     });
@@ -150,11 +166,13 @@ export function AviationCommandCenter() {
 
   function selectAllFacilityTypes() {
     setSelectedFacilityTypes([]);
+    if (lastScannedAt) setScanIsStale(true);
     recordAviationAuditEvent({ event_type: 'facility_filters_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: 'Facility filters changed: All Walmart Facilities.' });
   }
 
   function clearFacilityTypes() {
     setSelectedFacilityTypes(['__none__']);
+    if (lastScannedAt) setScanIsStale(true);
     recordAviationAuditEvent({ event_type: 'facility_filters_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: 'Facility filters changed: none selected.' });
   }
 
@@ -231,6 +249,7 @@ export function AviationCommandCenter() {
     setReadinessActions(trip.readiness_actions);
     setSelectedFacilityId(trip.nearby_facilities[0]?.facility_id ?? null);
     setLastScannedAt(trip.last_scanned);
+    setScanIsStale(false);
   }
 
   async function duplicateSavedTrip(tripId: string) {
@@ -260,6 +279,7 @@ export function AviationCommandCenter() {
     setScanResults([]);
     setSelectedFacilityId(null);
     setLastScannedAt(null);
+    setScanIsStale(false);
     setFaaResult(emptyFAAResult);
     setWeatherResult(emptyWeatherResult);
     setReadinessActions([]);
@@ -288,6 +308,7 @@ export function AviationCommandCenter() {
     setScanResults(scanned);
     setSelectedFacilityId(scanned[0]?.facility_id ?? null);
     setLastScannedAt(new Date().toISOString());
+    setScanIsStale(false);
     setFaaResult(faa);
     setWeatherResult(weather);
     setReadinessActions(generateReadinessActions({ tripId, weatherAlerts: weather.alerts, faaAlerts: faa.alerts, nearbyFacilities: scanned, risk: demoRisk }));
@@ -296,9 +317,11 @@ export function AviationCommandCenter() {
 
   const hasScanned = Boolean(lastScannedAt);
   const visibleFacilityTypes = selectedFacilityTypes.includes('__none__') ? [] : selectedFacilityTypes;
+  const hiddenCoordinateRecords = facilitySource.filter((facility) => facility.latitude === null || facility.longitude === null).length;
 
   function updateRadius(miles: number) {
     setRadiusMiles(miles);
+    if (lastScannedAt) setScanIsStale(true);
     recordAviationAuditEvent({ event_type: 'radius_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Radius changed to ${miles} miles.` });
   }
 
@@ -319,6 +342,7 @@ export function AviationCommandCenter() {
             radiusMiles={radiusMiles}
             facilityTypes={facilityTypes}
             selectedFacilityTypes={visibleFacilityTypes}
+            scanIsStale={scanIsStale}
             savedTrips={savedTrips}
             canSaveTrip={Boolean(selectedAirport && tripName.trim())}
             onOpenTrip={openTrip}
@@ -340,6 +364,7 @@ export function AviationCommandCenter() {
             selectedFacilityTypes={visibleFacilityTypes}
             facilityCount={nearbyFacilities.length}
             lastScannedAt={lastScannedAt}
+            scanIsStale={scanIsStale}
             scanning={scanning}
             onRunScan={handleScan}
             onClearScan={clearScan}
@@ -347,6 +372,11 @@ export function AviationCommandCenter() {
         </section>
 
         <ReadinessSummary hasScanned={hasScanned} facilitiesCount={nearbyFacilities.length} faaCount={faaResult.alerts.length} weatherCount={weatherResult.alerts.length} actionsCount={readinessActions.filter((action) => action.status !== 'Closed').length} riskBand={risk.band} riskScore={risk.score} />
+
+        <section className="aviation-map-results-grid" aria-label="Airport radius map and facility results">
+          <FacilityRadiusMap airport={selectedAirport} radiusMiles={radiusMiles} facilities={nearbyFacilities} selectedFacilityId={selectedFacilityId} scanHasRun={hasScanned} scanIsStale={scanIsStale} hiddenRecordsCount={hiddenCoordinateRecords} onFacilitySelect={selectFacilityMarker} />
+          <ScanSummaryPanel selectedAirport={selectedAirport} radiusMiles={radiusMiles} hasScanned={hasScanned} scanIsStale={scanIsStale} facilities={nearbyFacilities} canViewEPReadiness={permissions.canViewEPReadiness} sortMode={sortMode} lastScannedAt={lastScannedAt} onSortChange={changeSortMode} onFacilitySelect={selectFacilityMarker} onRunScan={handleScan} />
+        </section>
 
         <ReviewWorkspace
           activeTab={activeTab}
@@ -397,12 +427,26 @@ export function AviationCommandCenter() {
 
 type ReadinessContext = { airport: Airport | null; radiusMiles: number; tripStart: string; tripEnd: string; facilities: FacilityWithDistance[]; risk: TripRiskResult; faaAlerts: FAAAlert[]; weatherAlerts: WeatherAlert[]; lastScannedAt: string | null };
 
-function TripSetupCard({ selectedAirport, tripName, tripStart, tripEnd, missionType, notes, radiusMiles, facilityTypes, selectedFacilityTypes, savedTrips, canSaveTrip, onOpenTrip, onAirportSelect, onTripNameChange, onTripStartChange, onTripEndChange, onMissionTypeChange, onNotesChange, onRadiusChange, onToggleFacilityType, onSelectAllFacilityTypes, onClearFacilityTypes, onSaveTrip }: { selectedAirport: Airport | null; tripName: string; tripStart: string; tripEnd: string; missionType: string; notes: string; radiusMiles: number; facilityTypes: string[]; selectedFacilityTypes: string[]; savedTrips: AviationTripPlan[]; canSaveTrip: boolean; onOpenTrip: (trip: AviationTripPlan) => void; onAirportSelect: (airport: Airport) => void; onTripNameChange: (value: string) => void; onTripStartChange: (value: string) => void; onTripEndChange: (value: string) => void; onMissionTypeChange: (value: string) => void; onNotesChange: (value: string) => void; onRadiusChange: (value: number) => void; onToggleFacilityType: (type: string) => void; onSelectAllFacilityTypes: () => void; onClearFacilityTypes: () => void; onSaveTrip: () => void }) {
-  return <section className="panel aviation-panel aviation-trip-setup-card"><div className="card-heading"><div><p className="eyebrow">Step 1</p><h2>Trip Setup</h2></div></div><div className="aviation-detail-grid"><label>Trip name<input className="aviation-input" value={tripName} onChange={(event) => onTripNameChange(event.target.value)} placeholder="Name this aviation readiness trip" /></label><label>Open saved trip<select className="aviation-input" value="" onChange={(event) => { const trip = savedTrips.find((item) => item.trip_id === event.target.value); if (trip) onOpenTrip(trip); }}><option value="">Select saved trip</option>{savedTrips.map((trip) => <option key={trip.trip_id} value={trip.trip_id}>{trip.trip_name}</option>)}</select></label><label>Trip start<input className="aviation-input" type="datetime-local" value={tripStart} onChange={(event) => onTripStartChange(event.target.value)} /></label><label>Trip end<input className="aviation-input" type="datetime-local" value={tripEnd} onChange={(event) => onTripEndChange(event.target.value)} /></label><label>Mission type<select className="aviation-input" value={missionType} onChange={(event) => onMissionTypeChange(event.target.value)}><option>Executive movement/support</option><option>Aviation crew support</option><option>Security assessment</option><option>Facility support staging</option><option>Training / stakeholder demo</option></select></label><label>Operational notes<textarea className="aviation-input" value={notes} onChange={(event) => onNotesChange(event.target.value)} placeholder="Optional non-sensitive mission notes. Do not enter traveler identity or sensitive itinerary details." /></label></div><AirportSearch selectedAirport={selectedAirport} onSelectAirport={onAirportSelect} />{!selectedAirport ? <p className="aviation-empty">Select an airport to begin the readiness scan.</p> : null}<RadiusSelector radiusMiles={radiusMiles} airportCode={selectedAirport?.iata_code ?? selectedAirport?.faa_id ?? selectedAirport?.icao_code} onChange={onRadiusChange} /><FacilityTypeFilter facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes} countsByType={{}} onToggleFacilityType={onToggleFacilityType} onSelectAll={onSelectAllFacilityTypes} onClearAll={onClearFacilityTypes} /><div className="aviation-button-row"><button className="ops-action-button" disabled={!canSaveTrip} onClick={onSaveTrip}>Save Trip</button></div>{!canSaveTrip ? <p className="aviation-caveat">Trip name and airport are required before saving.</p> : null}</section>;
+type DateTimePickerInput = HTMLInputElement & { showPicker?: () => void };
+
+function openNativeDateTimePicker(event: { currentTarget: DateTimePickerInput }) {
+  try {
+    event.currentTarget.showPicker?.();
+  } catch {
+    // Browser may block showPicker outside a direct user gesture; the native input still works.
+  }
 }
 
-function ScanControlsCard({ selectedAirport, radiusMiles, selectedFacilityTypes, facilityCount, lastScannedAt, scanning, onRunScan, onClearScan }: { selectedAirport: Airport | null; radiusMiles: number; selectedFacilityTypes: string[]; facilityCount: number; lastScannedAt: string | null; scanning: boolean; onRunScan: () => void; onClearScan: () => void }) {
-  return <section className="panel aviation-panel aviation-scan-controls-card"><div className="card-heading"><div><p className="eyebrow">Step 2</p><h2>Airport Radius Scan</h2></div></div>{selectedAirport ? <article className="aviation-selected-card"><span className="eyebrow">Selected airport</span><strong>{selectedAirport.airport_name}</strong><span>{selectedAirport.city}, {selectedAirport.state} · {selectedAirport.faa_id ?? selectedAirport.iata_code ?? selectedAirport.icao_code ?? 'No code'}</span></article> : <p className="aviation-empty">No scan has been run yet. Select an airport and run a radius scan.</p>}<div className="aviation-detail-grid"><span>Radius: <strong>{radiusMiles} mi</strong></span><span>Facility filters: <strong>{selectedFacilityTypes.length ? selectedFacilityTypes.join(', ') : 'All facility types'}</strong></span>{lastScannedAt ? <span>Last scanned: <strong>{new Date(lastScannedAt).toLocaleString()}</strong></span> : null}{lastScannedAt ? <span>Facilities found: <strong>{facilityCount}</strong></span> : null}</div><div className="aviation-button-row"><button className="ops-action-button" disabled={!selectedAirport || scanning} onClick={onRunScan}>{scanning ? 'Scanning...' : 'Run Scan'}</button><button className="ops-action-button secondary" disabled={!lastScannedAt} onClick={onClearScan}>Clear Scan</button></div>{!selectedAirport ? <p className="aviation-caveat">Select an airport before running a scan.</p> : null}</section>;
+function TripDateTimeInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return <label>{label}<input className="aviation-input aviation-date-time-input" type="datetime-local" value={value} onClick={openNativeDateTimePicker} onFocus={openNativeDateTimePicker} onChange={(event) => onChange(event.target.value)} /><span className="aviation-field-helper">Click to open calendar and time selector.</span></label>;
+}
+
+function TripSetupCard({ selectedAirport, tripName, tripStart, tripEnd, missionType, notes, radiusMiles, facilityTypes, selectedFacilityTypes, scanIsStale, savedTrips, canSaveTrip, onOpenTrip, onAirportSelect, onTripNameChange, onTripStartChange, onTripEndChange, onMissionTypeChange, onNotesChange, onRadiusChange, onToggleFacilityType, onSelectAllFacilityTypes, onClearFacilityTypes, onSaveTrip }: { selectedAirport: Airport | null; tripName: string; tripStart: string; tripEnd: string; missionType: string; notes: string; radiusMiles: number; facilityTypes: string[]; selectedFacilityTypes: string[]; scanIsStale: boolean; savedTrips: AviationTripPlan[]; canSaveTrip: boolean; onOpenTrip: (trip: AviationTripPlan) => void; onAirportSelect: (airport: Airport) => void; onTripNameChange: (value: string) => void; onTripStartChange: (value: string) => void; onTripEndChange: (value: string) => void; onMissionTypeChange: (value: string) => void; onNotesChange: (value: string) => void; onRadiusChange: (value: number) => void; onToggleFacilityType: (type: string) => void; onSelectAllFacilityTypes: () => void; onClearFacilityTypes: () => void; onSaveTrip: () => void }) {
+  return <section className="panel aviation-panel aviation-trip-setup-card"><div className="card-heading"><div><p className="eyebrow">Step 1</p><h2>Trip Setup</h2></div></div><div className="aviation-detail-grid"><label>Trip name<input className="aviation-input" value={tripName} onChange={(event) => onTripNameChange(event.target.value)} placeholder="Name this aviation readiness trip" /></label><label>Open saved trip<select className="aviation-input" value="" onChange={(event) => { const trip = savedTrips.find((item) => item.trip_id === event.target.value); if (trip) onOpenTrip(trip); }}><option value="">Select saved trip</option>{savedTrips.map((trip) => <option key={trip.trip_id} value={trip.trip_id}>{trip.trip_name}</option>)}</select></label><TripDateTimeInput label="Trip start" value={tripStart} onChange={onTripStartChange} /><TripDateTimeInput label="Trip end" value={tripEnd} onChange={onTripEndChange} /><label>Mission type<select className="aviation-input" value={missionType} onChange={(event) => onMissionTypeChange(event.target.value)}><option>Executive movement/support</option><option>Aviation crew support</option><option>Security assessment</option><option>Facility support staging</option><option>Training / stakeholder demo</option></select></label><label>Operational notes<textarea className="aviation-input" value={notes} onChange={(event) => onNotesChange(event.target.value)} placeholder="Optional non-sensitive mission notes. Do not enter traveler identity or sensitive itinerary details." /></label></div><AirportSearch selectedAirport={selectedAirport} onSelectAirport={onAirportSelect} />{!selectedAirport ? <p className="aviation-empty">Select an airport to begin the readiness scan.</p> : null}<RadiusSelector radiusMiles={radiusMiles} airportCode={selectedAirport?.iata_code ?? selectedAirport?.faa_id ?? selectedAirport?.icao_code} scanIsStale={scanIsStale} onChange={onRadiusChange} /><FacilityTypeFilter facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes} countsByType={{}} onToggleFacilityType={onToggleFacilityType} onSelectAll={onSelectAllFacilityTypes} onClearAll={onClearFacilityTypes} /><div className="aviation-button-row"><button className="ops-action-button" disabled={!canSaveTrip} onClick={onSaveTrip}>Save Trip</button></div>{!canSaveTrip ? <p className="aviation-caveat">Trip name and airport are required before saving.</p> : null}</section>;
+}
+
+function ScanControlsCard({ selectedAirport, radiusMiles, selectedFacilityTypes, facilityCount, lastScannedAt, scanIsStale, scanning, onRunScan, onClearScan }: { selectedAirport: Airport | null; radiusMiles: number; selectedFacilityTypes: string[]; facilityCount: number; lastScannedAt: string | null; scanIsStale: boolean; scanning: boolean; onRunScan: () => void; onClearScan: () => void }) {
+  return <section className="panel aviation-panel aviation-scan-controls-card"><div className="card-heading"><div><p className="eyebrow">Step 2</p><h2>Airport Radius Scan</h2></div></div>{selectedAirport ? <article className="aviation-selected-card"><span className="eyebrow">Selected airport</span><strong>{selectedAirport.airport_name}</strong><span>{selectedAirport.city}, {selectedAirport.state} · {selectedAirport.faa_id ?? selectedAirport.iata_code ?? selectedAirport.icao_code ?? 'No code'}</span></article> : <p className="aviation-empty">No scan has been run yet. Select an airport and run a radius scan.</p>}<div className="aviation-detail-grid"><span>Radius: <strong>{radiusMiles} mi</strong></span><span>Facility filters: <strong>{selectedFacilityTypes.length ? selectedFacilityTypes.join(', ') : 'All facility types'}</strong></span>{lastScannedAt ? <span>Last scanned: <strong>{new Date(lastScannedAt).toLocaleString()}</strong></span> : null}{lastScannedAt ? <span>Facilities found: <strong>{facilityCount}</strong></span> : null}</div><div className="aviation-button-row"><button className="ops-action-button" disabled={!selectedAirport || scanning} onClick={onRunScan}>{scanning ? 'Scanning...' : scanIsStale ? 'Refresh Scan' : 'Run Scan'}</button><button className="ops-action-button secondary" disabled={!lastScannedAt} onClick={onClearScan}>Clear Scan</button></div>{!selectedAirport ? <p className="aviation-caveat">Select an airport before running a scan.</p> : null}</section>;
 }
 
 function ReadinessSummary({ hasScanned, facilitiesCount, faaCount, weatherCount, actionsCount, riskBand, riskScore }: { hasScanned: boolean; facilitiesCount: number; faaCount: number; weatherCount: number; actionsCount: number; riskBand: string; riskScore: number }) {
@@ -411,6 +455,13 @@ function ReadinessSummary({ hasScanned, facilitiesCount, faaCount, weatherCount,
 
 function SummaryTile({ label, value }: { label: string; value: string | number }) {
   return <article className="aviation-summary-card"><span>{label}</span><strong>{value}</strong></article>;
+}
+
+function ScanSummaryPanel({ selectedAirport, radiusMiles, hasScanned, scanIsStale, facilities, canViewEPReadiness, sortMode, lastScannedAt, onSortChange, onFacilitySelect, onRunScan }: { selectedAirport: Airport | null; radiusMiles: number; hasScanned: boolean; scanIsStale: boolean; facilities: FacilityWithDistance[]; canViewEPReadiness: boolean; sortMode: FacilitySortMode; lastScannedAt: string | null; onSortChange: (mode: FacilitySortMode) => void; onFacilitySelect: (facility: FacilityWithDistance) => void; onRunScan: () => void }) {
+  const highestRisk = facilities[0] ?? null;
+  const supportCandidate = facilities.find((facility) => facility.aviation_support_candidate) ?? null;
+  const airportCode = selectedAirport?.iata_code ?? selectedAirport?.faa_id ?? selectedAirport?.icao_code ?? 'Pending';
+  return <aside className="aviation-scan-results-panel"><section className="panel aviation-panel"><div className="card-heading"><div><p className="eyebrow">Scan Summary</p><h3>{hasScanned ? `${airportCode} · ${radiusMiles} mi` : 'Awaiting scan'}</h3></div>{scanIsStale ? <span className="aviation-badge aviation-status-pending">Refresh needed</span> : null}</div>{!hasScanned ? <p className="aviation-empty">Select an airport and run scan to populate nearby Walmart facilities.</p> : <div className="aviation-detail-grid"><span>Facilities found: <strong>{facilities.length}</strong></span><span>Highest-risk facility: <strong>{highestRisk ? `${highestRisk.facility_number} · ${highestRisk.facility_risk_band}` : 'None'}</strong></span><span>Recommended support candidate: <strong>{supportCandidate ? `${supportCandidate.facility_number} · ${supportCandidate.facility_type}` : 'None'}</strong></span><span>Last scanned: <strong>{lastScannedAt ? new Date(lastScannedAt).toLocaleString() : 'Not scanned'}</strong></span></div>} {scanIsStale ? <button type="button" className="ops-action-button" disabled={!selectedAirport} onClick={onRunScan}>Refresh Scan</button> : null}</section>{hasScanned ? <NearbyFacilitiesTable facilities={facilities} canViewEPReadiness={canViewEPReadiness} sortMode={sortMode} onSortChange={onSortChange} onFacilitySelect={onFacilitySelect} /> : null}</aside>;
 }
 
 const reviewTabs: { id: AviationReviewTab; label: string }[] = [{ id: 'nearby', label: 'Nearby Facilities' }, { id: 'faa', label: 'FAA / Airport Watch' }, { id: 'weather', label: 'NOAA Weather' }, { id: 'risk', label: 'Trip Risk' }, { id: 'actions', label: 'Actions' }, { id: 'briefs', label: 'Brief' }, { id: 'demo', label: 'Demo' }];

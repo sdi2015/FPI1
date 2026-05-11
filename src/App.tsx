@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
-import { AviationCommandCenter } from './pages/AviationCommandCenter';
+import { AviationMultiAirportTripPlanner as AviationCommandCenter } from './components/aviation/AviationMultiAirportTripPlanner';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
 import { SecurityMitigationManagerView } from './components/views/SecurityMitigationManagerView';

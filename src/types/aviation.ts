@@ -109,6 +109,65 @@ export type RiskDomainBreakdown = {
   confidence: number;
 };
 
+export type AviationTripStatus = 'Draft' | 'Planned' | 'Scanned' | 'Report Generated' | 'Closed';
+export type AviationTravelerType = 'Executive' | 'Crew' | 'Support' | 'Field / Security';
+export type AviationRiskBandWithPending = 'Pending' | RiskBand;
+
+export type AviationTripAirportStop = {
+  stop_id: string;
+  sequence: number;
+  stop_type: 'Start' | 'Intermediate' | 'End';
+  airport_id: string;
+  airport_name: string;
+  faa_id?: string;
+  iata_code?: string;
+  icao_code?: string;
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  radius_miles: number;
+  arrival_time?: string;
+  departure_time?: string;
+  scan_status: 'Not Scanned' | 'Scanned' | 'Needs Refresh';
+  nearby_facility_ids: string[];
+  selected_facility_ids: string[];
+  airport_risk_score?: number;
+  airport_risk_band?: AviationRiskBandWithPending;
+  faa_watch_count?: number;
+  weather_alert_count?: number;
+};
+
+export type AviationSelectedFacility = {
+  trip_id: string;
+  stop_id: string;
+  airport_id: string;
+  facility_id: string;
+  selected: boolean;
+  selection_reason?: string;
+  recommended_role?: 'Support / Staging' | 'Monitor' | 'Verification Required' | 'Avoid' | 'Visit Site';
+  distance_miles: number;
+  facility_risk_score?: number;
+  facility_risk_band?: FacilityRiskBand;
+};
+
+export type AviationMultiAirportTrip = {
+  trip_id: string;
+  trip_name: string;
+  trip_status: AviationTripStatus;
+  traveler_type: AviationTravelerType;
+  trip_start: string;
+  trip_end: string;
+  default_radius_miles: number;
+  facility_types: string[];
+  airports: AviationTripAirportStop[];
+  selected_facilities: AviationSelectedFacility[];
+  overall_risk_score?: number;
+  overall_risk_band?: AviationRiskBandWithPending;
+  confidence?: number;
+  last_scanned?: string;
+};
+
 export type TripRiskResult = {
   score: number;
   band: RiskBand;

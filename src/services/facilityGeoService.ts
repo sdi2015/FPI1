@@ -43,8 +43,8 @@ export function sortScannedFacilities(facilities: FacilityWithDistance[], sortMo
     if (sortMode === 'distance') return a.distance_miles - b.distance_miles || b.facility_risk_score - a.facility_risk_score;
     if (sortMode === 'support') return supportScore(b) - supportScore(a) || a.distance_miles - b.distance_miles;
     if (b.facility_risk_score !== a.facility_risk_score) return b.facility_risk_score - a.facility_risk_score;
-    if ((epRank[b.ep_readiness_status] ?? 0) !== (epRank[a.ep_readiness_status] ?? 0)) return (epRank[b.ep_readiness_status] ?? 0) - (epRank[a.ep_readiness_status] ?? 0);
-    return a.distance_miles - b.distance_miles;
+    if (a.distance_miles !== b.distance_miles) return a.distance_miles - b.distance_miles;
+    return (epRank[b.ep_readiness_status] ?? 0) - (epRank[a.ep_readiness_status] ?? 0);
   }).map((facility, index) => ({ ...facility, support_candidate_rank: facility.aviation_support_candidate ? index + 1 : undefined }));
 }
 
