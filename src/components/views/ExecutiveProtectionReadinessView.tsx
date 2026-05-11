@@ -71,7 +71,7 @@ type EprMitigationDraft = {
 
 const tabs: Array<{ id: EprTab; label: string; eyebrow: string }> = [
   { id: 'overview', label: 'Overview', eyebrow: 'Readiness' },
-  { id: 'visits', label: 'Visit Planner', eyebrow: 'Travel' },
+  { id: 'visits', label: 'Mission Control', eyebrow: 'Travel Ops' },
   { id: 'hotels', label: 'Hotel Intelligence', eyebrow: 'Safety' },
   { id: 'incidents', label: 'Incident Risk', eyebrow: 'Risk' },
   { id: 'mitigation', label: 'Security Mitigation', eyebrow: 'Controls' },
@@ -132,7 +132,7 @@ export function ExecutiveProtectionReadinessView({
   storeScope,
   onChangeScopeRequest,
 }: ExecutiveProtectionReadinessViewProps) {
-  const [activeTab, setActiveTab] = useState<EprTab>('visits');
+  const [activeTab, setActiveTab] = useState<EprTab>('overview');
   const eprState = useEprData();
 
   useEffect(() => {
@@ -223,7 +223,7 @@ function OverviewTab({ data, topRiskFacilities, onTabSelect }: { data: EprData; 
           <div className="card-heading"><div><p className="eyebrow">Readiness focus</p><h2>What leaders should review first</h2></div><StatusPill label="DECISION VIEW" tone="ready" /></div>
           <div className="module-map">
             {[
-              { label: 'Visit route risk', tab: 'visits' as EprTab, helper: 'Build a draft route and identify critical/overdue task exposure.' },
+              { label: 'Active trip workflows', tab: 'visits' as EprTab, helper: 'Run one workflow per active trip and track readiness by stop.' },
               { label: 'Hotel safety options', tab: 'hotels' as EprTab, helper: 'Review hotel safety scoring, preferred options, and travel handoff context.' },
               { label: 'Incident exposure', tab: 'incidents' as EprTab, helper: 'Inspect recent incident patterns that may affect executive movement.' },
               { label: 'Open critical tasks', tab: 'tasks' as EprTab, helper: 'Prioritize owner follow-up, SLA risk, and evidence requirements.' },
@@ -255,19 +255,56 @@ function VisitPlannerTab({ data }: { data: EprData }) {
   const selectedRoute = useMemo(() => selectedRouteIds.map((id) => data.visit_planner.route_facilities.find((facility) => facility.facility_id === id)).filter((facility): facility is EprFacility => Boolean(facility)), [data.visit_planner.route_facilities, selectedRouteIds]);
   const addToRoute = (facility: EprFacility) => setSelectedRouteIds((current) => current.includes(facility.facility_id) ? current : [...current, facility.facility_id]);
   const removeFromRoute = (facilityId: number) => setSelectedRouteIds((current) => current.filter((id) => id !== facilityId));
+  const [tripName, setTripName] = useState('Region 75 Active Trip');
+  const [startAirportCode, setStartAirportCode] = useState('RIC');
+  const [endAirportCode, setEndAirportCode] = useState('BWI');
+  const [tripWorkflows] = useState([
+    { id: 'wf-1', name: 'May 2026 Mid-Atlantic Tour', status: 'Active', stops: 5, readiness: 83, risk: 'Moderate' },
+    { id: 'wf-2', name: 'Q2 Leadership Rotation', status: 'Planned', stops: 3, readiness: 67, risk: 'Elevated' },
+  ]);
 
   return (
     <section className="dashboard-grid epr-grid epr-visit-grid">
+      <section className="panel selected-service-panel">
+        <div className="card-heading"><div><p className="eyebrow">Mission landing</p><h2>Travel Mission Control</h2></div><StatusPill label={`${tripWorkflows.length} WORKFLOWS`} tone="ready" /></div>
+        <p>
+          This workspace is organized around <strong>one workflow per active or planned trip</strong>. Program-level performance and aggregate stats remain on the Overview tab.
+        </p>
+        <div className="service-meta-grid">
+          <div><span>Trip workflow model</span><strong>Active per trip</strong></div>
+          <div><span>Next release focus</span><strong>Store search + airport risk</strong></div>
+          <div><span>Upcoming integrations</span><strong>Weather · Airport alerts · Travel risk report</strong></div>
+        </div>
+        <div className="epr-route-list" style={{ marginTop: 12 }}>
+          {tripWorkflows.map((workflow) => (
+            <article key={workflow.id}>
+              <div>
+                <span>{workflow.status}</span>
+                <strong>{workflow.name}</strong>
+                <small>{workflow.stops} stops · readiness {workflow.readiness}% · risk {workflow.risk}</small>
+              </div>
+              <button type="button" className="epr-action-button secondary">Open workflow</button>
+            </article>
+          ))}
+        </div>
+      </section>
       <section className="panel fire-facilities-panel epr-resizable-panel" data-resizable-panel="visit-route-queue" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
-        <div className="card-heading"><div><p className="eyebrow">Route queue</p><h2>Facilities available for executive/field visit planning</h2></div><StatusPill label={`${facilities.length} MATCHES`} tone="stable" /></div>
+        <div className="card-heading"><div><p className="eyebrow">Step 1 · Trip setup</p><h2>Define mission route and add airport/store stops</h2></div><StatusPill label={`${facilities.length} STORES`} tone="stable" /></div>
+        <div className="epr-controls">
+          <input type="text" value={tripName} onChange={(event) => setTripName(event.target.value)} placeholder="Trip workflow name" />
+          <input type="text" value={startAirportCode} onChange={(event) => setStartAirportCode(event.target.value.toUpperCase())} placeholder="Start airport (IATA)" maxLength={4} />
+          <input type="text" value={endAirportCode} onChange={(event) => setEndAirportCode(event.target.value.toUpperCase())} placeholder="End airport (IATA)" maxLength={4} />
+        </div>
+        <p className="epr-disclaimer" style={{ marginTop: -8 }}>Use <strong>+ Add stop</strong> to append intermediate airports or store visits between start and end legs.</p>
         <div className="epr-controls"><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search facility, market, region, city" /><select value={riskFilter} onChange={(event) => setRiskFilter(event.target.value)}><option value="all">All risk levels</option><option value="critical">Critical risk 80+</option><option value="high">High risk 70-79</option><option value="moderate">Moderate risk below 70</option></select></div>
         <div className="epr-table-shell"><table><thead><tr><th>Facility</th><th>Market</th><th>Risk</th><th>Tasks</th><th>Route</th></tr></thead><tbody>{facilities.map((facility) => <FacilityRow facility={facility} key={facility.facility_id} onAdd={addToRoute} selected={selectedRouteIds.includes(facility.facility_id)} />)}</tbody></table></div>
       </section>
       <section className="panel epr-route-panel epr-resizable-panel" data-resizable-panel="visit-draft-route" onMouseUp={saveResizablePanelSize} onTouchEnd={saveResizablePanelSize}>
-        <div className="card-heading"><div><p className="eyebrow">Draft route</p><h2>Selected visit route and handoff summary</h2></div><StatusPill label="MOCK ONLY" tone="track" /></div>
-        {selectedRoute.length === 0 ? <p className="epr-empty-state">No facilities selected yet. Add facilities from the route queue to build a draft visit route.</p> : <div className="epr-route-body"><RouteMap facilities={selectedRoute} /><div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div></div>}
-        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Create Visit Brief</button><details className="epr-export-menu"><summary className="epr-action-button" aria-disabled={selectedRoute.length === 0} role="button">Export Route ▾</summary><div className="epr-export-menu-list" role="menu"><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteCsv(selectedRoute)); }}><strong>Spreadsheet (CSV)</strong><span>One row per stop · Excel-friendly</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteGpx(selectedRoute)); }}><strong>GPS route (GPX)</strong><span>Import into Google Maps / Garmin / Apple Maps</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteIcs(selectedRoute)); }}><strong>Calendar invites (ICS)</strong><span>One event per stop · Outlook / Google Cal</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteJson(selectedRoute)); }}><strong>Raw data (JSON)</strong><span>For dashboards / API consumers</span></button></div></details><button className="epr-action-button secondary" type="button" disabled={selectedRoute.length === 0} onClick={() => setHandoffOpen(true)}>Send Handoff (mock)</button></div>
-        <p className="epr-disclaimer">Draft only — no calendar export, notification, booking, or production workflow is triggered.</p>
+        <div className="card-heading"><div><p className="eyebrow">Step 2+ · Build the workflow</p><h2>Map-first route, store search, readiness actions, and risk reporting</h2></div><StatusPill label="MOCK FLOW" tone="track" /></div>
+        {selectedRoute.length === 0 ? <p className="epr-empty-state">No stops selected yet. Start with a store, then continue adding stops with the + buttons to model the trip.</p> : <div className="epr-route-body"><RouteMap facilities={selectedRoute} /><div className="epr-route-list">{selectedRoute.map((facility, index) => <article key={facility.facility_id}><div><span>{String(index + 1).padStart(2, '0')}</span><strong>{facility.facility_name}</strong><small>{facility.market} · {facility.region} · Risk {Math.round(facility.risk_score)}</small></div><button className="epr-action-button secondary" type="button" onClick={() => removeFromRoute(facility.facility_id)}>Remove</button></article>)}</div></div>}
+        <div className="epr-draft-actions"><button className="epr-action-button secondary" type="button">+ Add stop</button><button className="epr-action-button secondary" type="button">Store search by radius</button><button className="epr-action-button secondary" type="button">Manual store search</button><button className="epr-action-button secondary" type="button">Airport risk</button></div>
+        <div className="epr-draft-actions"><button className="epr-action-button" type="button" disabled={selectedRoute.length === 0} onClick={() => setBriefOpen(true)}>Open Travel Workflow</button><details className="epr-export-menu"><summary className="epr-action-button" aria-disabled={selectedRoute.length === 0} role="button">Export Route ▾</summary><div className="epr-export-menu-list" role="menu"><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteCsv(selectedRoute)); }}><strong>Spreadsheet (CSV)</strong><span>One row per stop · Excel-friendly</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteGpx(selectedRoute)); }}><strong>GPS route (GPX)</strong><span>Import into Google Maps / Garmin / Apple Maps</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteIcs(selectedRoute)); }}><strong>Calendar invites (ICS)</strong><span>One event per stop · Outlook / Google Cal</span></button><button type="button" role="menuitem" disabled={selectedRoute.length === 0} onClick={(e) => { e.currentTarget.closest('details')?.removeAttribute('open'); triggerDownload(exportRouteJson(selectedRoute)); }}><strong>Raw data (JSON)</strong><span>For dashboards / API consumers</span></button></div></details><button className="epr-action-button secondary" type="button" disabled={selectedRoute.length === 0} onClick={() => setHandoffOpen(true)}>Readiness Action (mock)</button></div>
+        <p className="epr-disclaimer">Workflow mock includes map, route builder, stop expansion, hotel selection path, and travel risk report placeholders for weather and live risk feeds.</p>
       </section>
       {briefOpen && (
         <VisitBriefWizard
