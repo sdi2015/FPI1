@@ -513,6 +513,17 @@
   margin-bottom: 0;
 }
 
+.aviation-hero-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.aviation-hero-primary-actions .ops-action-button {
+  min-height: 2.5rem;
+}
+
 .aviation-hero .aviation-summary-cards {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-self: stretch;
@@ -820,6 +831,48 @@
 
 .aviation-alert-grid {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.aviation-map-breakdown,
+.aviation-empty-state-actions {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.aviation-map-breakdown h3 {
+  margin: 0;
+}
+
+.aviation-map-breakdown-grid,
+.aviation-store-visit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.aviation-map-breakdown-grid article,
+.aviation-store-visit-card {
+  display: grid;
+  gap: 0.38rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(2, 6, 23, 0.24);
+  overflow-wrap: anywhere;
+}
+
+.aviation-map-breakdown-grid article > span,
+.aviation-store-visit-card > span,
+.aviation-store-visit-card p {
+  margin: 0;
+  color: var(--text-muted, #b7c6d8);
+  line-height: 1.4;
 }
 
 @media (max-width: 1100px) {
