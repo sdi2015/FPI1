@@ -134,10 +134,34 @@ export type TripReadinessAction = {
   status: 'Open' | 'In Progress' | 'Verified' | 'Closed';
   evidence_required: boolean;
   evidence_type?: string;
+  evidence_note?: string;
+  evidence_file_name?: string;
+  evidence_received?: boolean;
+  verifier_name?: string;
+  verified_at?: string;
   created_from_driver: string;
   source_domain: 'Weather' | 'FAA' | 'Facility' | 'EP' | 'Incident' | 'Support' | 'Data Freshness';
+  related_facility_id?: string;
   created_at: string;
   updated_at: string;
+};
+
+export type AviationBriefStatus = 'Draft' | 'Reviewed' | 'Final';
+
+export type AviationGeneratedBrief = {
+  brief_id: string;
+  trip_id: string | null;
+  brief_name: string;
+  airport_id: string | null;
+  airport_label: string;
+  trip_window: string;
+  risk_band: string;
+  risk_score: number;
+  content: string;
+  generated_by: string;
+  generated_at: string;
+  status: AviationBriefStatus;
+  source_freshness: ProviderSourceStatus;
 };
 
 export type AviationTripClosureSummary = {

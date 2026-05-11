@@ -22,6 +22,8 @@ export function RadiusSelector({ radiusMiles, airportCode, onChange }: RadiusSel
           <h3>Scanning within {radiusMiles} miles{airportCode ? ` of ${airportCode}` : ''}</h3>
         </div>
       </div>
+      <p className="aviation-caveat">Radius controls which nearby Walmart facilities are included in the aviation readiness scan.</p>
+      <label className="aviation-radius-slider"><span>Radius slider</span><input type="range" min={5} max={100} step={5} value={Math.min(100, radiusMiles)} onChange={(event) => onChange(Number(event.target.value))} /></label>
       <div className="aviation-button-grid">
         {radiusOptions.map((option) => (
           <button key={option} type="button" className={option === radiusMiles ? 'ops-action-button' : 'ops-action-button secondary'} onClick={() => onChange(option)}>

@@ -50,6 +50,26 @@ export function generateReadinessActions({
   return actions;
 }
 
+export function createFacilityReadinessAction(tripId: string, facility: FacilityWithDistance, title = 'Verify selected facility support/staging posture'): TripReadinessAction {
+  return action({
+    trip_id: tripId,
+    title,
+    description: `${facility.facility_name} #${facility.facility_number} is ${facility.distance_miles.toFixed(1)} miles from the selected airport. Risk ${facility.facility_risk_band}; EP readiness ${facility.ep_readiness_status}; driver: ${facility.top_risk_driver}.`,
+    owner_role: facility.ep_readiness_status === 'Gap' ? 'Executive Protection' : 'Field Security / Facility Protection',
+    due_time: due(8),
+    priority: facility.facility_risk_band === 'Critical' ? 'Critical' : facility.facility_risk_band === 'High' ? 'High' : 'Medium',
+    evidence_required: true,
+    evidence_type: 'Facility leadership or EP readiness confirmation',
+    created_from_driver: facility.top_risk_driver,
+    source_domain: facility.ep_readiness_status === 'Gap' ? 'EP' : 'Facility',
+    related_facility_id: facility.facility_id,
+  }, 0);
+}
+
 export function updateReadinessActionStatus(actions: TripReadinessAction[], actionId: string, status: TripReadinessAction['status']): TripReadinessAction[] {
-  return actions.map((action) => action.action_id === actionId ? { ...action, status, updated_at: now() } : action);
+  return actions.map((action) => action.action_id === actionId ? { ...action, status, updated_at: now(), verified_at: status === 'Verified' ? now() : action.verified_at } : action);
+}
+
+export function updateReadinessActionEvidence(actions: TripReadinessAction[], actionId: string, updates: Pick<Partial<TripReadinessAction>, 'evidence_note' | 'evidence_file_name' | 'evidence_received' | 'verifier_name' | 'verified_at'>): TripReadinessAction[] {
+  return actions.map((action) => action.action_id === actionId ? { ...action, ...updates, updated_at: now() } : action);
 }

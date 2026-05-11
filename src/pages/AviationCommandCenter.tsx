@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AviationAdminGovernance } from '../components/aviation/AviationAdminGovernance';
 import { AviationAirportScanner } from '../components/aviation/AviationAirportScanner';
-import { AviationAlertsIntelligence } from '../components/aviation/AviationAlertsIntelligence';
 import { AviationAuditTimeline } from '../components/aviation/AviationAuditTimeline';
 import { AviationDataValidationPanel } from '../components/aviation/AviationDataValidationPanel';
 import { AviationHeaderSummary } from '../components/aviation/AviationHeaderSummary';
 import { AviationOperationsDashboard } from '../components/aviation/AviationOperationsDashboard';
-import { AviationReportsCenter } from '../components/aviation/AviationReportsCenter';
+import { AskFPIAviationPanel } from '../components/aviation/AskFPIAviationPanel';
 import { AviationTabNav, type AviationOpsTab } from '../components/aviation/AviationTabNav';
 import { AviationTripDetail } from '../components/aviation/AviationTripDetail';
 import { AviationTripPlanner } from '../components/aviation/AviationTripPlanner';
 import { SavedTripsPanel } from '../components/aviation/SavedTripsPanel';
-import { TripReadinessActions } from '../components/aviation/TripReadinessActions';
-import { TripRiskScoreCard } from '../components/aviation/TripRiskScoreCard';
+import { AviationAdminDataSourcesTab, AviationAuditLogTab, AviationBriefsTab, AviationDemoScenarioTab, AviationFAAWatchTab, AviationFacilityDetailTab, AviationNearbyFacilitiesTab, AviationReadinessActionsTab, AviationRiskScoreTab, AviationTripContextBar, AviationWeatherWatchTab } from '../components/aviation/AviationReadinessTabs';
 import { getAirportById } from '../services/airportService';
 import { recordAviationAuditEvent } from '../services/aviationAuditService';
 import { getAviationPermissions } from '../services/aviationAuthorizationService';
@@ -23,7 +21,7 @@ import { deleteTripPlan, duplicateTripPlan, getSavedTripPlans, saveTripPlan } fr
 import { getFacilitiesForAviationScan } from '../services/facilityDataAdapter';
 import { scanFacilitiesNearAirport, sortScannedFacilities } from '../services/facilityGeoService';
 import { getFAAAlertsForAirport, type FAAProviderResult } from '../services/faaService';
-import { generateReadinessActions, updateReadinessActionStatus } from '../services/readinessActionService';
+import { createFacilityReadinessAction, generateReadinessActions, updateReadinessActionEvidence, updateReadinessActionStatus } from '../services/readinessActionService';
 import { generateTripBrief } from '../services/tripBriefService';
 import { getWeatherAlertsForAirport, type WeatherProviderResult } from '../services/weatherService';
 import type { Airport, AviationTripPlan, AviationUserRole, FacilitySortMode, FacilityWithDistance, NormalizedFacility, TripReadinessAction } from '../types/aviation';
@@ -49,6 +47,8 @@ export function AviationCommandCenter() {
   const [tripNotes, setTripNotes] = useState<string>('');
   const [tripStart, setTripStart] = useState<string>('');
   const [tripEnd, setTripEnd] = useState<string>('');
+  const [travelerType, setTravelerType] = useState<string>('Executive');
+  const [riskDomains, setRiskDomains] = useState<string[]>(['FAA', 'Weather', 'Facility', 'Executive Protection', 'Data freshness']);
   const [role, setRole] = useState<AviationUserRole>('aviation_admin');
   const [identity, setIdentity] = useState<AviationIdentity | null>(null);
   const [faaResult, setFaaResult] = useState<FAAProviderResult>(emptyFAAResult);
@@ -67,6 +67,8 @@ export function AviationCommandCenter() {
   const risk = useMemo(() => calculateTripRiskScore({ nearbyFacilities, faaAlerts: faaResult.alerts, weatherAlerts: weatherResult.alerts, hasSelectedAirport: Boolean(selectedAirport) }), [nearbyFacilities, faaResult.alerts, weatherResult.alerts, selectedAirport]);
   const generatedBrief = useMemo(() => generateTripBrief({ airport: selectedAirport, radiusMiles, tripStart, tripEnd, facilityTypes: selectedFacilityTypes, nearbyFacilities, risk, faaAlerts: faaResult.alerts, weatherAlerts: weatherResult.alerts }), [selectedAirport, radiusMiles, tripStart, tripEnd, selectedFacilityTypes, nearbyFacilities, risk, faaResult.alerts, weatherResult.alerts]);
   const currentTripForValidation = useMemo<AviationTripPlan | null>(() => selectedAirport ? buildCurrentTrip('draft') : null, [selectedAirport, tripName, tripStart, tripEnd, radiusMiles, selectedFacilityTypes, nearbyFacilities, faaResult.alerts, weatherResult.alerts, risk, readinessActions, generatedBrief, currentTripId]);
+  const selectedFacility = useMemo(() => nearbyFacilities.find((facility) => facility.facility_id === selectedFacilityId) ?? null, [nearbyFacilities, selectedFacilityId]);
+  const aviationContext = useMemo(() => ({ airport: selectedAirport, radiusMiles, tripStart, tripEnd, facilities: nearbyFacilities, risk, faaAlerts: faaResult.alerts, weatherAlerts: weatherResult.alerts, lastScannedAt }), [selectedAirport, radiusMiles, tripStart, tripEnd, nearbyFacilities, risk, faaResult.alerts, weatherResult.alerts, lastScannedAt]);
 
   useEffect(() => {
     getCurrentAviationIdentity().then((currentIdentity) => {
@@ -171,13 +173,40 @@ export function AviationCommandCenter() {
   function generateActions() {
     const actions = generateReadinessActions({ tripId: currentTripId, weatherAlerts: weatherResult.alerts, faaAlerts: faaResult.alerts, nearbyFacilities, risk });
     setReadinessActions(actions);
-    setActiveTab('risk');
+    setActiveTab('actions');
     recordAviationAuditEvent({ event_type: 'readiness_actions_generated', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `${actions.length} readiness action(s) generated.` });
   }
 
   function updateActionStatus(actionId: string, status: TripReadinessAction['status']) {
+    const oldStatus = readinessActions.find((action) => action.action_id === actionId)?.status;
     setReadinessActions((actions) => updateReadinessActionStatus(actions, actionId, status));
-    recordAviationAuditEvent({ event_type: 'readiness_action_status_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Readiness action ${actionId} changed to ${status}.` });
+    recordAviationAuditEvent({ event_type: 'readiness_action_status_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Readiness action ${actionId} changed to ${status}.`, metadata: { action_id: actionId, oldValue: oldStatus, newValue: status } });
+  }
+
+  function updateActionEvidence(actionId: string, updates: Pick<Partial<TripReadinessAction>, 'evidence_note' | 'evidence_file_name' | 'evidence_received' | 'verifier_name' | 'verified_at'>) {
+    setReadinessActions((actions) => updateReadinessActionEvidence(actions, actionId, updates));
+    recordAviationAuditEvent({ event_type: 'readiness_action_status_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Readiness action ${actionId} evidence updated.`, metadata: { action_id: actionId, ...updates } });
+  }
+
+  function createFacilityAction(facility: FacilityWithDistance) {
+    const action = createFacilityReadinessAction(currentTripId, facility);
+    setReadinessActions((actions) => [action, ...actions]);
+    setActiveTab('actions');
+    recordAviationAuditEvent({ event_type: 'readiness_actions_generated', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Facility readiness action created for ${facility.facility_name}.`, metadata: { facility_id: facility.facility_id, action_id: action.action_id } });
+  }
+
+  function markFacilitySupportCandidate(facility: FacilityWithDistance, candidate: boolean) {
+    setScanResults((facilities) => facilities.map((item) => item.facility_id === facility.facility_id ? { ...item, aviation_support_candidate: candidate, recommended_action: candidate ? 'Candidate for support/staging' : item.recommended_action } : item));
+    recordAviationAuditEvent({ event_type: 'facility_marker_selected', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `${facility.facility_name} support candidate changed to ${candidate ? 'Yes' : 'No'}.`, metadata: { facility_id: facility.facility_id, oldValue: facility.aviation_support_candidate, newValue: candidate } });
+  }
+
+  function addFacilityNote(facility: FacilityWithDistance, note: string) {
+    if (!note.trim()) return;
+    recordAviationAuditEvent({ event_type: 'facility_marker_selected', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Facility note added for ${facility.facility_name}.`, metadata: { facility_id: facility.facility_id, note } });
+  }
+
+  function toggleRiskDomain(domain: string) {
+    setRiskDomains((current) => current.includes(domain) ? current.filter((item) => item !== domain) : [...current, domain]);
   }
 
   async function saveCurrentTrip() {
@@ -250,29 +279,32 @@ export function AviationCommandCenter() {
 
   return (
     <section className="aviation-command-center aviation-ops-command-center">
-      <AviationHeaderSummary role={role} selectedAirport={selectedAirport} tripName={tripName} risk={risk} onPlanTrip={() => setActiveTab('planner')} onRunScan={handleScan} onLaunchDemo={launchDemoScenario} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('reports'); }} onSaveTrip={saveCurrentTrip} />
+      <AviationHeaderSummary role={role} selectedAirport={selectedAirport} tripName={tripName} risk={risk} onPlanTrip={() => setActiveTab('scanner')} onRunScan={handleScan} onLaunchDemo={launchDemoScenario} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('briefs'); }} onSaveTrip={saveCurrentTrip} />
       <section className="aviation-context-bar" aria-label="Aviation context and access">
         <div className="panel aviation-panel aviation-context-card"><p className="eyebrow">Pilot mode</p><strong>Advisory workflow</strong><p className="aviation-caveat">Demo fallback remains active. Live APIs run only when explicitly enabled. Authorized human review is required.</p></div>
         <div className="panel aviation-panel aviation-context-card aviation-role-strip"><div><p className="eyebrow">Access</p>{roleSelectorAllowed ? <select className="aviation-input" value={role} onChange={(event) => setRole(event.target.value as AviationUserRole)} aria-label="Current aviation role"><option value="aviation_admin">Aviation Admin</option><option value="aviation_user">Aviation User</option><option value="executive_protection">Executive Protection</option><option value="global_security">Global Security</option><option value="field_security">Field Security</option><option value="fpi_admin">FPI Admin</option><option value="viewer">Viewer</option></select> : <strong>{identity?.display_name ?? 'Enterprise IAM user'} · {role}</strong>}</div><p className="aviation-caveat">{isApprovedPilotRole(role) ? 'Approved controlled-pilot role.' : 'Limited / not in approved pilot role list.'} {roleSelectorAllowed ? 'Local selector available outside production.' : 'Role controlled by enterprise IAM.'}</p></div>
       </section>
       <AviationTabNav activeTab={activeTab} onChange={setActiveTab} />
+      <AviationTripContextBar airport={selectedAirport} radiusMiles={radiusMiles} tripStart={tripStart} tripEnd={tripEnd} facilities={nearbyFacilities} risk={risk} lastScannedAt={lastScannedAt} />
 
-      {activeTab === 'dashboard' ? <AviationOperationsDashboard savedTrips={savedTrips} nearbyFacilities={nearbyFacilities} readinessActions={readinessActions} faaAlerts={faaResult.alerts} weatherAlerts={weatherResult.alerts} currentRisk={risk} onPlanTrip={() => setActiveTab('planner')} onLaunchDemo={launchDemoScenario} onOpenScanner={() => setActiveTab('scanner')} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('reports'); }} onViewIntegrations={() => setActiveTab('admin')} onOpenTrip={openTrip} /> : null}
+      {activeTab === 'dashboard' ? <AviationOperationsDashboard savedTrips={savedTrips} nearbyFacilities={nearbyFacilities} readinessActions={readinessActions} faaAlerts={faaResult.alerts} weatherAlerts={weatherResult.alerts} currentRisk={risk} selectedAirport={selectedAirport} radiusMiles={radiusMiles} tripStart={tripStart} tripEnd={tripEnd} onPlanTrip={() => setActiveTab('scanner')} onLaunchDemo={launchDemoScenario} onOpenScanner={() => setActiveTab('scanner')} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('briefs'); }} onViewIntegrations={() => setActiveTab('admin')} onOpenTrip={openTrip} /> : null}
 
-      {activeTab === 'planner' ? <AviationTripPlanner role={role} selectedAirport={selectedAirport} tripName={tripName} tripStart={tripStart} tripEnd={tripEnd} radiusMiles={radiusMiles} facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes} notes={tripNotes} onAirportSelect={selectAirport} onTripNameChange={setTripName} onTripStartChange={setTripStart} onTripEndChange={setTripEnd} onRadiusChange={(miles) => { setRadiusMiles(miles); recordAviationAuditEvent({ event_type: 'radius_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Radius changed to ${miles} miles.` }); }} onToggleFacilityType={toggleFacilityType} onNotesChange={setTripNotes} onSaveTrip={saveCurrentTrip} onRunScan={handleScan} onGenerateRisk={() => setActiveTab('risk')} onGenerateActions={generateActions} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('reports'); }} /> : null}
+      {activeTab === 'planner' ? <AviationTripPlanner role={role} selectedAirport={selectedAirport} tripName={tripName} tripStart={tripStart} tripEnd={tripEnd} radiusMiles={radiusMiles} facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes} notes={tripNotes} onAirportSelect={selectAirport} onTripNameChange={setTripName} onTripStartChange={setTripStart} onTripEndChange={setTripEnd} onRadiusChange={(miles) => { setRadiusMiles(miles); recordAviationAuditEvent({ event_type: 'radius_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Radius changed to ${miles} miles.` }); }} onToggleFacilityType={toggleFacilityType} onNotesChange={setTripNotes} onSaveTrip={saveCurrentTrip} onRunScan={handleScan} onGenerateRisk={() => setActiveTab('risk')} onGenerateActions={generateActions} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('briefs'); }} /> : null}
 
-      {activeTab === 'scanner' ? <AviationAirportScanner selectedAirport={selectedAirport} radiusMiles={radiusMiles} facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes.includes('__none__') ? [] : selectedFacilityTypes} nearbyFacilities={nearbyFacilities} selectedFacilityId={selectedFacilityId} canViewEPReadiness={permissions.canViewEPReadiness} sortMode={sortMode} lastScannedAt={lastScannedAt} scanning={scanning} onAirportSelect={selectAirport} onRadiusChange={(miles) => { setRadiusMiles(miles); recordAviationAuditEvent({ event_type: 'radius_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Radius changed to ${miles} miles.` }); }} onToggleFacilityType={toggleFacilityType} onSelectAllFacilityTypes={selectAllFacilityTypes} onClearFacilityTypes={clearFacilityTypes} onSortChange={changeSortMode} onScan={handleScan} onClearScan={clearScan} onSaveTrip={saveCurrentTrip} onGenerateRisk={() => setActiveTab('risk')} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('reports'); }} onFacilitySelect={selectFacilityMarker} /> : null}
+      {activeTab === 'scanner' ? <AviationAirportScanner selectedAirport={selectedAirport} radiusMiles={radiusMiles} facilityTypes={facilityTypes} selectedFacilityTypes={selectedFacilityTypes.includes('__none__') ? [] : selectedFacilityTypes} nearbyFacilities={nearbyFacilities} selectedFacilityId={selectedFacilityId} canViewEPReadiness={permissions.canViewEPReadiness} sortMode={sortMode} lastScannedAt={lastScannedAt} scanning={scanning} tripStart={tripStart} tripEnd={tripEnd} travelerType={travelerType} riskDomains={riskDomains} onAirportSelect={selectAirport} onRadiusChange={(miles) => { setRadiusMiles(miles); recordAviationAuditEvent({ event_type: 'radius_changed', actor_role: role, trip_id: currentTripId, airport_id: selectedAirport?.airport_id ?? null, summary: `Radius changed to ${miles} miles.` }); }} onToggleFacilityType={toggleFacilityType} onSelectAllFacilityTypes={selectAllFacilityTypes} onClearFacilityTypes={clearFacilityTypes} onSortChange={changeSortMode} onScan={handleScan} onClearScan={clearScan} onSaveTrip={saveCurrentTrip} onGenerateRisk={() => setActiveTab('risk')} onGenerateBrief={() => { setBriefVisible(true); setActiveTab('briefs'); }} onFacilitySelect={selectFacilityMarker} onTripStartChange={setTripStart} onTripEndChange={setTripEnd} onTravelerTypeChange={setTravelerType} onToggleRiskDomain={toggleRiskDomain} /> : null}
 
-      {activeTab === 'risk' ? <div className="aviation-risk-page"><TripRiskScoreCard risk={risk} canViewRecommendation={permissions.canViewGoNoGoRecommendation} />{currentTripForValidation ? <AviationDataValidationPanel trip={currentTripForValidation} canViewSensitive={permissions.canViewSensitiveTripDetails} /> : <section className="panel aviation-panel"><p className="aviation-empty">No selected airport. Select an airport and run a scan before readiness validation.</p></section>}<TripReadinessActions actions={readinessActions} canCreateActions={permissions.canCreateReadinessActions} canViewEPReadiness={permissions.canViewEPReadiness} onGenerateActions={generateActions} onStatusChange={updateActionStatus} /></div> : null}
-
-      {activeTab === 'alerts' ? <AviationAlertsIntelligence airport={selectedAirport} faaResult={faaResult} weatherResult={weatherResult} facilities={nearbyFacilities} /> : null}
-
+      {activeTab === 'nearby' ? <AviationNearbyFacilitiesTab context={aviationContext} canViewEPReadiness={permissions.canViewEPReadiness} sortMode={sortMode} selectedFacilityId={selectedFacilityId} onSortChange={changeSortMode} onFacilitySelect={selectFacilityMarker} /> : null}
+      {activeTab === 'facility-detail' ? <AviationFacilityDetailTab facility={selectedFacility} canViewEPReadiness={permissions.canViewEPReadiness} onCreateAction={createFacilityAction} onMarkSupportCandidate={markFacilitySupportCandidate} onAddNote={addFacilityNote} /> : null}
+      {activeTab === 'risk' ? <AviationRiskScoreTab context={aviationContext} canViewRecommendation={permissions.canViewGoNoGoRecommendation} onExplain={() => setActiveTab('ask-fpi')} /> : null}
+      {activeTab === 'faa' ? <AviationFAAWatchTab context={aviationContext} /> : null}
+      {activeTab === 'weather' ? <AviationWeatherWatchTab context={aviationContext} /> : null}
+      {activeTab === 'actions' ? <AviationReadinessActionsTab actions={readinessActions} canCreateActions={permissions.canCreateReadinessActions} canViewEPReadiness={permissions.canViewEPReadiness} onGenerateActions={generateActions} onStatusChange={updateActionStatus} onEvidenceChange={updateActionEvidence} /> : null}
+      {activeTab === 'ask-fpi' ? <AskFPIAviationPanel airport={selectedAirport} facilities={nearbyFacilities} risk={risk} faaAlerts={faaResult.alerts} weatherAlerts={weatherResult.alerts} /> : null}
+      {activeTab === 'briefs' ? <AviationBriefsTab actorRole={role} tripId={currentTripId} context={aviationContext} facilityTypes={selectedFacilityTypes} canGenerateBrief={permissions.canGenerateBrief || briefVisible} canCopyBrief={permissions.canCopyBrief} /> : null}
+      {activeTab === 'demo' ? <AviationDemoScenarioTab onLaunchDemo={launchDemoScenario} /> : null}
+      {activeTab === 'admin' ? <><AviationAdminDataSourcesTab trips={savedTrips} context={aviationContext} /><AviationAdminGovernance role={role} tripId={currentTripId} /></> : null}
+      {activeTab === 'audit' ? <AviationAuditLogTab /> : null}
       {activeTab === 'saved' ? <div className="aviation-saved-page"><SavedTripsPanel trips={savedTrips} onSave={saveCurrentTrip} onOpen={openTrip} onDuplicate={duplicateSavedTrip} onDelete={deleteSavedTrip} /><AviationAuditTimeline tripId={currentTripId} limit={12} /></div> : null}
-
-      {activeTab === 'reports' ? <AviationReportsCenter actorRole={role} tripId={currentTripId} airport={selectedAirport} radiusMiles={radiusMiles} tripStart={tripStart} tripEnd={tripEnd} facilityTypes={selectedFacilityTypes} nearbyFacilities={nearbyFacilities} risk={risk} faaAlerts={faaResult.alerts} weatherAlerts={weatherResult.alerts} canGenerateBrief={permissions.canGenerateBrief || briefVisible} canCopyBrief={permissions.canCopyBrief} /> : null}
-
-      {activeTab === 'admin' ? <AviationAdminGovernance role={role} tripId={currentTripId} /> : null}
-      {activeTab === 'admin' ? <AviationAuditTimeline limit={20} /> : null}
       {detailTrip ? <AviationTripDetail trip={detailTrip} currentRole={role} onClose={() => setDetailTrip(null)} onTripUpdated={(trip) => { setDetailTrip(trip); refreshSavedTrips(); }} /> : null}
     </section>
   );

@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react';
 import { AviationTabSettings } from './AviationTabSettings';
 import { loadAviationTabPreferences, type AviationAvailableTab, type AviationTabPreferences } from '../../services/aviationTabPreferenceService';
 
-export type AviationOpsTab = 'dashboard' | 'planner' | 'scanner' | 'risk' | 'alerts' | 'saved' | 'reports' | 'admin';
+export type AviationOpsTab = 'dashboard' | 'scanner' | 'nearby' | 'facility-detail' | 'risk' | 'faa' | 'weather' | 'actions' | 'ask-fpi' | 'briefs' | 'demo' | 'admin' | 'audit' | 'planner' | 'saved';
 
 export const aviationTabs: AviationAvailableTab[] = [
-  { tab_id: 'dashboard', label: 'Overview', operational: true },
-  { tab_id: 'scanner', label: 'Airport Scan', operational: true },
-  { tab_id: 'planner', label: 'Plan', operational: true },
-  { tab_id: 'risk', label: 'Risk', operational: true },
-  { tab_id: 'alerts', label: 'Alerts', operational: true },
-  { tab_id: 'saved', label: 'Trips', operational: true },
-  { tab_id: 'reports', label: 'Reports', operational: false },
-  { tab_id: 'admin', label: 'Admin', operational: false },
+  { tab_id: 'dashboard', label: 'Aviation Command Center', operational: true },
+  { tab_id: 'scanner', label: 'Airport Radius Scanner', operational: true },
+  { tab_id: 'nearby', label: 'Nearby Facilities', operational: true },
+  { tab_id: 'facility-detail', label: 'Facility Detail / Support Staging', operational: true },
+  { tab_id: 'risk', label: 'Trip Risk Score', operational: true },
+  { tab_id: 'faa', label: 'FAA / Airport Watch', operational: true },
+  { tab_id: 'weather', label: 'NOAA Weather Watch', operational: true },
+  { tab_id: 'actions', label: 'Readiness Actions', operational: true },
+  { tab_id: 'ask-fpi', label: 'Ask FPI Aviation', operational: true },
+  { tab_id: 'briefs', label: 'Aviation Travel Briefs', operational: true },
+  { tab_id: 'demo', label: 'Demo Scenario Mode', operational: true },
+  { tab_id: 'admin', label: 'Admin / Data Sources', operational: false },
+  { tab_id: 'audit', label: 'Audit / Activity Log', operational: false },
+  { tab_id: 'planner', label: 'Legacy Plan', operational: false },
+  { tab_id: 'saved', label: 'Saved Trips', operational: false },
 ];
 
 const tabMeta: Record<AviationOpsTab, { icon: string; hint: string }> = {
-  dashboard: { icon: '01', hint: 'Command summary' },
-  scanner: { icon: '02', hint: 'Airport radius' },
-  planner: { icon: '03', hint: 'Trip setup' },
-  risk: { icon: '04', hint: 'Score & actions' },
-  alerts: { icon: '05', hint: 'FAA / weather' },
-  saved: { icon: '06', hint: 'Saved plans' },
-  reports: { icon: '07', hint: 'Briefs & exports' },
-  admin: { icon: '08', hint: 'Governance' },
+  dashboard: { icon: '01', hint: 'Executive dashboard' }, scanner: { icon: '02', hint: 'Guided radius scan' }, nearby: { icon: '03', hint: 'Facilities in radius' }, 'facility-detail': { icon: '04', hint: 'Support staging' }, risk: { icon: '05', hint: 'Score model' }, faa: { icon: '06', hint: 'FAA / airport' }, weather: { icon: '07', hint: 'NOAA weather' }, actions: { icon: '08', hint: 'Track tasks' }, 'ask-fpi': { icon: '09', hint: 'Aviation assistant' }, briefs: { icon: '10', hint: 'Briefs' }, demo: { icon: '11', hint: 'Synthetic demo' }, admin: { icon: '12', hint: 'Data sources' }, audit: { icon: '13', hint: 'Activity log' }, planner: { icon: '14', hint: 'Legacy trip setup' }, saved: { icon: '15', hint: 'Saved plans' },
 };
 
 export function AviationTabNav({ activeTab, onChange }: { activeTab: AviationOpsTab; onChange: (tab: AviationOpsTab) => void }) {

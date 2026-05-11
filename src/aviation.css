@@ -819,3 +819,51 @@
     min-width: 0;
   }
 }
+
+/* Aviation readiness module tab expansion */
+.aviation-trip-context-bar { position: sticky; top: 4.25rem; z-index: 9; display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: .5rem; padding: .65rem; border: 1px solid rgba(148,163,184,.22); border-radius: 1rem; background: rgba(2,6,23,.88); backdrop-filter: blur(10px); }
+.aviation-trip-context-bar span { display: grid; gap: .1rem; padding: .45rem .6rem; border-radius: .75rem; background: rgba(15,23,42,.48); }
+.aviation-trip-context-bar small { color: var(--text-muted,#b7c6d8); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; }
+.aviation-command-center-hero h1 { margin: .2rem 0; font-size: clamp(1.8rem, 3vw, 3rem); }
+.aviation-command-kpis { grid-template-columns: repeat(4, minmax(140px, 1fr)); }
+.aviation-three-column { display: grid; grid-template-columns: minmax(240px,.8fr) minmax(340px,1.2fr) minmax(260px,.9fr); gap: 1rem; align-items: start; }
+.aviation-guided-steps { display: grid; grid-template-columns: repeat(2, minmax(280px,1fr)); gap: 1rem; }
+.aviation-step-card { position: relative; }
+.aviation-step-card > span:first-child { display: inline-flex; margin-bottom: .45rem; border-radius: 999px; padding: .18rem .55rem; background: rgba(14,116,144,.32); color: #bfdbfe; font-weight: 800; }
+.aviation-radius-slider { display: grid; gap: .3rem; margin: .65rem 0; color: var(--text-muted,#b7c6d8); }
+.aviation-tab-page { display: grid; gap: 1rem; }
+.aviation-filter-row { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
+.aviation-inline-check { display: inline-flex; gap: .4rem; align-items: center; color: var(--text-muted,#b7c6d8); }
+.aviation-small-input { max-width: 6rem; }
+.aviation-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1rem; }
+.aviation-facility-card p { margin: .35rem 0; }
+.aviation-risk-hero { display: grid; grid-template-columns: minmax(240px,1fr) minmax(220px,.8fr) auto; gap: 1rem; align-items: center; }
+.aviation-risk-hero h2 { margin: 0; font-size: clamp(3rem, 8vw, 6rem); line-height: .9; }
+.aviation-score-meter { height: 1rem; border-radius: 999px; overflow: hidden; background: rgba(148,163,184,.24); }
+.aviation-score-meter span { display: block; height: 100%; background: linear-gradient(90deg,#22c55e,#facc15,#f97316,#ef4444,#7f1d1d); }
+.aviation-timeline { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; justify-content: space-between; padding: .75rem; border-radius: .8rem; background: rgba(59,130,246,.1); }
+.aviation-guardrail { border: 1px solid rgba(250,204,21,.35); border-radius: .85rem; background: rgba(113,63,18,.22); padding: .8rem; color: #fde68a; }
+.aviation-freshness-seeded_demo,.aviation-freshness-uploaded_geojson { border-color: rgba(96,165,250,.45); color:#bfdbfe; }
+.aviation-freshness-live,.aviation-freshness-verified { border-color: rgba(34,197,94,.45); color:#bbf7d0; }
+.aviation-freshness-stale { border-color: rgba(250,204,21,.45); color:#fde68a; }
+.aviation-freshness-missing,.aviation-freshness-unknown { border-color: rgba(248,113,113,.45); color:#fecaca; }
+.aviation-ask-response h3 { margin: .65rem 0 .2rem; }
+@media (max-width: 1200px) { .aviation-trip-context-bar, .aviation-command-kpis, .aviation-three-column, .aviation-guided-steps, .aviation-risk-hero { grid-template-columns: 1fr; position: static; } }
+
+/* FAA / NOAA watch filtering and timeline */
+.aviation-small-select { max-width: 14rem; }
+.aviation-info-chip.selected { border-color: rgba(34,197,94,.7); background: rgba(22,101,52,.32); color: #bbf7d0; }
+.aviation-status-active { border-color: rgba(34,197,94,.45); color:#bbf7d0; }
+.aviation-status-pending { border-color: rgba(96,165,250,.45); color:#bfdbfe; }
+.aviation-status-expired { border-color: rgba(148,163,184,.45); color:#cbd5e1; }
+.aviation-status-outside-trip-window { border-color: rgba(250,204,21,.45); color:#fde68a; }
+.aviation-weather-timeline { display: grid; gap: .65rem; margin: .75rem 0; }
+.aviation-weather-axis { position: relative; height: 2.35rem; border-bottom: 1px solid rgba(148,163,184,.25); }
+.aviation-weather-axis .trip-window { position: absolute; top: .65rem; height: .6rem; border-radius: 999px; background: rgba(59,130,246,.28); border: 1px solid rgba(96,165,250,.5); }
+.aviation-weather-axis i { position: absolute; top: 1.45rem; transform: translateX(-50%); color: var(--text-muted,#b7c6d8); font-size: .72rem; font-style: normal; white-space: nowrap; }
+.aviation-weather-row { position: relative; display: grid; grid-template-columns: minmax(180px,.35fr) minmax(260px,1fr) minmax(160px,.35fr); gap: .6rem; min-height: 2.35rem; align-items: center; }
+.aviation-weather-label { display: grid; gap: .1rem; }
+.aviation-weather-label small, .aviation-weather-facilities { color: var(--text-muted,#b7c6d8); font-size: .78rem; }
+.aviation-weather-bar { position: absolute; left: 0; right: auto; top: .7rem; height: .85rem; border-radius: 999px; opacity: .86; border: 1px solid rgba(255,255,255,.18); }
+.aviation-weather-row > .aviation-weather-bar { grid-column: 2; }
+@media (max-width: 900px) { .aviation-weather-row { grid-template-columns: 1fr; padding-bottom: 1.2rem; } .aviation-weather-bar { position: relative; top: auto; width: 100% !important; left: 0 !important; } }

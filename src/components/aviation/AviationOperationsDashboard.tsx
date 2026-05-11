@@ -1,4 +1,4 @@
-import type { AviationTripPlan, FAAAlert, FacilityWithDistance, TripReadinessAction, TripRiskResult, WeatherAlert } from '../../types/aviation';
+import type { Airport, AviationTripPlan, FAAAlert, FacilityWithDistance, TripReadinessAction, TripRiskResult, WeatherAlert } from '../../types/aviation';
 
 type DashboardProps = {
   savedTrips: AviationTripPlan[];
@@ -7,6 +7,10 @@ type DashboardProps = {
   faaAlerts: FAAAlert[];
   weatherAlerts: WeatherAlert[];
   currentRisk: TripRiskResult;
+  selectedAirport?: Airport | null;
+  radiusMiles?: number;
+  tripStart?: string;
+  tripEnd?: string;
   onPlanTrip: () => void;
   onLaunchDemo: () => void;
   onOpenScanner: () => void;
@@ -24,16 +28,22 @@ function formatDate(value: string | null) {
   return new Date(value).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
-export function AviationOperationsDashboard({ savedTrips, nearbyFacilities, readinessActions, faaAlerts, weatherAlerts, currentRisk, onPlanTrip, onLaunchDemo, onOpenScanner, onGenerateBrief, onViewIntegrations, onOpenTrip }: DashboardProps) {
+export function AviationOperationsDashboard({ savedTrips, nearbyFacilities, readinessActions, faaAlerts, weatherAlerts, currentRisk, selectedAirport, radiusMiles = 25, tripStart = '', tripEnd = '', onPlanTrip, onLaunchDemo, onOpenScanner, onGenerateBrief, onViewIntegrations, onOpenTrip }: DashboardProps) {
   const activeTrips = savedTrips.filter((trip) => trip.status !== 'closed');
   const highRiskTrips = savedTrips.filter((trip) => ['High', 'Critical'].includes(trip.risk_band));
   const openActions = [...readinessActions, ...savedTrips.flatMap((trip) => trip.readiness_actions)].filter((action) => !['Closed', 'Verified'].includes(action.status));
   const airportsMonitored = new Set(savedTrips.map((trip) => trip.airport_id)).size;
   const boardTrips = (activeTrips.length ? activeTrips : savedTrips).slice().sort((a, b) => riskRank(b.risk_band) - riskRank(a.risk_band)).slice(0, 5);
   const alertCount = faaAlerts.length + weatherAlerts.length;
+  const briefsGenerated = savedTrips.filter((trip) => trip.generated_brief).length;
+  const highestRiskFacility = nearbyFacilities[0];
+  const supportFacility = nearbyFacilities.find((facility) => facility.aviation_support_candidate);
 
   return (
     <div className="aviation-dashboard">
+      <section className="panel aviation-panel aviation-command-center-hero"><p className="eyebrow">Aviation Travel Readiness Command Center</p><h1>Aviation Travel Readiness Command Center</h1><p>Monitor airport-centered travel risk, nearby Walmart facility posture, FAA/NOAA signals, and pre-trip readiness actions.</p></section>
+      <section className="aviation-kpi-grid aviation-command-kpis"><article className="aviation-kpi-card"><span>Planned Trips</span><strong>{activeTrips.length}</strong><small>Active or draft</small></article><article className="aviation-kpi-card"><span>Airports Monitored</span><strong>{airportsMonitored}</strong><small>Unique saved airports</small></article><article className="aviation-kpi-card"><span>High-Risk Trip Windows</span><strong>{highRiskTrips.length}</strong><small>High / Critical</small></article><article className="aviation-kpi-card"><span>Facilities Within Radius</span><strong>{nearbyFacilities.length}</strong><small>Selected scan</small></article><article className="aviation-kpi-card"><span>FAA Watch Items</span><strong>{faaAlerts.length}</strong><small>Selected trip</small></article><article className="aviation-kpi-card"><span>Weather Alerts</span><strong>{weatherAlerts.length}</strong><small>NOAA window</small></article><article className="aviation-kpi-card"><span>Open Readiness Actions</span><strong>{openActions.length}</strong><small>Unresolved tasks</small></article><article className="aviation-kpi-card"><span>Briefs Generated</span><strong>{briefsGenerated}</strong><small>Saved trip briefs</small></article></section>
+      <section className="aviation-three-column"><aside className="panel aviation-panel"><p className="eyebrow">Trip Controls</p><h3>{selectedAirport?.airport_name ?? 'No airport selected'}</h3><p>Radius: {radiusMiles} mi</p><p>Window: {formatDate(tripStart)} → {formatDate(tripEnd)}</p><div className="aviation-button-row"><button className="ops-action-button" onClick={onOpenScanner}>Run scan</button><button className="ops-action-button secondary" onClick={onPlanTrip}>Trip setup</button><button className="ops-action-button secondary" onClick={onLaunchDemo}>Load demo scenario</button></div></aside><main className="panel aviation-panel"><p className="eyebrow">Active Scan Overview</p><h3>{nearbyFacilities.length} facilities in radius</h3><p>Highest-risk facility: {highestRiskFacility ? `${highestRiskFacility.facility_name} (${highestRiskFacility.facility_risk_band})` : 'Run a scan'}</p><p>Recommended support/staging: {supportFacility?.facility_name ?? 'No support candidate selected'}</p><div className="aviation-timeline"><span>{formatDate(tripStart)}</span><strong>Trip window</strong><span>{formatDate(tripEnd)}</span></div></main><aside className="panel aviation-panel"><p className="eyebrow">Decision Support</p><h3>{currentRisk.score} · {currentRisk.band}</h3><ul className="aviation-driver-list">{currentRisk.drivers.slice(0, 5).map((driver) => <li key={driver}>{driver}</li>)}</ul><div className="aviation-chip-list"><button className="aviation-filter-chip">Explain risk</button><button className="aviation-filter-chip">Best support site?</button><button className="aviation-filter-chip">Weather impact?</button></div><button className="ops-action-button" onClick={onGenerateBrief}>Generate brief</button></aside></section>
       <section className="aviation-command-surface">
         <div className="aviation-command-primary panel aviation-panel">
           <div className="card-heading">

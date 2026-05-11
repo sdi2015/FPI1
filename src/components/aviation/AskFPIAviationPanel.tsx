@@ -15,8 +15,10 @@ const prompts = [
 
 export function AskFPIAviationPanel({ airport, facilities, risk, faaAlerts, weatherAlerts }: { airport: Airport | null; facilities: FacilityWithDistance[]; risk: TripRiskResult; faaAlerts: FAAAlert[]; weatherAlerts: WeatherAlert[] }) {
   const [response, setResponse] = useState('Select a prompt chip to generate a deterministic Phase 1 summary from current page data.');
+  const [lastPrompt, setLastPrompt] = useState('Aviation Travel Readiness mode');
 
   function answer(prompt: string) {
+    setLastPrompt(prompt);
     const highest = facilities[0];
     const support = facilities.find((facility) => facility.aviation_support_candidate && facility.ep_readiness_status !== 'Gap') ?? facilities.find((facility) => facility.aviation_support_candidate);
     if (prompt.includes('Scan')) setResponse(`${facilities.length} Walmart demo facilities are inside the selected radius for ${airport?.airport_name ?? 'the selected airport'}. Results are sorted by risk, distance, then EP readiness gaps.`);
@@ -32,11 +34,12 @@ export function AskFPIAviationPanel({ airport, facilities, risk, faaAlerts, weat
 
   return (
     <section className="panel aviation-panel">
-      <div className="card-heading"><div><p className="eyebrow">Ask FPI aviation mode</p><h3>Prompt Chips</h3></div></div>
+      <div className="card-heading"><div><p className="eyebrow">Ask FPI aviation mode</p><h3>Prompt Chips</h3></div><span className="mode-pill">Advisory assistant</span></div>
+      <p className="aviation-guardrail">Ask FPI is operating in Aviation Travel Readiness mode. It provides advisory readiness analysis and does not make autonomous flight or security deployment decisions.</p>
       <div className="aviation-chip-list">
         {prompts.map((prompt) => <button key={prompt} type="button" className="ops-action-button secondary" onClick={() => answer(prompt)}>{prompt}</button>)}
       </div>
-      <pre className="aviation-response">{response}</pre>
+      <article className="aviation-response aviation-ask-response"><p className="eyebrow">{lastPrompt}</p><h3>Answer summary</h3><p>{response}</p><h3>Supporting data used</h3><p>{airport?.airport_name ?? 'No airport selected'} · {facilities.length} facilities · {faaAlerts.length} FAA items · {weatherAlerts.length} NOAA alerts · score {risk.score}</p><h3>Source freshness / confidence</h3><p>Seeded Demo / API-ready where enabled · {risk.confidence}% confidence</p><h3>Recommended actions</h3><ul>{risk.required_mitigations.slice(0, 4).map((item) => <li key={item}>{item}</li>)}</ul><h3>Missing data</h3><p>{risk.caveats.join(' ') || 'No additional caveats available.'}</p><p className="aviation-caveat">Human review reminder: authorized aviation, executive protection, and security leaders retain final decision authority.</p></article>
     </section>
   );
 }
