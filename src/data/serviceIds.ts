@@ -31,9 +31,9 @@ const CAPABILITY_TO_SERVICE_ID: Record<string, ServiceId> = {
   'nova-agent': SERVICE_IDS.NOVA,
 };
 
-const SERVICE_TO_CAPABILITY_ID: Record<ServiceId, string> = Object.entries(CAPABILITY_TO_SERVICE_ID).reduce(
+const SERVICE_TO_CAPABILITY_ID: Partial<Record<ServiceId, string>> = Object.entries(CAPABILITY_TO_SERVICE_ID).reduce(
   (accumulator, [capabilityId, serviceId]) => ({ ...accumulator, [serviceId]: capabilityId }),
-  {} as Record<ServiceId, string>,
+  {} as Partial<Record<ServiceId, string>>,
 );
 
 export function serviceIdForCapability(capabilityId: string): ServiceId {
@@ -41,5 +41,5 @@ export function serviceIdForCapability(capabilityId: string): ServiceId {
 }
 
 export function capabilityIdForService(serviceId: ServiceId): string {
-  return SERVICE_TO_CAPABILITY_ID[serviceId] ?? 'command-center';
+  return SERVICE_TO_CAPABILITY_ID[serviceId] ?? serviceId;
 }

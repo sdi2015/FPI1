@@ -1,9 +1,8 @@
-import { ScopeContextChip } from '../ScopeContextChip';
 import type { FireAlarmSite } from '../../data/fireAlarmTypes';
 import { capabilities, pillars, type Capability, type Pillar } from '../../data/program';
 import type { FpiDashboardMetrics, FpiFacility, FpiKpi, FpiTopRiskFacility, StatusTone } from '../../data/fpiTypes';
 import type { FpiServiceMetricsModel } from '../../data/fpiServiceMetrics';
-import type { StoreScopeState } from '../../data/storeScope';
+import { getStoreScopeSummary, type StoreScopeState } from '../../data/storeScope';
 
 export type ReadinessOverviewViewProps = {
   facilities: FpiFacility[];
@@ -68,77 +67,43 @@ export function ReadinessOverviewView({
   onCapabilitySelect,
 }: ReadinessOverviewViewProps) {
   const executiveMetrics = buildExecutiveMetrics(dashboardMetrics);
+  const scopeSummary = getStoreScopeSummary(storeScope, fireSites);
 
   return (
     <>
-      <HeroSummary metrics={executiveMetrics} />
-      <LeadershipAttentionRequired metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
+      <HeroSummary metrics={executiveMetrics} scopeSummary={scopeSummary} onReviewPriority={() => onCapabilitySelect('remediation-orchestration')} onChangeScope={onChangeScopeRequest} />
       <ExecutiveKpiRow metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
-
-      <section className="dashboard-grid executive-risk-grid" aria-label="Executive risk drivers and facility heat map">
-        <TopDriversOfWatchPosture metrics={executiveMetrics} />
-        <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities} onSelectFacility={onFacilitySelect} />
-      </section>
-
-      <section className="progress-grid" aria-label="Operational Readiness">
-        {pillars.map((pillar) => (
-          <ProgressCard pillar={pillar} key={pillar.id} />
-        ))}
-      </section>
-
-      <section className="dashboard-grid" aria-label="Recent exceptions and supporting operational detail">
-        <RecentExceptionsActivity metrics={dashboardMetrics} />
-        <ReadinessDistribution metrics={dashboardMetrics} />
-        <DataConfidencePanel metrics={executiveMetrics} />
-        <SelectedServiceCard activeCapability={activeCapability} serviceMetrics={serviceMetrics} />
-        <ServiceAreaBuildout activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
-      </section>
-
-      <ScopeContextChip sites={fireSites} scope={storeScope} onChangeScope={onChangeScopeRequest} />
-      <CommandCenterGuidancePanel onChangeScope={onChangeScopeRequest} />
+      <LeadershipAttentionRequired metrics={executiveMetrics} onCapabilitySelect={onCapabilitySelect} />
+      <FacilityRiskHeatMap facilities={dashboardMetrics.topRiskFacilities.slice(0, 5)} onSelectFacility={onFacilitySelect} />
+      <ModuleShortcuts activeCapabilityId={activeCapability.id} onSelectCapability={onCapabilitySelect} />
       <AdditionalProgramMetrics metrics={dashboardMetrics} />
     </>
   );
 }
 
-function HeroSummary({ metrics }: { metrics: CommandCenterExecutiveMetrics }) {
-  const statusCluster = [
-    { label: 'Current Posture', value: metrics.posture },
-    { label: 'Trend', value: metrics.trend },
-    { label: 'Executive Attention Required', value: metrics.criticalExceptions > 0 ? 'Yes' : 'No' },
-    { label: 'Highest Risk Domain', value: 'Remediation / Technical Controls' },
-    { label: 'ELM Locations', value: formatNumber(metrics.elmLocationCount) },
-    { label: 'Geocoded Facilities', value: formatNumber(metrics.geocodedFacilities) },
-    { label: 'Data Mode', value: metrics.dataMode },
-  ];
+function HeroSummary({ metrics, scopeSummary, onReviewPriority, onChangeScope }: { metrics: CommandCenterExecutiveMetrics; scopeSummary: string; onReviewPriority: () => void; onChangeScope: () => void }) {
+  const posture = formatPosture(metrics.posture);
+  const priorityItemCount = [metrics.criticalExceptions, metrics.activeWorkQueue, metrics.panelTrouble, metrics.activeSignals].filter((value) => value > 0).length;
 
   return (
-    <header className="dashboard-header executive-dashboard-header">
+    <header className="dashboard-header executive-dashboard-header clean-command-header">
       <div className="executive-hero-copy">
-        <p className="eyebrow">Command Center dashboard</p>
+        <p className="eyebrow">Command Center</p>
         <h1>Facility Protection Command Center</h1>
-        <p className="posture-summary">
-          Current Posture: <strong>{metrics.posture}</strong>
-        </p>
-        <p>
-          {formatNumber(metrics.facilitiesProfiled)} facilities monitored | {formatNumber(metrics.elmLocationCount)} ELM locations |{' '}
-          {formatNumber(metrics.geocodedFacilities)} geocoded | {formatNumber(metrics.activeWorkQueue)} active work items
-        </p>
+        <p>Real-time protection posture, priority exceptions, and action queue.</p>
+        <div className="command-header-facts" aria-label="Command Center summary">
+          <span><strong>Scope:</strong> {scopeSummary}</span>
+          <span><strong>Current posture:</strong> {posture}</span>
+          <span><strong>Last updated:</strong> Demo dataset</span>
+        </div>
         <p className="executive-summary-copy">
-          <strong>Executive Summary:</strong> FPI now includes the national ELM location inventory for location-aware facility
-          protection planning. Current exposure remains driven by active remediation items, technical control issues,
-          life-safety/device health signals, and {formatNumber(metrics.elmMediumPriority + metrics.elmHighPriority)} ELM
-          location pins marked for review.
+          Current posture is {posture}. {priorityItemCount || 'No'} priority {priorityItemCount === 1 ? 'item requires' : 'items require'} review before leadership review.
         </p>
+        <div className="command-header-actions">
+          <button type="button" className="ops-action-button" onClick={onReviewPriority}>Review Priority Items</button>
+          <button type="button" className="ops-action-button secondary" onClick={onChangeScope}>Change Scope</button>
+        </div>
       </div>
-      <aside className="hero-status-cluster" aria-label="Executive situation status">
-        {statusCluster.map((item) => (
-          <div className="status-cluster-item" key={item.label}>
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-          </div>
-        ))}
-      </aside>
     </header>
   );
 }
@@ -186,33 +151,47 @@ function LeadershipAttentionRequired({
     },
   ];
 
+  const visibleItems = leadershipAttentionItems.slice(0, 3);
+  const remainingItems = leadershipAttentionItems.slice(3);
+
+  function renderActionItem(item: (typeof leadershipAttentionItems)[number]) {
+    return (
+      <article className="leadership-attention-item" key={`${item.priority}-${item.action}`}>
+        <div className="leadership-attention-headline">
+          <StatusPill label={item.priority} tone={item.priority === 'P1' ? 'critical' : 'watch'} />
+          <strong>{item.issue}</strong>
+        </div>
+        <p>{item.businessImpact}</p>
+        <div className="leadership-attention-meta">
+          <span>Owner</span>
+          <strong>{item.owner}</strong>
+        </div>
+        <button type="button" onClick={() => onCapabilitySelect(item.targetCapabilityId)}>
+          {item.action}
+        </button>
+      </article>
+    );
+  }
+
   return (
     <section className="panel leadership-attention-panel" aria-labelledby="leadership-attention-title">
       <div className="card-heading">
         <div>
-          <p className="eyebrow">Executive decisions</p>
-          <h2 id="leadership-attention-title">Leadership Attention Required</h2>
+          <p className="eyebrow">Action queue</p>
+          <h2 id="leadership-attention-title">Priority Actions</h2>
         </div>
-        <StatusPill label="ACTION" tone="watch" />
       </div>
       <div className="leadership-attention-grid">
-        {leadershipAttentionItems.map((item) => (
-          <article className="leadership-attention-item" key={`${item.priority}-${item.action}`}>
-            <div className="leadership-attention-headline">
-              <StatusPill label={item.priority} tone={item.priority === 'P1' ? 'critical' : 'watch'} />
-              <strong>{item.issue}</strong>
-            </div>
-            <p>{item.businessImpact}</p>
-            <div className="leadership-attention-meta">
-              <span>Owner</span>
-              <strong>{item.owner}</strong>
-            </div>
-            <button type="button" onClick={() => onCapabilitySelect(item.targetCapabilityId)}>
-              {item.action}
-            </button>
-          </article>
-        ))}
+        {visibleItems.map(renderActionItem)}
       </div>
+      {remainingItems.length > 0 ? (
+        <details className="supporting-details-inline">
+          <summary>View all actions</summary>
+          <div className="leadership-attention-grid">
+            {remainingItems.map(renderActionItem)}
+          </div>
+        </details>
+      ) : null}
     </section>
   );
 }
@@ -226,47 +205,40 @@ function ExecutiveKpiRow({
 }) {
   const executiveKpis = [
     {
-      title: 'Protection Posture',
-      value: metrics.posture,
-      trend: metrics.trend,
-      interpretation: 'Active exceptions require continued governance review.',
-      action: 'Review Risk Drivers',
-      targetCapabilityId: 'command-center',
-    },
-    {
-      title: 'Critical Exposure',
-      value: `${formatNumber(metrics.criticalExceptions)} Critical Exceptions`,
-      trend: 'Needs Review',
-      interpretation: 'Critical/P1 records remain active across the portfolio.',
-      action: 'Review Critical Exceptions',
+      title: 'Critical Exceptions',
+      value: formatNumber(metrics.criticalExceptions),
+      interpretation: 'Highest-priority records requiring review.',
+      action: 'Review Exceptions',
       targetCapabilityId: 'remediation-orchestration',
     },
     {
-      title: 'Action Backlog',
-      value: `${formatNumber(metrics.activeWorkQueue)} Active Work Items`,
-      trend: 'Under Governance',
-      interpretation: 'Active remediation queue requires ownership and SLA tracking.',
-      action: 'Open Work Queue',
+      title: 'Open Work Items',
+      value: formatNumber(metrics.activeWorkQueue),
+      interpretation: 'Items awaiting ownership, evidence, or closure.',
+      action: 'Open Queue',
       targetCapabilityId: 'remediation-orchestration',
     },
     {
-      title: 'System Health',
-      value: `${formatNumber(metrics.panelTrouble)} Panel Trouble / ${formatNumber(metrics.activeSignals)} Active Signals`,
-      trend: 'Monitor',
-      interpretation: 'Device and signal health require technical validation.',
-      action: 'Review Device Health',
+      title: 'Panel / Device Issues',
+      value: formatNumber(metrics.panelTrouble),
+      interpretation: 'Technical or life-safety monitoring issues.',
+      action: 'Review Devices',
+      targetCapabilityId: 'fire-system-monitoring',
+    },
+    {
+      title: 'Active Signals',
+      value: formatNumber(metrics.activeSignals),
+      interpretation: 'Signals requiring validation or follow-up.',
+      action: 'Review Signals',
       targetCapabilityId: 'fire-system-monitoring',
     },
   ];
 
   return (
-    <section className="executive-kpi-grid" aria-label="Executive KPI row">
+    <section className="executive-kpi-grid clean-kpi-grid" aria-label="Operational snapshot">
       {executiveKpis.map((kpi) => (
-        <article className="executive-kpi-tile" key={kpi.title}>
-          <div className="kpi-topline">
-            <span>{kpi.title}</span>
-            <StatusPill label={kpi.trend} tone={kpi.trend === 'Needs Review' ? 'watch' : 'stable'} />
-          </div>
+        <article className="executive-kpi-tile clean-kpi-tile" key={kpi.title}>
+          <span>{kpi.title}</span>
           <strong>{kpi.value}</strong>
           <p>{kpi.interpretation}</p>
           <button type="button" onClick={() => onCapabilitySelect(kpi.targetCapabilityId)}>
@@ -471,8 +443,8 @@ function AdditionalProgramMetrics({ metrics }: { metrics: FpiDashboardMetrics })
   return (
     <details className="panel dashboard-more-metrics">
       <summary>
-        <span>Additional program metrics</span>
-        <strong>Open supporting dashboard data</strong>
+        <span>Supporting Metrics</span>
+        <strong>Open secondary dashboard details</strong>
       </summary>
       <ExecutiveStatusStrip metrics={metrics} />
       <section className="kpi-grid" aria-label="Supporting FPI indicators">
@@ -614,12 +586,20 @@ function RecentExceptionsActivity({ metrics }: { metrics: FpiDashboardMetrics })
   );
 }
 
-function ServiceAreaBuildout({ activeCapabilityId, onSelectCapability }: { activeCapabilityId: string; onSelectCapability: (id: string) => void }) {
+function ModuleShortcuts({ activeCapabilityId, onSelectCapability }: { activeCapabilityId: string; onSelectCapability: (id: string) => void }) {
+  const shortcutCapabilityIds = ['aviation-travel-readiness', 'remediation-orchestration', 'camera-technical-control', 'fire-system-monitoring'];
+  const shortcutCapabilities = shortcutCapabilityIds
+    .map((id) => capabilities.find((capability) => capability.id === id))
+    .filter((capability): capability is Capability => Boolean(capability));
+
   return (
-    <section className="panel module-map-panel" aria-labelledby="service-buildout-title">
-      <div className="card-heading"><div><p className="eyebrow">Capability map</p><h2 id="service-buildout-title">Service area buildout</h2></div></div>
-      <div className="module-map">
-        {capabilities.map((capability) => (
+    <details className="panel module-map-panel compact-module-shortcuts" aria-labelledby="service-buildout-title">
+      <summary>
+        <span>Module Shortcuts</span>
+        <strong>Open focused workspaces</strong>
+      </summary>
+      <div className="module-map compact-module-map">
+        {shortcutCapabilities.map((capability) => (
           <button
             type="button"
             key={capability.id}
@@ -627,13 +607,12 @@ function ServiceAreaBuildout({ activeCapabilityId, onSelectCapability }: { activ
             aria-pressed={capability.id === activeCapabilityId}
             onClick={() => onSelectCapability(capability.id)}
           >
-            <StatusPill label={capability.status.toUpperCase()} tone={statusToneForCapability(capability.status)} />
-            <strong>{capability.title}</strong>
-            <small>{capability.metric} • {capability.owner}</small>
+            <strong>Open {capability.navLabel ?? capability.title}</strong>
+            <small>{capability.description}</small>
           </button>
         ))}
       </div>
-    </section>
+    </details>
   );
 }
 
@@ -643,9 +622,8 @@ function FacilityRiskHeatMap({ facilities, onSelectFacility }: { facilities: Fpi
       <div className="card-heading">
         <div>
           <p className="eyebrow">Facility posture</p>
-          <h2 id="facility-risk-title">Facility Risk Heat Map</h2>
+          <h2 id="facility-risk-title">Top Risk Facilities</h2>
         </div>
-        <StatusPill label="SYNTHETIC DATA" tone="watch" />
       </div>
       <div className="facility-risk-table" role="table" aria-label="Ranked facility risk table">
         <div className="facility-risk-row facility-risk-header" role="row">
@@ -664,7 +642,7 @@ function FacilityRiskHeatMap({ facilities, onSelectFacility }: { facilities: Fpi
               <strong>{facility.facilityName}</strong>
               <small>{facility.region} • {facility.market}</small>
             </div>
-            <div role="cell"><StatusPill label={facility.riskTier.toUpperCase()} tone={riskTierTone(facility.riskTier)} /></div>
+            <div role="cell"><StatusPill label={facility.riskTier} tone={riskTierTone(facility.riskTier)} /></div>
             <span role="cell">{facility.criticalExceptions}</span>
             <span role="cell">{facility.openWorkItems}</span>
             <span role="cell">{lifeSafetyStatus(facility)}</span>
@@ -730,6 +708,13 @@ function buildExecutiveMetrics(metrics: FpiDashboardMetrics): CommandCenterExecu
     trend: 'Stable',
     dataMode: metrics.elmLocationCount > 0 ? 'ELM enriched' : 'Synthetic data',
   };
+}
+
+function formatPosture(posture: FpiDashboardMetrics['overallStatus']): string {
+  if (posture === 'READY') return 'Stable';
+  if (posture === 'WATCH') return 'Watch';
+  if (posture === 'CRITICAL') return 'Critical';
+  return 'Unavailable';
 }
 
 function formatNumber(value: number): string {

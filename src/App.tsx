@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FacilityDetailPanel } from './components/FacilityDetailPanel';
 import { FloatingNovaAssistant } from './components/FloatingNovaAssistant';
-import { SidePanelSettings } from './components/navigation/SidePanelSettings';
 import { AviationCommandCenter } from './pages/AviationCommandCenter';
 import { CameraTechnicalControlView } from './components/views/CameraTechnicalControlView';
 import { ExecutiveProtectionReadinessView } from './components/views/ExecutiveProtectionReadinessView';
@@ -24,11 +23,12 @@ import { createAllStoresScope, getStoreScopeSummary, hasEmptyStoreScope, type St
 import { getServiceMetrics, type FpiServiceMetricsModel } from './data/fpiServiceMetrics';
 import { capabilities, pillars, type Capability, type Pillar } from './data/program';
 import { capabilityIdForService, serviceIdForCapability, SERVICE_IDS, type ServiceId } from './data/serviceIds';
+import { loadNavigationConfig, saveNavigationConfig, type NavigationItemConfig, type NavigationSectionId } from './data/navigationConfig';
 import type { FpiDashboardMetrics, FpiKpi, FpiRiskTier, FpiTopRiskFacility, StatusTone } from './data/fpiTypes';
 import { useFpiProgramData, type FpiProgramDataState } from './data/useFpiProgramData';
 import { useFireAlarmData } from './data/useFireAlarmData';
 import { applyTheme, getInitialThemePreference, persistThemePreference, resolveTheme, type ThemePreference } from './theme/themePreference';
-import { loadSidePanelDisplayMode, loadSidePanelPreferences, type SidePanelAvailableTab, type SidePanelDisplayMode, type SidePanelPreferences } from './services/sidePanelPreferenceService';
+
 
 type Screen = 'landing' | 'dashboard';
 
@@ -36,36 +36,6 @@ const defaultServiceId = SERVICE_IDS.COMMAND_CENTER;
 const STORE_SCOPE_STORAGE_KEY = 'fpi-store-scope';
 const LANDING_SESSION_KEY = 'fpiLandingEntered';
 const validServiceIds = Object.values(SERVICE_IDS) as ServiceId[];
-
-function getAvailableSidePanelTabs(): SidePanelAvailableTab[] {
-  function toSidePanelTab(capability: Capability): SidePanelAvailableTab {
-    const serviceId = serviceIdForCapability(capability.id);
-    return {
-      tab_id: serviceId,
-      label: capability.navLabel ?? capability.title,
-      route: `#/${serviceId}`,
-      description: capability.description,
-      group: capability.eyebrow,
-      access_note: serviceId === SERVICE_IDS.AVIATION_TRAVEL_READINESS ? 'Aviation workspace is visible by preference; EP, provider, export, and admin controls remain role-restricted.' : 'Module visibility does not grant restricted actions.',
-    };
-  }
-
-  const commandCenter = capabilities.find((capability) => serviceIdForCapability(capability.id) === SERVICE_IDS.COMMAND_CENTER);
-  const programModules = capabilities.filter((capability) => serviceIdForCapability(capability.id) !== SERVICE_IDS.COMMAND_CENTER);
-  const capabilityTabs = [commandCenter, ...programModules].filter((capability): capability is Capability => Boolean(capability)).map(toSidePanelTab);
-
-  return [
-    ...capabilityTabs,
-    {
-      tab_id: SERVICE_IDS.SETTINGS,
-      label: 'Settings',
-      route: `#/${SERVICE_IDS.SETTINGS}`,
-      description: 'Workspace scope, store filters, and application preferences.',
-      group: 'Workspace',
-      access_note: 'Workspace settings available to configure local dashboard preferences.',
-    },
-  ];
-}
 
 function getServiceIdFromHash(): ServiceId | null {
   if (typeof window === 'undefined') return null;
@@ -315,6 +285,7 @@ function DashboardShell({
 }) {
   const [selectedFacilityId, setSelectedFacilityId] = useState<string | null>(null);
   const [storeScope, setStoreScope] = useState<StoreScopeState>(loadStoredStoreScope());
+  const [navigationConfig, setNavigationConfig] = useState<NavigationItemConfig[]>(loadNavigationConfig());
   const [novaDrawerOpen, setNovaDrawerOpen] = useState(false);
   const [isNovaWidgetDismissed, setIsNovaWidgetDismissed] = useState<boolean>(typeof window !== 'undefined' && window.localStorage.getItem('fpi_nova_floating_button_dismissed') === 'true');
   const fireAlarmState = useFireAlarmData();
@@ -347,6 +318,10 @@ function DashboardShell({
   useEffect(() => {
     window.localStorage.setItem(STORE_SCOPE_STORAGE_KEY, JSON.stringify(storeScope));
   }, [storeScope]);
+
+  useEffect(() => {
+    saveNavigationConfig(navigationConfig);
+  }, [navigationConfig]);
 
   useEffect(() => {
     function closeNovaOnEscape(event: KeyboardEvent) {
@@ -384,7 +359,7 @@ function DashboardShell({
 
   return (
     <div className="dashboard-shell">
-      <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} theme={theme} />
+      <SidebarNav selectedService={selectedService} onSelectService={onSelectService} onBackToLanding={onBackToLanding} theme={theme} navigationConfig={navigationConfig} />
 
       <main className="dashboard-content" aria-label="FPI facility protection dashboard">
         <CompactCommandBar
@@ -419,6 +394,9 @@ function DashboardShell({
                 fireAlarmError={fireAlarmState.error}
                 storeScope={storeScope}
                 onStoreScopeChange={setStoreScope}
+                navigationConfig={navigationConfig}
+                onNavigationConfigChange={setNavigationConfig}
+                dashboardMetrics={metrics}
               />
             ) : isEmptyScope ? (
               <>
@@ -570,7 +548,7 @@ function CompactCommandBar({
 }) {
   const hasDataIssue = Boolean(fpiError || fireError);
   const isLoading = fpiLoading || fireLoading;
-  const posture = isEmptyScope ? 'NO SCOPE' : metrics?.overallStatus ?? (isLoading ? 'LOADING' : 'WATCH');
+  const posture = isEmptyScope ? 'No scope' : metrics?.overallStatus === 'READY' ? 'Stable' : metrics?.overallStatus === 'WATCH' ? 'Watch' : metrics?.overallStatus === 'CRITICAL' ? 'Critical' : metrics?.overallStatus === 'UNAVAILABLE' ? 'Unavailable' : isLoading ? 'Loading' : 'Watch';
   const tone: StatusTone = hasDataIssue ? 'critical' : isEmptyScope ? 'watch' : isLoading ? 'buildout' : metrics?.overallStatus === 'CRITICAL' ? 'critical' : metrics?.overallStatus === 'WATCH' ? 'watch' : 'ready';
   const diagnostics = [
     { label: 'FPI data', value: fpiError ? 'Issue' : fpiLoading ? 'Loading' : 'Loaded', tone: fpiError ? 'critical' : fpiLoading ? 'buildout' : 'ready' },
@@ -600,7 +578,7 @@ function CompactCommandBar({
               <article key={item.label}>
                 <span>{item.label}</span>
                 <strong>{item.value}</strong>
-                <StatusPill label={item.tone === 'ready' ? 'OK' : item.tone === 'critical' ? 'CHECK' : item.tone.toUpperCase()} tone={item.tone} />
+                <StatusPill label={item.tone === 'ready' ? 'Ok' : item.tone === 'critical' ? 'Check' : item.tone === 'buildout' ? 'Loading' : item.tone === 'stable' ? 'Stable' : item.tone === 'track' ? 'Track' : 'Watch'} tone={item.tone} />
               </article>
             ))}
           </div>
@@ -619,29 +597,25 @@ function SidebarNav({
   onSelectService,
   onBackToLanding,
   theme,
+  navigationConfig,
 }: {
   selectedService: ServiceId;
   onSelectService: (id: ServiceId) => void;
   onBackToLanding: () => void;
   theme: 'dark' | 'light';
+  navigationConfig: NavigationItemConfig[];
 }) {
-  const availableTabs = useMemo(() => getAvailableSidePanelTabs(), []);
-  const [preferences, setPreferences] = useState<SidePanelPreferences>(loadSidePanelPreferences(availableTabs));
-  const [displayMode, setDisplayMode] = useState<SidePanelDisplayMode>(loadSidePanelDisplayMode());
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const capabilityByServiceId = useMemo(() => new Map(capabilities.map((capability) => [serviceIdForCapability(capability.id), capability])), []);
-  const visibleTabs = preferences.tabs
-    .filter((tab) => tab.visible && validServiceIds.includes(tab.tab_id as ServiceId))
-    .sort((a, b) => a.order - b.order);
+  const sections: Array<{ id: NavigationSectionId; label: string }> = [{ id: 'command', label: 'Command' }, { id: 'modules', label: 'Modules' }, { id: 'aviation', label: 'Aviation' }, { id: 'workspace', label: 'Workspace' }];
+  const visibleItems = navigationConfig.filter((item) => (item.enabled || item.locked) && validServiceIds.includes(item.serviceId));
 
-  function getStatusToneForTab(serviceId: ServiceId): StatusTone {
-    if (serviceId === SERVICE_IDS.SETTINGS) return 'track';
-    const capability = capabilityByServiceId.get(serviceId);
-    return capability ? capabilityStatusTone(capability.status) : 'track';
+  function getStatusToneForItem(item: NavigationItemConfig): StatusTone {
+    const capability = capabilityByServiceId.get(item.serviceId);
+    return capability ? capabilityStatusTone(capability.status) : item.statusTone ?? 'track';
   }
 
   return (
-    <aside className={displayMode === 'compact' ? 'sidebar sidebar-compact' : 'sidebar'} aria-label="FPI dashboard navigation">
+    <aside className="sidebar" aria-label="FPI dashboard navigation">
       <button className="logo-button" type="button" onClick={onBackToLanding} aria-label="Back to landing page">
         <img className="brand-spark" src="/brand/walmart/spark/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" />
         <span>
@@ -651,42 +625,35 @@ function SidebarNav({
       </button>
 
       <nav aria-label="Customizable FPI navigation" className="sidebar-command-nav">
-        <p className="nav-label">Navigation</p>
-        {visibleTabs.length === 0 ? <p className="sidebar-empty-note">No visible modules. Use Customize Navigation to restore tabs.</p> : null}
-        {visibleTabs.map((tab) => {
-          const serviceId = tab.tab_id as ServiceId;
-          const statusTone = getStatusToneForTab(serviceId);
-          return (
-            <button
-              className={`${serviceId === selectedService ? 'nav-item active' : 'nav-item'}${serviceId === SERVICE_IDS.COMMAND_CENTER ? ' command-center-nav-item' : ''}`}
-              key={tab.tab_id}
-              type="button"
-              aria-current={serviceId === selectedService ? 'page' : undefined}
-              title={tab.label}
-              onClick={() => onSelectService(serviceId)}
-            >
-              <span className="nav-title-row">
-                <strong>{tab.label}</strong>
-                <span className={`nav-status-dot nav-status-${statusTone}`} aria-label={`${statusTone} status`} />
-              </span>
-            </button>
-          );
+        {visibleItems.length === 0 ? <p className="sidebar-empty-note">No visible modules. Open Settings → Custom Navigation to restore tabs.</p> : null}
+        {sections.map((section) => {
+          const sectionItems = visibleItems.filter((item) => item.section === section.id).sort((a, b) => a.order - b.order);
+          if (sectionItems.length === 0) return null;
+          return <div key={section.id} className="sidebar-nav-section"><p className="nav-label">{section.label}</p>{sectionItems.map((item) => {
+            const statusTone = getStatusToneForItem(item);
+            return (
+              <button
+                className={`${item.serviceId === selectedService ? 'nav-item active' : 'nav-item'}${item.serviceId === SERVICE_IDS.COMMAND_CENTER ? ' command-center-nav-item' : ''}`}
+                key={item.id}
+                type="button"
+                aria-current={item.serviceId === selectedService ? 'page' : undefined}
+                title={item.description ?? item.label}
+                onClick={() => onSelectService(item.serviceId)}
+              >
+                <span className="nav-title-row">
+                  <strong>{item.label}</strong>
+                  <span className={`nav-status-dot nav-status-${statusTone}`} aria-label={`${statusTone} status`} />
+                </span>
+              </button>
+            );
+          })}</div>;
         })}
-      </nav>
-
-      <nav aria-label="Navigation customization" className="sidebar-settings-nav">
-        <p className="nav-label">Personalize</p>
-        <button type="button" className="nav-item customize-navigation-button" onClick={() => setSettingsOpen(true)}>
-          <span className="nav-title-row"><strong>Customize Navigation</strong><span className="nav-status-dot nav-status-track" aria-label="Personal navigation settings" /></span>
-        </button>
       </nav>
 
       <footer className="sidebar-brand-footer" aria-label="Walmart brand footer">
         <img className="walmart-wordmark" src={theme === 'dark' ? '/brand/walmart/wordmark/WMT-Wordmark-Standard-White-RGB.svg' : '/brand/walmart/wordmark/WMT-Wordmark-Standard-TrueBlue-RGB.svg'} alt="Walmart" />
         <span>Internal prototype</span>
       </footer>
-
-      {settingsOpen ? <SidePanelSettings availableTabs={availableTabs} preferences={preferences} displayMode={displayMode} onClose={() => setSettingsOpen(false)} onPreferencesChange={setPreferences} onDisplayModeChange={setDisplayMode} /> : null}
     </aside>
   );
 }

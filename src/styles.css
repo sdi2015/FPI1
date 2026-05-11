@@ -949,3 +949,37 @@ button.scope-chip { cursor: pointer; }
   .stars-layer, .spark-flight, .landing-copy, .landing-actions, .landing-security-note { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .spark-flight { transform: scale(1); filter: drop-shadow(0 0 16px rgba(255,205,59,.45)); }
 }
+
+/* Centralized navigation settings */
+.settings-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.settings-tab { border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(255,255,255,.05); color: inherit; padding: .65rem 1rem; cursor: pointer; }
+.settings-tab.active { border-color: rgba(255,194,32,.55); background: rgba(255,194,32,.14); }
+.navigation-settings-list { display: grid; gap: 1rem; }
+.navigation-settings-section { display: grid; gap: .65rem; }
+.navigation-settings-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,.8fr); gap: 1rem; align-items: center; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: rgba(255,255,255,.045); padding: .85rem; }
+.navigation-settings-row p { margin: .3rem 0; color: var(--text-secondary); }
+.nav-config-actions { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; justify-content: flex-end; }
+.nav-config-actions .aviation-input { max-width: 14rem; margin: 0; }
+.locked-badge { display: inline-flex; border: 1px solid rgba(148,163,184,.35); border-radius: 999px; padding: .1rem .45rem; color: var(--text-muted); font-size: .72rem; }
+.sidebar-nav-section { display: grid; gap: .35rem; margin-bottom: .75rem; }
+@media (max-width: 900px) { .navigation-settings-row { grid-template-columns: 1fr; } .nav-config-actions { justify-content: flex-start; } }
+
+/* Clean operational Command Center */
+.clean-command-header { display: block; }
+.clean-command-header .executive-hero-copy { max-width: 980px; }
+.command-header-facts { display: flex; flex-wrap: wrap; gap: .65rem 1rem; margin: 1rem 0; color: var(--text-secondary); }
+.command-header-facts span { border: 1px solid var(--border-subtle); border-radius: 999px; padding: .45rem .75rem; background: rgba(255,255,255,.045); }
+.command-header-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+.clean-kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.clean-kpi-tile { min-height: 0; }
+.clean-kpi-tile > span { color: var(--text-secondary); font-size: .88rem; }
+.clean-kpi-tile > strong { display: block; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .35rem 0; }
+.supporting-details-inline { margin-top: 1rem; }
+.supporting-details-inline summary,
+.compact-module-shortcuts summary,
+.dashboard-more-metrics summary { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.compact-module-map .module-chip { min-height: 0; }
+.compact-module-map .module-chip small { line-height: 1.35; }
+.settings-system-grid { margin-top: 1rem; }
+@media (max-width: 1100px) { .clean-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .clean-kpi-grid { grid-template-columns: 1fr; } }
