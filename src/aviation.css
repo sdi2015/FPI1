@@ -918,6 +918,544 @@
   }
 }
 
+/* Aviation Travel Readiness guided workflow */
+.aviation-travel-readiness-page {
+  gap: 1rem;
+}
+
+.aviation-readiness-hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.aviation-readiness-hero h1 {
+  font-size: clamp(2.25rem, 4.4vw, 4.25rem);
+  letter-spacing: -0.06em;
+}
+
+.aviation-save-message {
+  margin: 0.75rem 0 0;
+  color: #bbf7d0;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.aviation-demo-label {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0.85rem 0 0;
+  border: 1px solid rgba(250, 204, 21, 0.38);
+  border-radius: 999px;
+  background: rgba(113, 63, 18, 0.22);
+  color: #fde68a;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.aviation-workflow-steps {
+  position: sticky;
+  top: 3.75rem;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(2, 6, 23, 0.86);
+  backdrop-filter: blur(12px);
+}
+
+.aviation-workflow-steps button {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 0.8rem;
+  background: rgba(15, 23, 42, 0.45);
+  color: var(--text-primary, #fff);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.aviation-workflow-steps button.active {
+  border-color: rgba(255, 194, 32, 0.75);
+  background: linear-gradient(135deg, rgba(255, 194, 32, 0.22), rgba(0, 113, 206, 0.2));
+}
+
+.aviation-workflow-steps span {
+  display: inline-grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.aviation-trip-setup-grid,
+.aviation-map-operations-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.62fr) minmax(260px, 0.48fr) minmax(420px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.aviation-trip-setup-details,
+.aviation-field-group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.aviation-primary-scan-button {
+  justify-content: center;
+  min-height: 2.9rem;
+  margin-top: 0.25rem;
+}
+
+.aviation-mission-overview {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.aviation-mission-kpi {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  min-height: 6.5rem;
+  align-content: center;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.34);
+  padding: 0.9rem;
+}
+
+.aviation-mission-kpi span,
+.aviation-mission-kpi small,
+.aviation-mini-facts small {
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aviation-mission-kpi strong {
+  font-size: clamp(1.45rem, 2.6vw, 2.35rem);
+  line-height: 1;
+}
+
+.aviation-map-operations-grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(310px, 0.55fr);
+  align-items: stretch;
+}
+
+.aviation-airport-mini-panel {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.aviation-mini-facts {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.aviation-mini-facts span {
+  display: grid;
+  gap: 0.16rem;
+  padding: 0.68rem 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0.75rem;
+  background: rgba(2, 6, 23, 0.24);
+}
+
+.aviation-mini-facts strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aviation-review-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.aviation-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.risk-low { color: #bbf7d0; border-color: rgba(34, 197, 94, 0.42); background: rgba(22, 101, 52, 0.24); }
+.risk-watch { color: #fde68a; border-color: rgba(250, 204, 21, 0.42); background: rgba(113, 63, 18, 0.2); }
+.risk-elevated { color: #fed7aa; border-color: rgba(245, 158, 11, 0.46); background: rgba(124, 45, 18, 0.22); }
+.risk-high { color: #fecaca; border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.24); }
+.risk-critical { color: #fee2e2; border-color: rgba(185, 28, 28, 0.72); background: rgba(69, 10, 10, 0.42); }
+.risk-unknown { color: #d1d5db; border-color: rgba(148, 163, 184, 0.45); background: rgba(31, 41, 55, 0.28); }
+
+.aviation-risk-score-card,
+.aviation-risk-driver-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.aviation-score-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.aviation-score-hero > strong {
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+}
+
+.aviation-score-hero > strong span {
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.28em;
+  letter-spacing: -0.03em;
+}
+
+.aviation-score-hero div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.aviation-score-hero div span {
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.aviation-score-hero b {
+  font-size: 1.55rem;
+}
+
+.aviation-risk-driver-list ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.aviation-risk-driver-list li {
+  margin: 0.35rem 0;
+  line-height: 1.45;
+}
+
+.aviation-decision-table {
+  min-width: 1320px;
+}
+
+.aviation-score-breakdown-table {
+  min-width: 980px;
+}
+
+@media (max-width: 1300px) {
+  .aviation-trip-setup-grid,
+  .aviation-mission-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .aviation-map-operations-grid,
+  .aviation-trip-setup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aviation-workflow-steps {
+    position: static;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .aviation-mission-overview,
+  .aviation-score-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Aviation Travel Command landing and workflow layout */
+.aviation-travel-command-landing,
+.aviation-travel-command-workflow {
+  width: 100%;
+  min-width: 0;
+}
+
+.aviation-travel-command-landing .aviation-hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.aviation-command-kpi-grid,
+.aviation-command-two-column,
+.aviation-workflow-card-grid,
+.aviation-location-grid,
+.aviation-stop-timeline {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.aviation-command-kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.aviation-command-two-column {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.aviation-command-two-column > .aviation-panel {
+  min-height: 100%;
+}
+
+.aviation-workflow-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.aviation-workflow-card,
+.aviation-command-row,
+.aviation-summary-card {
+  min-width: 0;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.aviation-workflow-card {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+  padding: 1rem;
+}
+
+.aviation-workflow-card > div:first-child {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.aviation-workflow-card strong {
+  display: block;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.aviation-workflow-card p,
+.aviation-command-row p,
+.aviation-command-row small {
+  margin: 0;
+  color: var(--text-muted, #b7c6d8);
+  line-height: 1.4;
+}
+
+.aviation-workflow-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.aviation-workflow-metrics span {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.62rem 0.7rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0.78rem;
+  background: rgba(2, 6, 23, 0.24);
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.76rem;
+}
+
+.aviation-workflow-metrics strong {
+  overflow: hidden;
+  color: var(--text-primary, #fff);
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aviation-command-row {
+  display: grid;
+  gap: 0.34rem;
+  margin-top: 0.65rem;
+  padding: 0.82rem;
+}
+
+.aviation-command-row > span {
+  color: var(--text-secondary, #d5e7ff);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.aviation-command-row .aviation-button-row {
+  margin-top: 0.35rem;
+}
+
+.aviation-summary-card {
+  display: grid;
+  gap: 0.15rem;
+  align-content: center;
+  padding: 0.9rem;
+}
+
+.aviation-summary-card > span {
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.aviation-route-map-canvas {
+  width: 100%;
+  min-height: 22rem;
+  margin: 0.75rem 0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at center, rgba(59, 130, 246, 0.16), transparent 44%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.58));
+  overflow: hidden;
+}
+
+.aviation-route-map-canvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 22rem;
+  color: var(--text-primary, #fff);
+}
+
+.aviation-location-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 0.85rem;
+}
+
+.aviation-data-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.aviation-data-table th,
+.aviation-data-table td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.aviation-data-table th {
+  color: var(--text-muted, #b7c6d8);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aviation-data-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.aviation-panel > .aviation-data-table {
+  display: block;
+  overflow-x: auto;
+}
+
+.aviation-table-wrap .aviation-data-table {
+  display: table;
+}
+
+.aviation-report-validation,
+.aviation-report-preview {
+  margin: 0.9rem 0;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(2, 6, 23, 0.24);
+  padding: 1rem;
+}
+
+.aviation-report-validation {
+  border-color: rgba(250, 204, 21, 0.3);
+  background: rgba(113, 63, 18, 0.18);
+}
+
+.aviation-report-validation p,
+.aviation-report-validation label {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted, #b7c6d8);
+}
+
+.report-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+}
+
+.aviation-report-preview {
+  max-height: 42rem;
+  overflow: auto;
+  color: var(--text-primary, #fff);
+}
+
+.aviation-report-preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.aviation-report-preview th,
+.aviation-report-preview td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 0.55rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.aviation-manual-modal {
+  width: min(980px, 96vw);
+  max-height: min(88vh, 900px);
+  margin: 0 auto;
+  overflow: auto;
+}
+
+.aviation-travel-command-workflow > .aviation-panel,
+.aviation-travel-command-landing > .aviation-panel {
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .aviation-command-two-column,
+  .aviation-workflow-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .aviation-command-kpi-grid,
+  .aviation-workflow-card-grid,
+  .aviation-location-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aviation-route-map-canvas,
+  .aviation-route-map-canvas svg {
+    min-height: 16rem;
+  }
+}
+
 /* Aviation readiness module tab expansion */
 .aviation-trip-context-bar { position: sticky; top: 4.25rem; z-index: 9; display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: .5rem; padding: .65rem; border: 1px solid rgba(148,163,184,.22); border-radius: 1rem; background: rgba(2,6,23,.88); backdrop-filter: blur(10px); }
 .aviation-trip-context-bar span { display: grid; gap: .1rem; padding: .45rem .6rem; border-radius: .75rem; background: rgba(15,23,42,.48); }
