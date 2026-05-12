@@ -213,6 +213,7 @@ function Landing({
           <div className="landing-copy">
             <h1>Facility Protection Intelligence</h1>
             <p>Command Center Experience</p>
+            <p className="landing-update-note">Updated interface delivered on May 12, 2026.</p>
           </div>
 
           <div className="landing-actions" role="group" aria-label="FPI entry actions">
